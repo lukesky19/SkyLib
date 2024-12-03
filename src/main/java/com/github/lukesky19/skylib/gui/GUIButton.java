@@ -19,49 +19,44 @@ package com.github.lukesky19.skylib.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
+
+import com.github.lukesky19.skylib.version.VersionUtil;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.CheckForNull;
 
 /**
  * This class supports the creation of inventory GUIs.
 */
 public class GUIButton {
+    @NotNull
     private final ItemStack itemStack;
-    private final Component itemName;
-    private final List<Component> lore;
+    @NotNull
     private final Consumer<InventoryClickEvent> action;
 
     /**
      * Gets the ItemStack associated with this GUIButton.
      * @return A Bukkit ItemStack
      */
+    @NotNull
     public ItemStack itemStack() {
         return this.itemStack;
-    }
-
-    /**
-     * Gets the item name associated with this GUIButton.
-     * @return An item name as a Component.
-     */
-    public Component itemName() {
-        return this.itemName;
-    }
-
-    /**
-     * Gets the lore associated with this GUIButton.
-     * @return A list of Components.
-     */
-    public List<Component> lore() {
-        return this.lore;
     }
 
     /**
      * Gets the action associated with this GUIButton.
      * @return A Consumer that takes an InventoryClickEvent.
      */
+    @NotNull
     public Consumer<InventoryClickEvent> action() {
         return this.action;
     }
@@ -71,49 +66,113 @@ public class GUIButton {
      * @param builder A Builder representing an incomplete GUIButton.
      */
     public GUIButton(Builder builder) {
-        this.itemStack = builder.itemStack;
-        this.itemName = builder.itemName;
-        this.lore = builder.lore;
-        this.action = builder.action;
+        // Create a new ItemStack and get the ItemMeta
+        if(builder.material == null) throw new RuntimeException("Material is required to build the button.");
+
+        final ItemStack builtStack = new ItemStack(builder.material);
+        final ItemMeta itemMeta = builtStack.getItemMeta();
+
+        // Set the item name.
+        if(builder.name != null) itemMeta.displayName(builder.name);
+
+        // Set the item lore
+        itemMeta.lore(builder.lore);
+
+        // Set the item flags
+        builder.itemFlags.forEach(itemMeta::addItemFlags);
+
+        // Set the item model
+        if(builder.model != null) {
+            itemMeta.setItemModel(builder.model);
+        }
+
+        // Set the ItemStack's ItemMeta
+        builtStack.setItemMeta(itemMeta);
+
+        // Set the ItemStack's size (amount)
+        if(builder.amount != null) {
+            builtStack.setAmount(builder.amount);
+        }
+
+        // Copy the final ItemStack and action to the class variables
+        this.itemStack = builtStack;
+        this.action = Objects.requireNonNullElseGet(builder.action, () -> inventoryClickEvent -> {});
     }
 
     /**
      * Builds a new GUIButton.
      */
     public static class Builder {
-        private ItemStack itemStack;
-        private Component itemName;
-        private List<Component> lore = new ArrayList<>();
-        private Consumer<InventoryClickEvent> action;
+        @CheckForNull private Material material;
+        @CheckForNull private Integer amount;
+        @CheckForNull Component name;
+        @NotNull private List<Component> lore = new ArrayList<>();
+        @NotNull private List<ItemFlag> itemFlags = new ArrayList<>();
+        @CheckForNull private NamespacedKey model;
+        @CheckForNull private Consumer<InventoryClickEvent> action;
 
         /**
-         * Sets the ItemStack associated with this GUIButton.
-         * @param itemStack A Bukkit ItemStack.
+         * Sets the Material of the final ItemStack associated with this GUIButton.
+         * @param material A Bukkit Material.
          * @return A GUIButton Builder.
          */
-        public Builder setItemStack(@NotNull ItemStack itemStack) {
-            this.itemStack = itemStack;
+        public Builder setMaterial(@NotNull Material material) {
+            this.material = material;
             return this;
         }
 
         /**
-         * Sets the name of the ItemStack associated with this GUIButton.
-         * @param itemName The item name as a Component.
-         * @return A GUIButton Builder.
+         * Sets the amount of the final ItemStack associated with this GUIButton.
+         * @param amount An int representing the amount in the ItemStack.
+         * @return  A GUIButton Builder.
          */
-        public Builder setItemName(@NotNull Component itemName) {
-            this.itemName = itemName;
+        public Builder setAmount(int amount) {
+            this.amount = amount;
             return this;
         }
 
         /**
-         * Sets the lore of the ItemStack associated with this GUIButton.
+         * Sets the name of the final ItemStack associated with this GUIButton.
+         * @param name The item name as a Component.
+         * @return A GUIButton Builder.
+         */
+        public Builder setItemName(@NotNull Component name) {
+            this.name = name;
+            return this;
+        }
+
+        /**
+         * Sets the lore to add to the final ItemStack associated with this GUIButton.
          * @param lore A list of Components.
          * @return A GUIButton Builder.
          */
         public Builder setLore(@NotNull List<Component> lore) {
             this.lore = lore;
             return this;
+        }
+
+        /**
+         * Sets the {@literal List<ItemFlags>} to add to the final ItemStack associated with this GUIButton.
+         * @param itemFlags A list of ItemFlag
+         * @return A GUIButton Builder.
+         */
+        public Builder setItemFlags(@NotNull List<ItemFlag> itemFlags) {
+            this.itemFlags = itemFlags;
+            return this;
+        }
+
+        /**
+         * Sets the item model of the final ItemStack associated with this GUIButton.
+         * @param model The NamespacedKey of the model.
+         * @return A GUIButton Builder.
+         */
+        public Builder setModel(@NotNull NamespacedKey model) {
+            if(VersionUtil.getMajorVersion() >= 21 && VersionUtil.getMinorVersion() >= 3) {
+                this.model = model;
+                return this;
+            }
+
+            throw new RuntimeException("Item Models are only available on Minecraft 1.21.3 and newer.");
         }
 
         /**

@@ -17,9 +17,29 @@
 */
 package com.github.lukesky19.skylib;
 
+import com.github.lukesky19.skylib.version.VersionUtil;
+import io.papermc.paper.ServerBuildInfo;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Entry point to the plugin.
  */
-public final class SkyLib extends JavaPlugin {}
+public final class SkyLib extends JavaPlugin {
+    @Override
+    public void onEnable() {
+        // Get ServerBuildInfo and Minecraft version
+        final ServerBuildInfo build = ServerBuildInfo.buildInfo();
+        final String minecraftVersionId = build.minecraftVersionId();
+
+        // Store Minecraft Version
+        VersionUtil.setMinecraftVersion(minecraftVersionId);
+
+        // Parse Minecraft Version for major and minor
+        final @NotNull String[] splitVersion = minecraftVersionId.split("\\.");
+
+        // Store Minecraft Major and Minor Versions
+        VersionUtil.setMajorVersion(Integer.parseInt(splitVersion[1]));
+        VersionUtil.setMinorVersion(Integer.parseInt(splitVersion[2]));
+    }
+}

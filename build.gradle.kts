@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.lukesky19"
-version = "1.0.0"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
     compileOnly("net.kyori:adventure-api:4.17.0")
     compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
     compileOnly("me.clip:placeholderapi:2.11.6")
