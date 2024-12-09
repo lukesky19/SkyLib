@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.lukesky19.skylib.version.VersionUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -30,6 +31,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.CheckForNull;
@@ -70,7 +72,7 @@ public class GUIButton {
         if(builder.material == null) throw new RuntimeException("Material is required to build the button.");
 
         final ItemStack builtStack = new ItemStack(builder.material);
-        final ItemMeta itemMeta = builtStack.getItemMeta();
+        ItemMeta itemMeta = builtStack.getItemMeta();
 
         // Set the item name.
         if(builder.name != null) itemMeta.displayName(builder.name);
@@ -84,6 +86,14 @@ public class GUIButton {
         // Set the item model
         if(builder.model != null) {
             itemMeta.setItemModel(builder.model);
+        }
+
+        // Set the PlayerProfile of a skull if the material matches PLAYER_HEAD.
+        if(builder.material == Material.PLAYER_HEAD) {
+            if (builder.playerProfile != null) {
+                SkullMeta skullMeta = (SkullMeta) itemMeta;
+                skullMeta.setPlayerProfile(builder.playerProfile);
+            }
         }
 
         // Set the ItemStack's ItemMeta
@@ -109,6 +119,7 @@ public class GUIButton {
         @NotNull private List<Component> lore = new ArrayList<>();
         @NotNull private List<ItemFlag> itemFlags = new ArrayList<>();
         @CheckForNull private NamespacedKey model;
+        @CheckForNull PlayerProfile playerProfile;
         @CheckForNull private Consumer<InventoryClickEvent> action;
 
         /**
@@ -173,6 +184,16 @@ public class GUIButton {
             }
 
             throw new RuntimeException("Item Models are only available on Minecraft 1.21.3 and newer.");
+        }
+
+        /**
+         * Sets the PlayerProfile if the Material is that of a PLAYER_HEAD
+         * @param playerProfile A PlayerProfile of an online player.
+         * @return A GUIButton Builder.
+         */
+        public Builder setPlayerProfile(@NotNull PlayerProfile playerProfile) {
+            this.playerProfile = playerProfile;
+            return this;
         }
 
         /**
