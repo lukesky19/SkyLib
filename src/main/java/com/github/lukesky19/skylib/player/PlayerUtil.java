@@ -17,7 +17,7 @@ public class PlayerUtil {
      * @param itemStack A Bukkit ItemStack
      * @param amount The amount of items to give
      */
-    public static void giveItem(@NotNull Player player, @NotNull ItemStack itemStack, @NotNull int amount) {
+    public static void giveItem(@NotNull Player player, @NotNull ItemStack itemStack, int amount) {
         if(amount > itemStack.getMaxStackSize()) {
             int count = amount / itemStack.getMaxStackSize();
             itemStack.setAmount(itemStack.getMaxStackSize());
