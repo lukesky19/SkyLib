@@ -17,6 +17,7 @@
 */
 package com.github.lukesky19.skylib;
 
+import com.github.lukesky19.skylib.listener.LoginListener;
 import com.github.lukesky19.skylib.version.VersionUtil;
 import io.papermc.paper.ServerBuildInfo;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,5 +42,7 @@ public final class SkyLib extends JavaPlugin {
         // Store Minecraft Major and Minor Versions
         VersionUtil.setMajorVersion(Integer.parseInt(splitVersion[1]));
         VersionUtil.setMinorVersion(Integer.parseInt(splitVersion[2]));
+
+        this.getServer().getPluginManager().registerEvents(new LoginListener(), this);
     }
 }
