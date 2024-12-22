@@ -68,7 +68,6 @@ public class PlayerUtil {
             addStack.setAmount(amount);
 
             giveItem(inventory, addStack, location);
-            // appropriate
         }
     }
 
@@ -80,12 +79,9 @@ public class PlayerUtil {
      * @param location The location to drop items if the inventory is full.
      */
     private static void giveItem(Inventory inventory, ItemStack addStack, Location location) {
-        // Try to add the item stack to the inventory
         HashMap<Integer, ItemStack> leftover = inventory.addItem(addStack);
 
-        // If there are leftover items, we need to handle them
         if (!leftover.isEmpty()) {
-            // Drop the leftover items on the ground
             for (ItemStack item : leftover.values()) {
                 if (item.getAmount() > 0) {
                     dropItem(location.getWorld(), location, item);
