@@ -3,7 +3,6 @@ package com.github.lukesky19.skylib.player;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.lukesky19.skylib.version.VersionUtil;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -84,56 +83,91 @@ public class PlayerUtil {
         if (!leftover.isEmpty()) {
             for (ItemStack item : leftover.values()) {
                 if (item.getAmount() > 0) {
-                    dropItem(location.getWorld(), location, item);
+                    dropItem(location, item);
                 }
             }
         }
     }
 
     /**
-     * Gives an item to a player.
-     * This handles stack sizes because of a bug in the api for versions 1.21 and 1.21.1 with the new stack size component.
+     * A method to give player items on Minecraft versions 1.21 and 1.21.1 due to a bug in the API with stack sizes.
+     * If the inventory is full, all items will drop to the ground.
+     * If there is existing stacks in the inventory, the items will be added to them.
+     * Then the items will be added to empty slots.
+     * Lastly, any remaining items that didn't fit will drop on the ground.
      * @param inventory The Inventory to add items to.
      * @param itemStack The ItemStack to add.
      * @param amount The amount of items to add.
      * @param location The location to drop items if the inventory is full.
      */
     private static void giveItem1_21(@NotNull Inventory inventory, @NotNull ItemStack itemStack, int amount, Location location) {
-        int maxStackSize = itemStack.getMaxStackSize();
-        int remainder = amount % maxStackSize;
-        int stacks = (amount - remainder) / maxStackSize;
+        // If the Inventory is full, just drop the items on the ground.
+        if(!inventory.isEmpty()) {
+            dropItem(location, itemStack);
 
-        if(stacks == 0 && remainder == 0) return;
+            return;
+        }
 
-        if(stacks >= 1) {
-            final ItemStack addStack = itemStack.clone();
-            addStack.setAmount(maxStackSize);
+        // Add any items to existing stacks.
+        for(int i = 0; i <= inventory.getSize() -1; i++) {
+            ItemStack slotStack = inventory.getItem(i);
 
-            for(int i = 1; i <= stacks; i++) {
-                giveItem(inventory, addStack, location);
+            if(slotStack != null && !slotStack.isEmpty() && slotStack.isSimilar(itemStack)) {
+                int slotAmount = slotStack.getAmount();
+                int slotMaxSize = slotStack.getMaxStackSize();
+
+                if(slotAmount < slotMaxSize) {
+                    int finalAmount = slotAmount + amount;
+                    amount = finalAmount % slotMaxSize;
+
+                    if(amount > 0) {
+                        slotStack.setAmount(slotMaxSize);
+                    } else {
+                        slotStack.setAmount(finalAmount);
+
+                        return;
+                    }
+                }
             }
         }
 
-        if(remainder >= 1) {
-            final ItemStack addStack = itemStack.clone();
-            addStack.setAmount(remainder);
+        // Add any leftover items to empty stacks.
+        if(amount > 0) {
+            for(int i = 0; i <= inventory.getSize() -1; i++) {
+                ItemStack slotStack = inventory.getItem(i);
 
-            for(int i = 1; i <= stacks; i++) {
-                giveItem(inventory, addStack, location);
+                if(slotStack != null && slotStack.isEmpty()) {
+                    final ItemStack cloneStack = itemStack.clone();
+
+                    int cloneStackMaxSize = cloneStack.getMaxStackSize();
+                    int finalAmount = Math.min(amount, cloneStackMaxSize);
+
+                    cloneStack.setAmount(finalAmount);
+                    amount -= finalAmount;
+
+                    inventory.setItem(i, cloneStack);
+
+                    if(amount  == 0) return;
+                }
             }
+        }
+
+        // Drop any leftover items on the ground.
+        if(amount > 0) {
+            final ItemStack cloneStack = itemStack.clone();
+            cloneStack.setAmount(amount);
+
+            dropItem(location, cloneStack);
         }
     }
 
     /**
      * Drops an item stack at the specified location.
-     * @param world    The world where the item will be dropped.
      * @param location The location where the item will be dropped.
      * @param itemStack The item stack to drop.
      */
-    private static void dropItem(World world, Location location, ItemStack itemStack) {
-        if (world != null && location != null && itemStack != null && itemStack.getAmount() > 0) {
-            Item item = world.dropItem(location, itemStack);
-            item.setPickupDelay(0); // Optional: Set pickup delay to 0 so players can pick it up immediately
-        }
+    private static void dropItem(@NotNull Location location, @NotNull ItemStack itemStack) {
+        Item item = location.getWorld().dropItem(location, itemStack);
+        item.setPickupDelay(0);
     }
 }
