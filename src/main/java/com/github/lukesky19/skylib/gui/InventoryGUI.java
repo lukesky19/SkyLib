@@ -27,8 +27,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,19 +65,12 @@ public class InventoryGUI implements InventoryHolder, GUIInterface {
 
     @Override
     public void createInventory(int size, @NotNull String title) {
-        Bukkit.createInventory(null, size, FormatUtil.format(title));
+        inventory = Bukkit.createInventory(this, size, FormatUtil.format(title));
     }
 
     @Override
     public void decorate() {
-        this.buttonMap.forEach((slot, button) -> {
-            ItemStack icon = button.itemStack();
-            ItemMeta iconMeta = icon.getItemMeta();
-            iconMeta.displayName(button.itemName());
-            iconMeta.lore(button.lore());
-            icon.setItemMeta(iconMeta);
-            inventory.setItem(slot, icon);
-        });
+        this.buttonMap.forEach((slot, button) -> inventory.setItem(slot, button.itemStack()));
     }
 
     @Override
