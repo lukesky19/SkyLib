@@ -17,6 +17,7 @@
 */
 package com.github.lukesky19.skylib.format;
 
+import com.github.lukesky19.skylib.record.Time;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -210,57 +211,6 @@ public class FormatUtil {
     }
 
     /**
-     * Takes milliseconds and converts it to years, months, weeks, days, hours, minutes, and seconds.
-     * @param millis The Milliseconds to parse
-     * @return A String
-     */
-    public static String millisToString(long millis) {
-        long y = 0;
-        long M = 0;
-        long w = 0;
-        long d = 0;
-        long h = 0;
-        long m = 0;
-        long s = 0;
-
-        if(millis >= YEAR) {
-            y = millis / YEAR;
-            millis %= YEAR;
-        }
-
-        if(millis >= MONTH) {
-            M = millis / MONTH;
-            millis %= MONTH;
-        }
-
-        if(millis >= WEEK) {
-            w = millis / WEEK;
-            millis %= WEEK;
-        }
-
-        if(millis >= DAY) {
-            d = millis / DAY;
-            millis %= DAY;
-        }
-
-        if(millis >= HOUR) {
-            h = millis / HOUR;
-            millis %= HOUR;
-        }
-
-        if(millis >= MINUTE) {
-            m = millis / MINUTE;
-            millis %= MINUTE;
-        }
-
-        if(millis >= SECOND) {
-            s = millis / SECOND;
-        }
-
-        return y + " years " + M + " months " + w + " weeks " + d + " days " + h + " hours " + m + " minutes " + s + " seconds";
-    }
-
-    /**
      * Takes String representing an amount of time (i.e., 1d2h30m) and converts it to Milliseconds.
      * @param time A String with a time to parse
      * @return Milliseconds
@@ -288,6 +238,73 @@ public class FormatUtil {
                 case "y" -> millis = (num * 365L * 24L * 60L * 60L * 1000L) + millis;
             }
         }
+
+        return millis;
+    }
+
+    /**
+     * Takes a long representing milliseconds and returns a {@link Time} Record that holds the years, months, weeks, days, hours, minutes, and milliseconds.
+     * @param millis The milliseconds to convert.
+     * @return A {@link Time} Record that holds the years, months, weeks, days, hours, minutes, and milliseconds.
+     */
+    public static Time millisToTime(long millis) {
+        int years = 0;
+        int months = 0;
+        int weeks = 0;
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
+        int seconds = 0;
+
+        if(millis >= YEAR) {
+            years = (int) (millis / YEAR);
+            millis %= YEAR;
+        }
+
+        if(millis >= MONTH) {
+            months = (int) (millis / MONTH);
+            millis %= MONTH;
+        }
+
+        if(millis >= WEEK) {
+            weeks = (int) (millis / WEEK);
+            millis %= WEEK;
+        }
+
+        if(millis >= DAY) {
+            days = (int) (millis / DAY);
+            millis %= DAY;
+        }
+
+        if(millis >= HOUR) {
+            hours = (int) (millis / HOUR);
+            millis %= HOUR;
+        }
+
+        if(millis >= MINUTE) {
+            minutes = (int) (millis / MINUTE);
+            millis %= MINUTE;
+        }
+
+        if(millis >= SECOND) {
+            seconds = (int) (millis / SECOND);
+            millis %= SECOND;
+        }
+
+        return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+    }
+
+    public static long timeToMillis(@NotNull Time time) {
+        long millis = 0;
+
+        millis += time.years() * YEAR;
+        millis += time.months() * MONTH;
+        millis += time.weeks() * WEEK;
+        millis += time.days() * DAY;
+        millis += time.hours() * HOUR;
+        millis += time.minutes() * MINUTE;
+        millis += time.seconds() * SECOND;
+        millis += time.milliseconds();
 
         return millis;
     }
