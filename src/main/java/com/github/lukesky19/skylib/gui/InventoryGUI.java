@@ -65,7 +65,7 @@ public class InventoryGUI implements InventoryHolder, GUIInterface {
 
     @Override
     public void createInventory(int size, @NotNull String title) {
-        Bukkit.createInventory(null, size, FormatUtil.format(title));
+        inventory = Bukkit.createInventory(this, size, FormatUtil.format(title));
     }
 
     @Override
