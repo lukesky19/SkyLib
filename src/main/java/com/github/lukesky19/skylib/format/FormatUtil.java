@@ -294,6 +294,11 @@ public class FormatUtil {
         return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
     }
 
+    /**
+     * Converts a {@link Time} Record to milliseconds.
+     * @param time A {@link Time} Record
+     * @return A long representing the milliseconds.
+     */
     public static long timeToMillis(@NotNull Time time) {
         long millis = 0;
 
