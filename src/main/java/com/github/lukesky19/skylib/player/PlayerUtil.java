@@ -3,6 +3,7 @@ package com.github.lukesky19.skylib.player;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.github.lukesky19.skylib.version.VersionUtil;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -91,73 +92,92 @@ public class PlayerUtil {
 
     /**
      * A method to give player items on Minecraft versions 1.21 and 1.21.1 due to a bug in the API with stack sizes.
-     * If the inventory is full, all items will drop to the ground.
-     * If there is existing stacks in the inventory, the items will be added to them.
-     * Then the items will be added to empty slots.
-     * Lastly, any remaining items that didn't fit will drop on the ground.
+     * Will attempt to add any items to existing ItemStacks of similar items, then fill empty slots, then drop the rest on the ground.
      * @param inventory The Inventory to add items to.
      * @param itemStack The ItemStack to add.
      * @param amount The amount of items to add.
      * @param location The location to drop items if the inventory is full.
      */
     private static void giveItem1_21(@NotNull Inventory inventory, @NotNull ItemStack itemStack, int amount, Location location) {
-        // If the Inventory is full, just drop the items on the ground.
-        if(!inventory.isEmpty()) {
-            dropItem(location, itemStack);
+        // Loop through the player's inventory
+        for(int i = 0; i <= (inventory.getSize() - 1); i++) {
+            // Ignore armor slots
+            if(i >= 36 && i <= 39) continue;
 
-            return;
-        }
+            // Get the ItemStack for this slot
+            final ItemStack invItem = inventory.getItem(i);
 
-        // Add any items to existing stacks.
-        for(int i = 0; i <= inventory.getSize() -1; i++) {
-            ItemStack slotStack = inventory.getItem(i);
+            // Check if it is not null and the type is not air
+            if(invItem != null && !invItem.getType().equals(Material.AIR)) {
+                // Get the max stack size of the inventory item
+                int invItemMaxSize = invItem.getMaxStackSize();
 
-            if(slotStack != null && !slotStack.isEmpty() && slotStack.isSimilar(itemStack)) {
-                int slotAmount = slotStack.getAmount();
-                int slotMaxSize = slotStack.getMaxStackSize();
+                // If the item to give is similar to the inventory item, attempt to add to the existing stack.
+                if(itemStack.isSimilar(invItem)) {
+                    // Check if the inventory item is less than it's max stack size
+                    if(invItem.getAmount() < invItemMaxSize) {
+                        // Get the result of adding the invItem amount and the amount to give.
+                        final int result = invItem.getAmount() + amount;
 
-                if(slotAmount < slotMaxSize) {
-                    int finalAmount = slotAmount + amount;
-                    amount = finalAmount % slotMaxSize;
+                        // If the result is less than or equal to the items max stack size, set the inventory items amount to the result.
+                        if(result <= invItemMaxSize) {
+                            invItem.setAmount(result);
 
-                    if(amount > 0) {
-                        slotStack.setAmount(slotMaxSize);
-                    } else {
-                        slotStack.setAmount(finalAmount);
+                            // Since the result fit inside the existing item stack, we can return as there would be no more left to add.
+                            return;
+                        } else {
+                            // Get the leftover amount that cannot fit inside the invItem stack
+                            final int leftover = result - invItemMaxSize;
+                            // Get the amount that fit inside the invItem stack
+                            final int transferred = amount - leftover;
+                            // Subtract the amount transferred from the total amount we are adding
+                            amount -= transferred;
 
-                        return;
+                            // Set the invItem's amount to it's max stack size.
+                            invItem.setAmount(invItemMaxSize);
+
+                            // If the total amount to add is less than or equal to 0, return
+                            if (amount <= 0) return;
+                        }
                     }
                 }
-            }
-        }
+            } else {
+                // Get the itemStack's max size that we are transferring.
+                int maxSize = itemStack.getMaxStackSize();
+                // Clone the itemStack
+                final ItemStack copyItem = itemStack.clone();
 
-        // Add any leftover items to empty stacks.
-        if(amount > 0) {
-            for(int i = 0; i <= inventory.getSize() -1; i++) {
-                ItemStack slotStack = inventory.getItem(i);
+                // Check if the total amount is greater than or equal to the itemStack's max size
+                if(amount >= maxSize) {
+                    // Set the cloned ItemStack to it's max stack size
+                    copyItem.setAmount(maxSize);
 
-                if(slotStack != null && slotStack.isEmpty()) {
-                    final ItemStack cloneStack = itemStack.clone();
+                    // Put the cloned ItemStack at the given slot
+                    inventory.setItem(i, copyItem);
 
-                    int cloneStackMaxSize = cloneStack.getMaxStackSize();
-                    int finalAmount = Math.min(amount, cloneStackMaxSize);
+                    // Subtract the max stack size (the amount added) from the total amount
+                    amount -= maxSize;
 
-                    cloneStack.setAmount(finalAmount);
-                    amount -= finalAmount;
+                    // If the total amount is less than or equal to 0, return
+                    if(amount <= 0) return;
+                } else {
+                    // Set the cloned ItemStack to the total amount
+                    copyItem.setAmount(amount);
 
-                    inventory.setItem(i, cloneStack);
+                    // Put the cloned ItemStack at the given slot
+                    inventory.setItem(i, copyItem);
 
-                    if(amount  == 0) return;
+                    // The total amount fit inside the new stack we added so we can return
+                    return;
                 }
             }
         }
 
-        // Drop any leftover items on the ground.
         if(amount > 0) {
-            final ItemStack cloneStack = itemStack.clone();
-            cloneStack.setAmount(amount);
+            ItemStack copyItem = itemStack.clone();
+            copyItem.setAmount(amount);
 
-            dropItem(location, cloneStack);
+            dropItem(location, copyItem);
         }
     }
 
