@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.lukesky19"
-version = "1.1.1"
+version = "1.2.0.0"
 
 repositories {
     mavenCentral()
@@ -52,7 +52,9 @@ tasks.shadowJar {
     manifest {
         attributes["paperweight-mappings-namespace"] = "mojang"
     }
+
     archiveClassifier.set("")
+
     relocate("org.spongepowered.configurate", "com.github.lukesky19.skylib.libs.configurate")
     relocate("org.bstats", "com.github.lukesky19.skylib.libs.bstats")
 }
