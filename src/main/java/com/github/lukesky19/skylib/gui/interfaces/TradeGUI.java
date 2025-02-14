@@ -2,8 +2,6 @@ package com.github.lukesky19.skylib.gui.interfaces;
 
 import com.github.lukesky19.skylib.format.FormatUtil;
 
-
-
 import com.github.lukesky19.skylib.version.VersionUtil;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import org.bukkit.Bukkit;
