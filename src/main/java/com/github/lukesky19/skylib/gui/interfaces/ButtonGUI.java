@@ -5,13 +5,11 @@ import com.github.lukesky19.skylib.gui.GUIButton;
 import com.github.lukesky19.skylib.gui.abstracts.ChestGUI;
 import com.github.lukesky19.skylib.gui.abstracts.MerchantGUI;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,11 +22,6 @@ import java.util.Map;
  * See {@link ChestGUI} and {@link MerchantGUI} for implementations to use.
  */
 public interface ButtonGUI extends BaseGUI {
-    /**
-     * This hashmap maps slots (as an Integer) to a GUIButton.
-     */
-    HashMap<Integer, GUIButton> slotButtons = new HashMap<>();
-
     /**
      * Creates a GUI for the given inventory type.
      * On versions newer or equal to 1.21.4, the MenuType API will be used.
@@ -51,14 +44,14 @@ public interface ButtonGUI extends BaseGUI {
         
         if(getInventoryView() != null) {
             InventoryView view = getInventoryView();
-            slotButtons.forEach((slot, button) -> {
+            getButtonMapping().forEach((slot, button) -> {
                 if(slot < 0 || slot > guiSizeZeroIndexed) throw new RuntimeException("Button Mapping has a button for a slot outside of inventory bounds. Slot must be greater than 0 and less than " + guiSize);
 
                 view.setItem(slot, button.itemStack());
             });
         } else {
             Inventory inventory = getInventory();
-            slotButtons.forEach((slot, button) -> {
+            getButtonMapping().forEach((slot, button) -> {
                 if(slot < 0 || slot > guiSizeZeroIndexed) throw new RuntimeException("Button Mapping has a button for a slot outside of inventory bounds. Slot must be greater than 0 and less than " + guiSize);
 
                 inventory.setItem(slot, button.itemStack());
@@ -90,11 +83,7 @@ public interface ButtonGUI extends BaseGUI {
      * @return A HashMap of all slots mapped to buttons.
      */
     @NotNull
-    default Map<Integer, GUIButton> getButtonMapping() {
-        return ButtonGUI.slotButtons;
-    }
-
-    // Method 'getButtinMapping()' always returns 'com.github.lukesky19.skylib.gui.interfaces.ButtonGUI.slotButtons'
+    Map<Integer, GUIButton> getButtonMapping();
 
     /**
      * Maps a GUIButton to a slot.
@@ -103,80 +92,21 @@ public interface ButtonGUI extends BaseGUI {
      * @param button The GUIButton for the given slot.
      * @throws RuntimeException if you try to map a button to a slot outside the Inventory bounds.
      */
-    default void setButton(int slot, @NotNull GUIButton button) {
-        Inventory inventory = getInventory();
-
-        if(slot < 0 || slot >= inventory.getSize()) {
-            throw new RuntimeException("Provided slot is outside of inventory bounds. Slot must be greater than 0 and less than " + inventory.getSize());
-        }
-
-        slotButtons.put(slot, button);
-    }
+    void setButton(int slot, @NotNull GUIButton button);
 
     /**
      * Takes a HashMap of representing a collection of slots and GUIButtons and replaces the existing mapping.
      * @param buttonMap A HashMap containing a mapping of slots to GUIButtons.
      */
-    default void setButtons(HashMap<Integer, GUIButton> buttonMap) {
-        clearButtons();
-
-        slotButtons.putAll(buttonMap);
-    }
+    void setButtons(HashMap<Integer, GUIButton> buttonMap);
 
     /**
      * Removes all buttons and ItemStacks for buttons from the Inventory.
      */
-    default void clearButtons() {
-        clearInventoryButtonsOnly();
-        
-        slotButtons.clear();
-    }
-
-    /**
-     * Clears the Inventory or InventoryView of all ItemStacks where the slot has an associated GUIButton.
-     */
-    private void clearInventoryButtonsOnly() {
-        ItemStack clearStack = new ItemStack(Material.AIR);
-
-        if(getInventoryView() != null) {
-            InventoryView view = getInventoryView();
-
-            int guiSize = getInventory().getSize() - 1;
-            for(int slot = 0; slot <= guiSize; slot++) {
-                if(slotButtons.containsKey(slot)) {
-                    view.setItem(slot, clearStack);
-                }
-            }
-        } else {
-            Inventory inventory = getInventory();
-            int guiSize = getInventory().getSize() - 1;
-            for(int slot = 0; slot <= guiSize; slot++) {
-                if(slotButtons.containsKey(slot)) {
-                    inventory.setItem(slot, clearStack);
-                }
-            }
-        }
-    }
+     void clearButtons();
 
     /**
      * Clears the Inventory or InventoryView of all ItemStacks, regardless if that slot has an associated GUIButton.
      */
-    default void clearInventory() {
-        ItemStack clearStack = new ItemStack(Material.AIR);
-        int guiSize = getInventory().getSize() - 1;
-        
-        if(getInventoryView() != null) {
-            InventoryView view = getInventoryView();
-            
-            for(int slot = 0; slot <= guiSize; slot++) {
-                view.setItem(slot, clearStack);
-            }
-        } else {
-            Inventory inventory = getInventory();
-            
-            for(int slot = 0; slot <= guiSize; slot++) {
-                inventory.setItem(slot, clearStack);
-            }
-        }
-    }
+    void clearInventory();
 }
