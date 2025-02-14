@@ -110,4 +110,14 @@ public interface BaseGUI {
     default void closeInventory(@NotNull Plugin plugin, @NotNull Player player) {
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.closeInventory(), 1L);
     }
+
+    /**
+     * Similar to {@link #update()} but can be used to refresh the GUI instead of completely update it.
+     */
+    void refresh();
+
+    /**
+     * Updates the contents of the Inventory or InventoryView.
+     */
+    void update();
 }

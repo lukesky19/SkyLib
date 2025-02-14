@@ -5,16 +5,15 @@ import com.github.lukesky19.skylib.gui.interfaces.TradeGUI;
 import com.github.lukesky19.skylib.version.VersionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.MenuType;
-import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.view.MerchantView;
 import org.bukkit.inventory.view.builder.MerchantInventoryViewBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.CheckForNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -25,6 +24,10 @@ import java.util.Objects;
  * See SkyMarket for an example implementation.
  */
 public abstract class MerchantGUI implements TradeGUI {
+    /**
+     * This list contains the trades (MerchantRecipe) to trade.
+     */
+    List<MerchantRecipe> trades = new ArrayList<>();
     private InventoryView view; // Used on all versions
     private Merchant merchant; // Used on all versions
 
@@ -74,5 +77,60 @@ public abstract class MerchantGUI implements TradeGUI {
     @Override
     public void setInventoryView(@NotNull InventoryView view) {
         this.view = view;
+    }
+
+    @Override
+    public void update() {
+        merchant.setRecipes(trades);
+    }
+
+    @Override
+    public void refresh() {
+        update();
+    }
+
+    /**
+     * Takes a List of MerchantRecipes and replaces the existing list.
+     * @param tradeList A List the MerchantRecipes to add to the Merchant.
+     */
+    public void setTrades(List<MerchantRecipe> tradeList) {
+        trades.clear();
+
+        trades.addAll(tradeList);
+    }
+
+    /**
+     * Adds a MerchantRecipe to the list of trades to add to the Merchant.
+     * To update the merchant's trades, you must call {@link #update()}
+     * @param merchantRecipe The MerchantRecipe to add.
+     */
+    public void addTrade(MerchantRecipe merchantRecipe) {
+        trades.add(merchantRecipe);
+    }
+
+    /**
+     * Removes a MerchantRecipe to the list of trades to add to the Merchant.
+     * To update the merchant's trades, you must call {@link #update()}
+     * @param merchantRecipe The MerchantRecipe to add.
+     */
+    public void removeTrade(MerchantRecipe merchantRecipe) {
+        trades.remove(merchantRecipe);
+    }
+
+    /**
+     * Get the list of initial trades for this GUI.
+     * NOTE: Will not return the live trades. Use {@link #getLiveTrades()} for those.
+     * @return A List of MerchantRecipes
+     */
+    public List<MerchantRecipe> getTrades() {
+        return trades;
+    }
+
+    /**
+     * Get the list of live trades for this GUI/Merchant.
+     * @return A List of MerchantRecipes
+     */
+    public List<MerchantRecipe> getLiveTrades() {
+        return merchant.getRecipes();
     }
 }

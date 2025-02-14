@@ -190,7 +190,7 @@ public abstract class ChestGUI implements ButtonGUI {
 
     /**
      * Maps a GUIButton to a slot.
-     * To actually add the buttons to the Inventory, you must call {@link #update()}
+     * To actually add the ItemStacks of the GUIButton to the Inventory, you must call {@link #update()}
      * @param slot The slot to map the GUIButton to.
      * @param button The GUIButton for the given slot.
      * @throws RuntimeException if you try to map a button to a slot outside the Inventory bounds.
@@ -205,8 +205,14 @@ public abstract class ChestGUI implements ButtonGUI {
         slotButtons.put(slot, button);
     }
 
+    @Override
+    public void refresh() {
+        update();
+    }
+
     /**
      * Takes a HashMap of representing a collection of slots and GUIButtons and replaces the existing mapping.
+     * To actually update the ItemStacks inside the Inventory, you must call {@link #update()}
      * @param buttonMap A HashMap containing a mapping of slots to GUIButtons.
      */
     public void setButtons(HashMap<Integer, GUIButton> buttonMap) {
