@@ -40,7 +40,7 @@ public interface TradeGUI extends BaseGUI {
      * @param view An InventoryView.
      */
     void setInventoryView(@NotNull InventoryView view);
-
+    
     /**
      * Creates the Inventory or InventoryView for the {@link MenuType} MERCHANT.
      * @param player The Player to create the GUI for.
@@ -48,7 +48,7 @@ public interface TradeGUI extends BaseGUI {
      * @param merchant The merchant associated with this GUI. If null, a virtual merchant will be created.
      * @param reachable If the merchant should be checked if it is reachable or not. Only useful for non-virtual merchants in the world.
      */
-    default void createInventory(Player player, @NotNull String name, @Nullable Merchant merchant, boolean reachable) {
+    default void create(Player player, @NotNull String name, @Nullable Merchant merchant, boolean reachable) {
         if(VersionUtil.getMajorVersion() > 21 || (VersionUtil.getMajorVersion() == 21 && VersionUtil.getMinorVersion() >= 4)) {
             @NotNull MerchantInventoryViewBuilder<@NotNull MerchantView> builder = MenuType.MERCHANT.builder();
 
@@ -67,6 +67,54 @@ public interface TradeGUI extends BaseGUI {
         }
     }
 
+    default void update() {
+        if(getMerchant() != null) {
+            Merchant merchant = getMerchant();
+            merchant.setRecipes(getTrades());
+        } else {
+            throw new RuntimeException("Unable to set Merchant trades due to a null Merchant.");
+        }
+    }
+
+    default void refresh() {
+        update();
+    }
+
+    @Override
+    default void open(@NotNull Plugin plugin, @NotNull Player player) {
+        if(VersionUtil.getMajorVersion() > 21 || (VersionUtil.getMajorVersion() == 21 && VersionUtil.getMinorVersion() >= 4)) {
+            if(getInventoryView() != null) {
+                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                        player.openInventory(getInventoryView()), 1L);
+            } else {
+                throw new RuntimeException("Unable to open this GUI due to a null InventoryView.");
+            }
+        } else {
+            // This deprecation warning can be ignored, it is to keep support for version <= 1.21.3.
+            // noinspection deprecation
+            InventoryView view = player.openMerchant(getMerchant(), false);
+            if (view != null) {
+                setInventoryView(view);
+            }
+        }
+    }
+
+    /**
+     * Get the trades used to populate the GUI.
+     * Will not return the live trades. Use {@link #getLiveTrades()} for those.
+     * @return A List of MerchantRecipe
+     */
+    List<MerchantRecipe> getTrades();
+
+    /**
+     * Get the live trades inside the GUI.
+     * May return null if {@link #create(Player, String, Merchant, boolean)} or {@link #open(Plugin, Player)}
+     * has not been run.
+     * @return A List of MerchantRecipe
+     */
+    @Nullable
+    List<MerchantRecipe> getLiveTrades();
+    
     /**
      * Adds a MerchantRecipe to the list of trades to add to the Merchant.
      * @param merchantRecipe The MerchantRecipe to add.
@@ -79,7 +127,12 @@ public interface TradeGUI extends BaseGUI {
      */
     void setTrades(List<MerchantRecipe> tradeList);
 
-    List<MerchantRecipe> getTrades();
+    /**
+     * Removes a MerchantRecipe from the list of trades to add to the Merchant.
+     * Will not update the live trades, you must call {@link #update()} for that.
+     * @param merchantRecipe A MerchantRecipe to remove.
+     */
+    void removeTrade(MerchantRecipe merchantRecipe);
 
     /**
      * Default handling of when any trade is completed by the Player.
@@ -93,23 +146,4 @@ public interface TradeGUI extends BaseGUI {
      * @param tradeSelectEvent A TradeSelectEvent
      */
     default void handleTradeSelect(TradeSelectEvent tradeSelectEvent) {}
-
-    @Override
-    default void openInventory(@NotNull Plugin plugin, @NotNull Player player) {
-        if(VersionUtil.getMajorVersion() > 21 || (VersionUtil.getMajorVersion() == 21 && VersionUtil.getMinorVersion() >= 4)) {
-            if(getInventoryView() != null) {
-                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                        player.openInventory(getInventoryView()), 1L);
-            } else {
-                throw new RuntimeException("Unable to open this GUI due to a null InventoryView. At least one is needed.");
-            }
-        } else {
-            // This deprecation warning can be ignored, it is to keep support for version <= 1.21.3.
-            // noinspection deprecation
-            InventoryView view = player.openMerchant(getMerchant(), false);
-            if (view != null) {
-                setInventoryView(view);
-            }
-        }
-    }
 }

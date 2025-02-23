@@ -34,6 +34,72 @@ public interface BaseGUI {
     Inventory getInventory();
 
     /**
+     * Sets the InventoryView associated with this GUI.
+     * @param view An InventoryView.
+     */
+    void setInventoryView(@NotNull InventoryView view);
+
+    /**
+     * Sets the Inventory associated with this GUI.
+     * @param inventory A Bukkit Inventory.
+     */
+    void setInventory(@NotNull Inventory inventory);
+
+    /**
+     * Opens this GUI's inventory for the player.
+     * @param plugin The plugin opening the Inventory.
+     * @param player The Player to open the GUI for.
+     */
+    default void open(@NotNull Plugin plugin, @NotNull Player player) {
+        if(getInventoryView() != null) {
+            if(getInventoryView().getPlayer().getUniqueId().equals(player.getUniqueId())) {
+                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                        player.openInventory(getInventoryView()), 1L);
+            } else {
+                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                        player.openInventory(getInventory()), 1L);
+            }
+        } else {
+            plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                    player.openInventory(getInventory()), 1L);
+        }
+    }
+
+    /**
+     * Updates the contents of the Inventory or InventoryView.
+     */
+    void update();
+
+    /**
+     * Similar to {@link #update()} but can be used to refresh the GUI instead of completely update it.
+     */
+    void refresh();
+
+    /**
+     * Closes the GUI's Inventory.
+     * @param plugin The plugin closing the GUI.
+     * @param player The player to close the GUI for.
+     */
+    default void close(@NotNull Plugin plugin, @NotNull Player player) {
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.closeInventory(), 1L);
+    }
+
+    /**
+     * Similar to {@link #close(Plugin, Player)}, but can be used to run different code when a GUI is closed vs unloaded (i.e., on reload).
+     * @param plugin The plugin unloading the GUI.
+     * @param player The player to close the GUI for.
+     * @param onDisable Whether the unload is happening while the plugin is being disabled or not.
+     */
+    void unload(@NotNull Plugin plugin, @NotNull Player player, boolean onDisable);
+
+    /**
+     * Default handling of when any item is clicked inside an inventory.
+     * You should override this if you want to do something with the event (i.e., return items the player input).
+     * @param inventoryCloseEvent An InventoryCloseEvent
+     */
+    default void handleClose(@NotNull InventoryCloseEvent inventoryCloseEvent) {}
+
+    /**
      * Default handling of when any item is dragged across the top part of an inventory.
      * You should override this if you want to do something with the event (i.e., cancel it).
      * @param inventoryDragEvent An InventoryDragEvent.
@@ -74,50 +140,4 @@ public interface BaseGUI {
      * @param inventoryClickEvent An InventoryClickEvent
      */
     default void handleGlobalClick(@NotNull InventoryClickEvent inventoryClickEvent) {}
-
-    /**
-     * Default handling of when any item is clicked inside an inventory.
-     * You should override this if you want to do something with the event (i.e., return items the player input).
-     * @param inventoryCloseEvent An InventoryCloseEvent
-     */
-    default void handleClose(@NotNull InventoryCloseEvent inventoryCloseEvent) {}
-
-    /**
-     * Opens this GUI's inventory for the player.
-     * @param plugin The plugin opening the Inventory.
-     * @param player The Player to open the GUI for.
-     */
-    default void openInventory(@NotNull Plugin plugin, @NotNull Player player) {
-        if(getInventoryView() != null) {
-            if(getInventoryView().getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                        player.openInventory(getInventoryView()), 1L);
-            } else {
-                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                        player.openInventory(getInventory()), 1L);
-            }
-        } else {
-            plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                    player.openInventory(getInventory()), 1L);
-        }
-    }
-
-    /**
-     * Closes this GUI's inventory for the player.
-     * @param plugin The plugin closing the Inventory.
-     * @param player The Player to close the GUI for.
-     */
-    default void closeInventory(@NotNull Plugin plugin, @NotNull Player player) {
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> player.closeInventory(), 1L);
-    }
-
-    /**
-     * Similar to {@link #update()} but can be used to refresh the GUI instead of completely update it.
-     */
-    void refresh();
-
-    /**
-     * Updates the contents of the Inventory or InventoryView.
-     */
-    void update();
 }
