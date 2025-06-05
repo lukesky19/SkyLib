@@ -82,7 +82,7 @@ public abstract class MultiThreadQueueManager {
                 try(Statement statement = connection.createStatement()) {
                     int rowsUpdated = statement.executeUpdate(sql);
 
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     return rowsUpdated;
                 } catch (SQLException e) {
@@ -121,7 +121,7 @@ public abstract class MultiThreadQueueManager {
 
                     int rowsUpdated = statement.executeUpdate();
 
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     return rowsUpdated;
                 } catch (SQLException e) {
@@ -164,7 +164,7 @@ public abstract class MultiThreadQueueManager {
                         }
                     });
 
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     return updatedRows;
                 } catch (SQLException e) {
@@ -216,7 +216,7 @@ public abstract class MultiThreadQueueManager {
                 });
 
                 try {
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     return updatedRows;
                 } catch (SQLException e) {
@@ -249,7 +249,7 @@ public abstract class MultiThreadQueueManager {
                 try (Statement statement = connectionManager.getConnection().createStatement()) {
                     int rowsUpdated = statement.executeUpdate(sql);
 
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     completableFuture.complete(rowsUpdated);
                 } catch (SQLException e) {
@@ -296,7 +296,7 @@ public abstract class MultiThreadQueueManager {
 
                     int rowsUpdated = statement.executeUpdate();
 
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     completableFuture.complete(rowsUpdated);
                 } catch (SQLException e) {
@@ -358,7 +358,7 @@ public abstract class MultiThreadQueueManager {
                     return;
                 }
 
-                if(!connection.getAutoCommit()) connection.commit();;
+                if(!connection.getAutoCommit()) connection.commit();
 
                 completableFuture.complete(updatedRows);
             } catch (SQLException e) {
@@ -409,7 +409,7 @@ public abstract class MultiThreadQueueManager {
                     }
                 });
 
-                if(!connection.getAutoCommit()) connection.commit();;
+                if(!connection.getAutoCommit()) connection.commit();
 
                 completableFuture.complete(updatedRows);
             } catch (SQLException e) {

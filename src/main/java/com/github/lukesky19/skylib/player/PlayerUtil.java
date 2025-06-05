@@ -23,9 +23,7 @@
 package com.github.lukesky19.skylib.player;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.github.lukesky19.skylib.version.VersionUtil;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;

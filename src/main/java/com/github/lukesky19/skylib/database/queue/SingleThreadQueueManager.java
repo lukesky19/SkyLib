@@ -80,7 +80,7 @@ public abstract class SingleThreadQueueManager {
                 try(Statement statement = connection.createStatement()) {
                     int rowsUpdated = statement.executeUpdate(sql);
 
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     return rowsUpdated;
                 } catch (SQLException e) {
@@ -120,7 +120,7 @@ public abstract class SingleThreadQueueManager {
 
                     int rowsUpdated = statement.executeUpdate();
 
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     return rowsUpdated;
                 } catch (SQLException e) {
@@ -163,7 +163,7 @@ public abstract class SingleThreadQueueManager {
                         }
                     });
 
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     return updatedRows;
                 } catch (SQLException e) {
@@ -215,7 +215,7 @@ public abstract class SingleThreadQueueManager {
                 });
 
                 try {
-                    if(!connection.getAutoCommit()) connection.commit();;
+                    if(!connection.getAutoCommit()) connection.commit();
 
                     return updatedRows;
                 } catch (SQLException e) {

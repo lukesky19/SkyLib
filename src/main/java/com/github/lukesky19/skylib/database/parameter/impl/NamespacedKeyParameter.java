@@ -26,8 +26,6 @@ import com.github.lukesky19.skylib.database.parameter.Parameter;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
 /**
  * Takes a {@link NamespacedKey} and converts to a string for storage in a database.
  */

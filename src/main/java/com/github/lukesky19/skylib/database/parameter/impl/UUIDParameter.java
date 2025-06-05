@@ -23,7 +23,6 @@
 package com.github.lukesky19.skylib.database.parameter.impl;
 
 import com.github.lukesky19.skylib.database.parameter.Parameter;
-import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
