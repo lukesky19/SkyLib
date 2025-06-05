@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-package com.github.lukesky19.skylib.format;
+package com.github.lukesky19.skylib.placeholderapi;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.OfflinePlayer;
@@ -25,6 +25,14 @@ import org.bukkit.entity.Player;
  * Parses PlaceholderAPI Placeholders
  */
 public class PlaceholderAPIUtil {
+    /**
+     * All methods in this class are static so this constructor will throw a runtime exception if used.
+     * @throws RuntimeException if the constructor is used.
+     */
+    public PlaceholderAPIUtil() {
+        throw new RuntimeException("This class cannot be instanced. Use the static references to methods instead.");
+    }
+
     /**
      * Parses a placeholder for an online player.
      * @param player A Bukkit Player
