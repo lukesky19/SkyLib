@@ -11,6 +11,14 @@ public class VersionUtil {
     private static int minorVersion;
 
     /**
+     * All methods in this class are static so this constructor will throw a runtime exception if used.
+     * @throws RuntimeException if the constructor is used.
+     */
+    public VersionUtil() {
+        throw new RuntimeException("This class cannot be instanced. Use the static references to methods instead.");
+    }
+
+    /**
      * Get the Minecraft version the server is running. I.e., 1.21.3.
      * @return The server's Minecraft version.
      */

@@ -11,6 +11,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class LoginListener implements Listener {
     /**
+     * Constructor.
+     * Used to initialize a class instance to register the listener.
+     */
+    public LoginListener() {}
+
+    /**
      * Listens to when a Player joins the server and caches their PlayerProfile.
      * @param playerJoinEvent A PlayerJoinEvent.
      */
