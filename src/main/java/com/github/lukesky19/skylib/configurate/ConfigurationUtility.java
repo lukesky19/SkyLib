@@ -15,7 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-package com.github.lukesky19.skylib.config;
+package com.github.lukesky19.skylib.configurate;
 
 import java.nio.file.Path;
 import org.jetbrains.annotations.Contract;
@@ -27,6 +27,14 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
  * Class that contains utilities for using Configurate to load configuration files.
  */
 public class ConfigurationUtility {
+    /**
+     * All methods in this class are static so this constructor will throw a runtime exception if used.
+     * @throws RuntimeException if the constructor is used.
+     */
+    public ConfigurationUtility() {
+        throw new RuntimeException("This class cannot be instanced. Use the static references to methods instead.");
+    }
+
     /**
      * Get a YamlConfigurationLoader object for a given path
      * @param path A Path
