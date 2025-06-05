@@ -25,7 +25,7 @@ A: Paper and forks of Paper (untested) are supported. Spigot is not supported.
 ```./gradlew build publishToMavenLocal```
 
 ```koitlin
-compileOnly("com.github.lukesky19:SkyLib:1.0.0")
+compileOnly("com.github.lukesky19:SkyLib:1.2.0.0")
 ```
 
 ## Why MIT?

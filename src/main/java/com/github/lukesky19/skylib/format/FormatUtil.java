@@ -315,6 +315,44 @@ public class FormatUtil {
     }
 
     /**
+     * Formats a Material name to a clean name.
+     * @param name The name of the Material.
+     * @return A clean String with the first letter capitalized, the rest lowercase, and any underscores replaced with spaces.
+     */
+    public static String formatMaterialNameSentenceCase(String name) {
+        String[] words = name.split("_");
+        StringBuilder formatted = new StringBuilder();
+
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                formatted.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+
+        return formatted.toString().trim();
+    }
+
+    /**
+     * Formats a Material name to a clean name.
+     * @param name The name of the Material.
+     * @return A clean String with the all lowercase letters, and any underscores replaced with spaces.
+     */
+    public static String formatMaterialNameLowercase(String name) {
+        String[] words = name.split("_");
+        StringBuilder formatted = new StringBuilder();
+
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                formatted.append(word.toLowerCase()).append(" ");
+            }
+        }
+
+        return formatted.toString().trim();
+    }
+
+    /**
      * A hacky way to support legacy color codes.
      * @param message A String that has legacy color codes to replace
      * @return A String with clean MiniMessage tags

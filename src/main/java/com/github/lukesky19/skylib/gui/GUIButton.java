@@ -17,28 +17,18 @@
 */
 package com.github.lukesky19.skylib.gui;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
-import com.github.lukesky19.skylib.version.VersionUtil;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.CheckForNull;
+import javax.annotation.Nullable;
 
 /**
- * This class supports the creation of inventory GUIs.
-*/
+ * This class creates buttons for use in button-based GUIs.
+ */
 public class GUIButton {
     @NotNull
     private final ItemStack itemStack;
@@ -68,44 +58,10 @@ public class GUIButton {
      * @param builder A Builder representing an incomplete GUIButton.
      */
     public GUIButton(Builder builder) {
-        // Create a new ItemStack and get the ItemMeta
-        if(builder.material == null) throw new RuntimeException("Material is required to build the button.");
+        if(builder.itemStack == null) throw new RuntimeException("Unable to create GUIButton due to null ItemStack.");
 
-        final ItemStack builtStack = new ItemStack(builder.material);
-        ItemMeta itemMeta = builtStack.getItemMeta();
+        this.itemStack = builder.itemStack;
 
-        // Set the item name.
-        if(builder.name != null) itemMeta.displayName(builder.name);
-
-        // Set the item lore
-        itemMeta.lore(builder.lore);
-
-        // Set the item flags
-        builder.itemFlags.forEach(itemMeta::addItemFlags);
-
-        // Set the item model
-        if(builder.model != null) {
-            itemMeta.setItemModel(builder.model);
-        }
-
-        // Set the PlayerProfile of a skull if the material matches PLAYER_HEAD.
-        if(builder.material == Material.PLAYER_HEAD) {
-            if (builder.playerProfile != null) {
-                SkullMeta skullMeta = (SkullMeta) itemMeta;
-                skullMeta.setPlayerProfile(builder.playerProfile);
-            }
-        }
-
-        // Set the ItemStack's ItemMeta
-        builtStack.setItemMeta(itemMeta);
-
-        // Set the ItemStack's size (amount)
-        if(builder.amount != null) {
-            builtStack.setAmount(builder.amount);
-        }
-
-        // Copy the final ItemStack and action to the class variables
-        this.itemStack = builtStack;
         this.action = Objects.requireNonNullElseGet(builder.action, () -> inventoryClickEvent -> {});
     }
 
@@ -113,97 +69,27 @@ public class GUIButton {
      * Builds a new GUIButton.
      */
     public static class Builder {
-        @CheckForNull private Material material;
-        @CheckForNull private Integer amount;
-        @CheckForNull Component name;
-        @NotNull private List<Component> lore = new ArrayList<>();
-        @NotNull private List<ItemFlag> itemFlags = new ArrayList<>();
-        @CheckForNull private NamespacedKey model;
-        @CheckForNull PlayerProfile playerProfile;
-        @CheckForNull private Consumer<InventoryClickEvent> action;
+        @Nullable
+        private ItemStack itemStack;
+        @Nullable
+        private Consumer<InventoryClickEvent> action;
 
         /**
-         * Sets the Material of the final ItemStack associated with this GUIButton.
-         * @param material A Bukkit Material.
-         * @return A GUIButton Builder.
+         * Sets the ItemStack associated with this GUIButton
+         *
+         * @param itemStack A Bukkit ItemStack
          */
-        public Builder setMaterial(@NotNull Material material) {
-            this.material = material;
-            return this;
-        }
-
-        /**
-         * Sets the amount of the final ItemStack associated with this GUIButton.
-         * @param amount An int representing the amount in the ItemStack.
-         * @return  A GUIButton Builder.
-         */
-        public Builder setAmount(int amount) {
-            this.amount = amount;
-            return this;
-        }
-
-        /**
-         * Sets the name of the final ItemStack associated with this GUIButton.
-         * @param name The item name as a Component.
-         * @return A GUIButton Builder.
-         */
-        public Builder setItemName(@NotNull Component name) {
-            this.name = name;
-            return this;
-        }
-
-        /**
-         * Sets the lore to add to the final ItemStack associated with this GUIButton.
-         * @param lore A list of Components.
-         * @return A GUIButton Builder.
-         */
-        public Builder setLore(@NotNull List<Component> lore) {
-            this.lore = lore;
-            return this;
-        }
-
-        /**
-         * Sets the {@literal List<ItemFlags>} to add to the final ItemStack associated with this GUIButton.
-         * @param itemFlags A list of ItemFlag
-         * @return A GUIButton Builder.
-         */
-        public Builder setItemFlags(@NotNull List<ItemFlag> itemFlags) {
-            this.itemFlags = itemFlags;
-            return this;
-        }
-
-        /**
-         * Sets the item model of the final ItemStack associated with this GUIButton.
-         * @param model The NamespacedKey of the model.
-         * @return A GUIButton Builder.
-         */
-        public Builder setModel(@NotNull NamespacedKey model) {
-            if(VersionUtil.getMajorVersion() >= 21 && VersionUtil.getMinorVersion() >= 3) {
-                this.model = model;
-                return this;
-            }
-
-            throw new RuntimeException("Item Models are only available on Minecraft 1.21.3 and newer.");
-        }
-
-        /**
-         * Sets the PlayerProfile if the Material is that of a PLAYER_HEAD
-         * @param playerProfile A PlayerProfile of an online player.
-         * @return A GUIButton Builder.
-         */
-        public Builder setPlayerProfile(@NotNull PlayerProfile playerProfile) {
-            this.playerProfile = playerProfile;
-            return this;
+        public void setItemStack(@NotNull ItemStack itemStack) {
+            this.itemStack = itemStack;
         }
 
         /**
          * Sets the action to be taken when a slot is clicked that the GUIButton is associated with.
+         *
          * @param action A Consumer that takes an InventoryClickEvent.
-         * @return A GUIButton Builder.
          */
-        public Builder setAction(@NotNull Consumer<InventoryClickEvent> action) {
+        public void setAction(@NotNull Consumer<InventoryClickEvent> action) {
             this.action = action;
-            return this;
         }
 
         /**
