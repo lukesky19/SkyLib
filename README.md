@@ -8,11 +8,11 @@
 ## FAQ
 Q: What versions does this plugin support?
 
-A: 1.21, 1.21.1, 1.21.2, 1.21.3, and 1.21.4
+A: 1.21.4 and 1.21.5.
 
 Q: Are there any plans to support any other versions?
 
-A: No.
+A: No. I've moved from supporting the latest major version (i.e., 1.21.X) to the latest stable version(s).
 
 Q: Does this work on Spigot and Paper?
 
