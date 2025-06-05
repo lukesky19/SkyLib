@@ -54,10 +54,18 @@ public class GUIButton {
     }
 
     /**
+     * The default constructor should not be used. Use {@link GUIButton#GUIButton(Builder)} instead.
+     * @throws RuntimeException if the constructor is used.
+     */
+    public GUIButton() {
+        throw new RuntimeException("The use of the default constructor is not allowed. Use GUIButton(Builder builder) instead.");
+    }
+
+    /**
      * Create a new GUIButton from a Builder.
      * @param builder A Builder representing an incomplete GUIButton.
      */
-    public GUIButton(Builder builder) {
+    public GUIButton(@NotNull Builder builder) {
         if(builder.itemStack == null) throw new RuntimeException("Unable to create GUIButton due to null ItemStack.");
 
         this.itemStack = builder.itemStack;
@@ -75,8 +83,14 @@ public class GUIButton {
         private Consumer<InventoryClickEvent> action;
 
         /**
+         * Constructor
+         * Creates an instance of the {@link GUIButton.Builder} class.
+         * Use the methods {@link #setItemStack(ItemStack)}, {@link #setAction(Consumer)} and {@link #build()}
+         */
+        public Builder() {}
+
+        /**
          * Sets the ItemStack associated with this GUIButton
-         *
          * @param itemStack A Bukkit ItemStack
          */
         public void setItemStack(@NotNull ItemStack itemStack) {
@@ -85,7 +99,6 @@ public class GUIButton {
 
         /**
          * Sets the action to be taken when a slot is clicked that the GUIButton is associated with.
-         *
          * @param action A Consumer that takes an InventoryClickEvent.
          */
         public void setAction(@NotNull Consumer<InventoryClickEvent> action) {

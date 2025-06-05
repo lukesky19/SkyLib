@@ -6,12 +6,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.CheckForNull;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * This class is used to create a base to build other Gui interfaces off of.
@@ -23,15 +22,8 @@ public interface BaseGUI {
      * Get the InventoryView associated with this GUI.
      * @return A Bukkit InventoryView.
      */
-    @CheckForNull
-    InventoryView getInventoryView();
-
-    /**
-     * Get the Inventory associated with this GUI.
-     * @return A Bukkit Inventory.
-     */
     @NotNull
-    Inventory getInventory();
+    InventoryView getInventoryView();
 
     /**
      * Sets the InventoryView associated with this GUI.
@@ -40,40 +32,28 @@ public interface BaseGUI {
     void setInventoryView(@NotNull InventoryView view);
 
     /**
-     * Sets the Inventory associated with this GUI.
-     * @param inventory A Bukkit Inventory.
-     */
-    void setInventory(@NotNull Inventory inventory);
-
-    /**
      * Opens this GUI's inventory for the player.
      * @param plugin The plugin opening the Inventory.
      * @param player The Player to open the GUI for.
      */
     default void open(@NotNull Plugin plugin, @NotNull Player player) {
-        if(getInventoryView() != null) {
-            if(getInventoryView().getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                        player.openInventory(getInventoryView()), 1L);
-            } else {
-                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                        player.openInventory(getInventory()), 1L);
-            }
-        } else {
+        if(getInventoryView().getPlayer().getUniqueId().equals(player.getUniqueId())) {
             plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                    player.openInventory(getInventory()), 1L);
+                    player.openInventory(getInventoryView()), 1L);
         }
     }
 
     /**
      * Updates the contents of the Inventory or InventoryView.
+     * @return Returns a {@link CompletableFuture} of type {@link Void} when the update has completed.
      */
-    void update();
+    CompletableFuture<Void> update();
 
     /**
      * Similar to {@link #update()} but can be used to refresh the GUI instead of completely update it.
+     * @return Returns a {@link CompletableFuture} of type {@link Void} when the update has completed.
      */
-    void refresh();
+    CompletableFuture<Void> refresh();
 
     /**
      * Closes the GUI's Inventory.

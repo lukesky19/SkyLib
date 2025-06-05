@@ -7,12 +7,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,55 +25,31 @@ import java.util.Map;
  */
 public abstract class ChestGUI implements ButtonGUI {
     private final HashMap<Integer, GUIButton> slotButtons = new HashMap<>();
-    private InventoryView view; // >= 1.21.4 only
-    private Inventory inventory; // All versions
+    private InventoryView view;
+
+    /**
+     * Default Constructor.
+     */
+    public ChestGUI() {}
 
     @Override
     public void setInventoryView(@NotNull InventoryView view) {
         this.view = view;
     }
 
-    @Override
-    public void setInventory(@NotNull Inventory inventory) {
-        this.inventory = inventory;
-    }
-
-    @Nullable
-    public InventoryView getInventoryView() {
+    public @NotNull InventoryView getInventoryView() {
         return view;
-    }
-
-    @NotNull
-    public Inventory getInventory() {
-        if(inventory != null) {
-            return inventory;
-        } else if(view != null) {
-            return view.getTopInventory();
-        } else {
-            throw new RuntimeException("Unable to get Inventory due to a null Inventory or InventoryView. Did you run createInventory?");
-        }
     }
 
     @Override
     public void clearButtons() {
         ItemStack clearStack = new ItemStack(Material.AIR);
+        InventoryView view = getInventoryView();
+        int guiSize = view.getTopInventory().getSize() - 1;
 
-        if(getInventoryView() != null) {
-            InventoryView view = getInventoryView();
-
-            int guiSize = getInventory().getSize() - 1;
-            for(int slot = 0; slot <= guiSize; slot++) {
-                if(getButtonMapping().containsKey(slot)) {
-                    view.setItem(slot, clearStack);
-                }
-            }
-        } else {
-            Inventory inventory = getInventory();
-            int guiSize = getInventory().getSize() - 1;
-            for(int slot = 0; slot <= guiSize; slot++) {
-                if(getButtonMapping().containsKey(slot)) {
-                    inventory.setItem(slot, clearStack);
-                }
+        for(int slot = 0; slot <= guiSize; slot++) {
+            if(getButtonMapping().containsKey(slot)) {
+                view.setItem(slot, clearStack);
             }
         }
 
@@ -85,20 +59,11 @@ public abstract class ChestGUI implements ButtonGUI {
     @Override
     public void clear()  {
         ItemStack clearStack = new ItemStack(Material.AIR);
-        int guiSize = getInventory().getSize() - 1;
+        InventoryView view = getInventoryView();
+        int guiSize = view.getTopInventory().getSize() - 1;
 
-        if(getInventoryView() != null) {
-            InventoryView view = getInventoryView();
-
-            for(int slot = 0; slot <= guiSize; slot++) {
-                view.setItem(slot, clearStack);
-            }
-        } else {
-            Inventory inventory = getInventory();
-
-            for(int slot = 0; slot <= guiSize; slot++) {
-                inventory.setItem(slot, clearStack);
-            }
+        for(int slot = 0; slot <= guiSize; slot++) {
+            view.setItem(slot, clearStack);
         }
 
         slotButtons.clear();
@@ -112,10 +77,10 @@ public abstract class ChestGUI implements ButtonGUI {
 
     @Override
     public void setButton(int slot, @NotNull GUIButton button) {
-        Inventory inventory = getInventory();
+        int guiSize = getInventoryView().getTopInventory().getSize();
 
-        if(slot < 0 || slot >= inventory.getSize()) {
-            throw new RuntimeException("Provided slot is outside of inventory bounds. Slot must be greater than 0 and less than " + inventory.getSize());
+        if(slot < 0 || slot >= guiSize) {
+            throw new RuntimeException("Provided slot is outside of inventory bounds. Slot must be greater than 0 and less than " + guiSize);
         }
 
         slotButtons.put(slot, button);

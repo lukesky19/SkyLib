@@ -4,10 +4,10 @@ import com.github.lukesky19.skylib.gui.interfaces.TradeGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * This class can be extended to create a GUI based on the Villager trading (Merchant) UI.
@@ -21,18 +21,17 @@ public abstract class MerchantGUI implements TradeGUI {
      * This list contains the trades (MerchantRecipe) to trade.
      */
     private final List<MerchantRecipe> trades = new ArrayList<>();
-    private InventoryView view; // Used on all versions
-    private Merchant merchant; // Used on all versions
+    private InventoryView view;
+    private Merchant merchant;
+
+    /**
+     * Default Constructor.
+     */
+    public MerchantGUI() {}
 
     @Override
-    @Nullable
-    public InventoryView getInventoryView() {
+    public @NotNull InventoryView getInventoryView() {
         return view;
-    }
-
-    @Override
-    public @NotNull Inventory getInventory() {
-        throw new RuntimeException("This method should not be used. Use getInventoryView() instead.");
     }
 
     @Override
@@ -41,13 +40,8 @@ public abstract class MerchantGUI implements TradeGUI {
     }
 
     @Override
-    public void setInventory(@NotNull Inventory inventory) {
-        throw new RuntimeException("This method should not be used. Use setInventoryView() instead.");
-    }
-
-    @Override
-    public void update() {
-        merchant.setRecipes(trades);
+    public CompletableFuture<Void> update() {
+        return CompletableFuture.runAsync(() -> merchant.setRecipes(trades));
     }
 
     @Override

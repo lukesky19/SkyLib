@@ -1,8 +1,7 @@
 package com.github.lukesky19.skylib.gui.interfaces;
 
-import com.github.lukesky19.skylib.format.FormatUtil;
+import com.github.lukesky19.skylib.adventure.AdventureUtil;
 
-import com.github.lukesky19.skylib.version.VersionUtil;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * This class is used to create a gui that uses trades.
@@ -48,55 +48,38 @@ public interface TradeGUI extends BaseGUI {
      * @param merchant The merchant associated with this GUI. If null, a virtual merchant will be created.
      * @param reachable If the merchant should be checked if it is reachable or not. Only useful for non-virtual merchants in the world.
      */
-    default void create(Player player, @NotNull String name, @Nullable Merchant merchant, boolean reachable) {
-        if(VersionUtil.getMajorVersion() > 21 || (VersionUtil.getMajorVersion() == 21 && VersionUtil.getMinorVersion() >= 4)) {
-            @NotNull MerchantInventoryViewBuilder<@NotNull MerchantView> builder = MenuType.MERCHANT.builder();
+    default void create(@NotNull Player player, @NotNull String name, @Nullable Merchant merchant, boolean reachable) {
+        @NotNull MerchantInventoryViewBuilder<@NotNull MerchantView> builder = MenuType.MERCHANT.builder();
 
-            Merchant validMerchant = Objects.requireNonNullElseGet(merchant, () -> Bukkit.getServer().createMerchant());
-            setMerchant(validMerchant);
+        Merchant validMerchant = Objects.requireNonNullElseGet(merchant, () -> Bukkit.getServer().createMerchant());
+        setMerchant(validMerchant);
 
-            builder.title(FormatUtil.format(name));
-            builder.merchant(validMerchant);
-            builder.checkReachable(reachable);
+        builder.title(AdventureUtil.serialize(name));
+        builder.merchant(validMerchant);
+        builder.checkReachable(reachable);
 
-            setInventoryView(builder.build(player));
-        } else {
-            // This deprecation warning can be ignored, it is to keep support for version <= 1.21.3.
-            // noinspection deprecation
-            setMerchant(Bukkit.getServer().createMerchant(FormatUtil.format(name)));
-        }
+        setInventoryView(builder.build(player));
     }
 
-    default void update() {
-        if(getMerchant() != null) {
-            Merchant merchant = getMerchant();
-            merchant.setRecipes(getTrades());
-        } else {
-            throw new RuntimeException("Unable to set Merchant trades due to a null Merchant.");
-        }
+    default CompletableFuture<Void> update() {
+        return CompletableFuture.runAsync(() -> {
+            if(getMerchant() != null) {
+                Merchant merchant = getMerchant();
+                merchant.setRecipes(getTrades());
+            } else {
+                throw new RuntimeException("Unable to set Merchant trades due to a null Merchant.");
+            }
+        });
     }
 
-    default void refresh() {
-        update();
+    default CompletableFuture<Void> refresh() {
+        return update();
     }
 
     @Override
     default void open(@NotNull Plugin plugin, @NotNull Player player) {
-        if(VersionUtil.getMajorVersion() > 21 || (VersionUtil.getMajorVersion() == 21 && VersionUtil.getMinorVersion() >= 4)) {
-            if(getInventoryView() != null) {
-                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
-                        player.openInventory(getInventoryView()), 1L);
-            } else {
-                throw new RuntimeException("Unable to open this GUI due to a null InventoryView.");
-            }
-        } else {
-            // This deprecation warning can be ignored, it is to keep support for version <= 1.21.3.
-            // noinspection deprecation
-            InventoryView view = player.openMerchant(getMerchant(), false);
-            if (view != null) {
-                setInventoryView(view);
-            }
-        }
+        plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                player.openInventory(getInventoryView()), 1L);
     }
 
     /**
