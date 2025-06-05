@@ -1,10 +1,10 @@
-package com.github.lukesky19.skylib.record;
+package com.github.lukesky19.skylib.time;
 
 /**
  * Stores the years, months, weeks, days, hours, minutes, seconds, and milliseconds for a point in time.
  * You should parse System.currentTimeMillis() to populate data.
- * See {@link com.github.lukesky19.skylib.format.FormatUtil#millisToTime(long)}
- * and {@link com.github.lukesky19.skylib.format.FormatUtil#stringToMillis(String)}
+ * See {@link com.github.lukesky19.skylib.time.TimeUtil#millisToTime(long)}
+ * and {@link com.github.lukesky19.skylib.time.TimeUtil#stringToMillis(String)}
  * @param years The years as an int
  * @param months The months as an int
  * @param weeks The weeks as an int
