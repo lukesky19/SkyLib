@@ -22,10 +22,10 @@ A: Paper and forks of Paper (untested) are supported. Spigot is not supported.
 * Download the plugin from the releases tab and add it to your server.
 
 ## For Developers
-```./gradlew build publishToMavenLocal```
+```./gradlew build```
 
 ```koitlin
-compileOnly("com.github.lukesky19:SkyLib:1.2.0.0")
+compileOnly("com.github.lukesky19:SkyLib:1.3.0.0")
 ```
 
 ## Why MIT?
