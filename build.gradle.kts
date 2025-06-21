@@ -21,9 +21,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.6-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
     implementation("org.spongepowered:configurate-yaml:4.2.0")
+    implementation("org.spongepowered:configurate-gson:4.2.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.zaxxer:HikariCP:6.3.0")
 }

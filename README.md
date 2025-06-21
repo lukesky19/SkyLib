@@ -8,15 +8,15 @@
 ## FAQ
 Q: What versions does this plugin support?
 
-A: 1.21.4 and 1.21.5.
+A: 1.21.4, 1.21.5, and 1.21.6
 
 Q: Are there any plans to support any other versions?
 
-A: No. I've moved from supporting the latest major version (i.e., 1.21.X) to the latest stable version(s).
+A: I will always do my best to support the latest versions of the game. I will sometimes support other versions until I no longer use them.
 
-Q: Does this work on Spigot and Paper?
+Q: Does this work on Spigot? Paper? (Insert other server software here)?
 
-A: Paper and forks of Paper (untested) are supported. Spigot is not supported.
+A: I only support Paper, but this will likely also work on forks of Paper (untested). There are no plans to support any other server software (i.e., Spigot or Folia).
 
 ## For Server Admins/Owners
 * Download the plugin from the releases tab and add it to your server.

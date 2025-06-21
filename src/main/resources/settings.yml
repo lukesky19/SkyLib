@@ -1,0 +1,3 @@
+core-pool-size: 1
+max-pool-size: 4
+timeout-time-seconds: 60
