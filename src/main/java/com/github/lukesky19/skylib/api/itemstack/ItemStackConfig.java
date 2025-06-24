@@ -82,7 +82,6 @@ public record ItemStackConfig(
         @NotNull ArmorTrimConfig armorTrim,
         @NotNull List<AttributeConfig> attributes,
         @NotNull OptionsConfig options) {
-
     /**
      * This record contains the information to create a potion {@link ItemStack}.
      * @param potionType The {@link NamespacedKey} for a {@link PotionType} as a {@link String} that may be associated with the {@link ItemStack}. The format can be either {@code namespace:key} or just {@code key}.
@@ -96,13 +95,13 @@ public record ItemStackConfig(
     /**
      * This record contains the information to create a {@link PotionEffect} to apply to a potion {@link ItemStack}
      * @param type The {@link NamespacedKey} for a {@link PotionEffectType} as a {@link String}. The format can be either {@code namespace:key} or just {@code key}.
-     * @param duration The duration of the {@link PotionEffect} as an {@link Integer}.
+     * @param durationSeconds The durationSeconds of the {@link PotionEffect} as an {@link Integer}.
      * @param amplifier The amplifier of the {@link PotionEffect} as an {@link Integer}.
      */
     @ConfigSerializable
     public record PotionEffectConfig(
             @Nullable String type,
-            @Nullable Integer duration,
+            @Nullable Double durationSeconds,
             @Nullable Integer amplifier) {}
 
     /**

@@ -132,15 +132,16 @@ public class ItemStackBuilder {
      * @param player An optional {@link Player} to use when parsing PlaceholderAPI placeholders when formatting an item's name and lore.
      * @param offlinePlayer An optional {@link OfflinePlayer} to use when parsing PlaceholderAPI placeholders when formatting an item's name and lore.
      * @param placeholders A list of placeholders to replace when formatting an item's name and lore.
+     * @return The current {@link ItemStackBuilder}.
      */
-    public void fromItemStackConfig(
+    public @NotNull ItemStackBuilder fromItemStackConfig(
             @NotNull ItemStackConfig config,
             @Nullable Player player,
             @Nullable OfflinePlayer offlinePlayer,
             @NotNull List<TagResolver.Single> placeholders) {
         if(config.itemType() == null) {
             logger.error(AdventureUtil.serialize("Unable to parse ItemStackConfig due to the ItemType being null."));
-            return;
+            return this;
         }
 
         // Get the ItemType from the registry.
@@ -151,7 +152,7 @@ public class ItemStackBuilder {
                 () -> logger.error(AdventureUtil.serialize("Unable to get a ItemType due to a configuration error.")));
 
         // If the ItemType is null, exit the method.
-        if(itemType == null) return;
+        if(itemType == null) return this;
 
         // Check if the max stack size is configured.
         // If not, use the default ItemType's max stack size.
@@ -245,9 +246,9 @@ public class ItemStackBuilder {
                 continue;
             }
 
-            // Send a warning if the potion effect duration is null.
-            if(potionEffectConfig.duration() == null) {
-                logger.warn(AdventureUtil.serialize("Missing duration for potion effect type: " + potionEffectConfig.type() + "."));
+            // Send a warning if the potion effect durationSeconds is null.
+            if(potionEffectConfig.durationSeconds() == null) {
+                logger.warn(AdventureUtil.serialize("Missing durationSeconds for potion effect type: " + potionEffectConfig.type() + "."));
                 continue;
             }
 
@@ -259,8 +260,12 @@ public class ItemStackBuilder {
 
             @NotNull Optional<@NotNull PotionEffectType> optionalPotionEffectType = RegistryUtil.getPotionEffectType(logger, potionEffectConfig.type());
             optionalPotionEffectType.ifPresentOrElse(potionEffectType -> {
+                // Calculate the duration in ticks
+                double durationInTicks = (potionEffectConfig.durationSeconds() * 20);
+                // Convert the durationInTicks to an int
+                int ticks = (int) durationInTicks;
                 // Create the PotionEffect
-                PotionEffect potionEffect = potionEffectType.createEffect(potionEffectConfig.duration(), potionEffectConfig.amplifier());
+                PotionEffect potionEffect = potionEffectType.createEffect(ticks, potionEffectConfig.amplifier());
                 // Add the created PotionEffect to the list of PotionEffects.
                 potionEffects.add(potionEffect);
             }, () -> logger.error(AdventureUtil.serialize("Unable to get a PotionEffectType due to a configuration error.")));
@@ -423,12 +428,14 @@ public class ItemStackBuilder {
         fireResistant = config.options().fireResistant();
         hideToolTip = config.options().hideToolTip();
         glider = config.options().glider();
+
+        return this;
     }
 
     /**
      * Creates an ItemStack based on the provided data inside the {@link ItemStackBuilder}.
      * @return an {@link Optional} containing the created {@link ItemStack} if the data is valid,
-     *         or an empty {@link Optional} if the data is invalid.
+     * or an empty {@link Optional} if the data is invalid.
      */
     public @NotNull Optional<@NotNull ItemStack> buildItemStack() {
         // Create a copy of the base ItemStack or create a new ItemStack using the ItemType. Handle any errors as needed.
@@ -442,9 +449,6 @@ public class ItemStackBuilder {
         } else {
             itemStack = Objects.requireNonNullElseGet(baseItemStack, () -> itemType.createItemStack(amount));
         }
-
-        // Add any enchantments to the ItemStack.
-        itemStack.addEnchantments(enchantments);
 
         // Get itemStack's ItemMeta.
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -589,11 +593,22 @@ public class ItemStackBuilder {
         return true;
     }
 
+    /**
+     * Applies {@link Enchantment}s to the provided {@link ItemMeta}.
+     * @param itemMeta The {@link ItemMeta} to apply {@link Enchantment}s to.
+     * @return The current {@link ItemStackBuilder}.
+     */
     private @NotNull ItemStackBuilder applyEnchantments(@NotNull ItemMeta itemMeta) {
         enchantments.forEach((enchantment, level) -> itemMeta.addEnchant(enchantment, level, true));
         return this;
     }
 
+    /**
+     * Sets the {@link ItemStack}'s {@link ItemMeta}.
+     * @param itemStack The {@link ItemStack}
+     * @param itemMeta The {@link ItemMeta}.
+     * @return The current {@link ItemStackBuilder}.
+     */
     private @NotNull ItemStackBuilder setItemMeta(@NotNull ItemStack itemStack, @NotNull ItemMeta itemMeta) {
         itemStack.setItemMeta(itemMeta);
         return this;
