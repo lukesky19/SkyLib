@@ -30,6 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -68,19 +69,19 @@ public interface ButtonGUI extends BaseGUI {
     boolean clearInventory();
 
     /**
-     * Maps a GUIButton to a slot.
-     * To actually add the ItemStacks of the GUIButton to the Inventory, you must call {@link #update()}
-     * @param slot The slot to map the GUIButton to.
-     * @param button The GUIButton for the given slot.
+     * Maps a {@link GUIButton} to a slot.
+     * To actually add the {@link ItemStack}s of the {@link GUIButton} to the Inventory, you must call {@link #update()}
+     * @param slot The slot to map the {@link GUIButton} to.
+     * @param button The {@link GUIButton} for the given slot.
      * @return true if successful, otherwise false.
      */
     boolean setButton(int slot, @NotNull GUIButton button);
 
     /**
-     * Takes a HashMap of representing a collection of slots and GUIButtons and replaces the existing mapping.
+     * Takes a {@link Map} of representing a collection of slots and GUIButtons and replaces the existing mapping.
      * To actually update the ItemStacks inside the Inventory, you must call {@link #update()}
      * @param buttonMap A HashMap containing a mapping of slots to GUIButtons.
      * @return true if successful, otherwise false.
      */
-    boolean setButtons(@NotNull HashMap<Integer, GUIButton> buttonMap);
+    boolean setButtons(@NotNull Map<Integer, GUIButton> buttonMap);
 }

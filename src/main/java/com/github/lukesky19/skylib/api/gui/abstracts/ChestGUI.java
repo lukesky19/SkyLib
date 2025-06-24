@@ -61,9 +61,9 @@ public abstract class ChestGUI implements ButtonGUI {
     protected final @NotNull AbstractGUIManager guiManager;
 
     /**
-     * The {@link HashMap} to store the mapping of slots to {@link GUIButton}s for.
+     * The {@link Map} to store the mapping of slots to {@link GUIButton}s for.
      */
-    protected final @NotNull HashMap<Integer, GUIButton> slotButtons = new HashMap<>();
+    protected final @NotNull Map<Integer, GUIButton> slotButtons = new HashMap<>();
     /**
      * The {@link Player} to create the GUI for.
      */
@@ -282,7 +282,7 @@ public abstract class ChestGUI implements ButtonGUI {
     }
 
     /**
-     * Clear the {@link InventoryView} of all {@link ItemStack}s from any source. Will also clear the {@link #slotButtons} {@link HashMap}.
+     * Clear the {@link InventoryView} of all {@link ItemStack}s from any source. Will also clear the {@link #slotButtons} {@link Map}.
      * @return true if successful, otherwise false.
      */
     @Override
@@ -332,7 +332,7 @@ public abstract class ChestGUI implements ButtonGUI {
      * @return true if successful, otherwise false.
      */
     @Override
-    public boolean setButtons(@NotNull HashMap<Integer, GUIButton> buttonMap) {
+    public boolean setButtons(@NotNull Map<Integer, GUIButton> buttonMap) {
         if(clearButtons()) {
             slotButtons.putAll(buttonMap);
             return true;
