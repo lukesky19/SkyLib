@@ -24,6 +24,9 @@ package com.github.lukesky19.skylib.api.time;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -150,5 +153,20 @@ public class TimeUtil {
         millis += time.milliseconds();
 
         return millis;
+    }
+
+    /**
+     * Formats the number of milliseconds to a formatted timestamp.
+     * @param millis The number of milliseconds to format.
+     * @param zoneId The {@link ZoneId} to use for the {@link DateTimeFormatter}. I.e., ZoneId.of("America/New_York")
+     * @param timestampFormat The timestamp format to use for the {@link DateTimeFormatter}. I.e., MM-dd-yyyy HH:mm:ss
+     * @return A {@link String} representing the formatted timestamp.
+     */
+    public static String millisToTimeStamp(long millis, @NotNull ZoneId zoneId, @NotNull String timestampFormat) {
+        Instant instant = Instant.ofEpochMilli(millis);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(timestampFormat).withZone(zoneId);
+
+        return dateTimeFormatter.format(instant);
     }
 }
