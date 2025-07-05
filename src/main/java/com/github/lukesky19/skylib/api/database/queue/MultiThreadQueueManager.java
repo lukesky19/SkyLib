@@ -109,7 +109,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
     public @NotNull CompletableFuture<Integer> queueWriteTransaction(@NotNull String sql) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sql, future);
+        Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, null, null));
@@ -133,7 +133,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
     public @NotNull CompletableFuture<Integer> queueWriteTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sql, params, future);
+        Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, null, null));
@@ -156,7 +156,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
     public @NotNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NotNull List<String> sqlList) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sqlList, future);
+        Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlList, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, null, null));
@@ -179,9 +179,33 @@ public abstract class MultiThreadQueueManager implements QueueManager {
     public @NotNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NotNull Map<String, List<Parameter<?>>> sqlAndParamsMap) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sqlAndParamsMap, future);
+        Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlAndParamsMap, future);
 
         if(pauseQueue) {
+            backupTaskQueue.add(new Task(runnable, future, null, null));
+        } else {
+            queueOrScheduleTask(runnable, future, null, null);
+        }
+
+        future.whenComplete((i, t) -> submittedTasksResults.remove(future));
+
+        return future;
+    }
+
+    /**
+     * Take the sql statement and execute for the number of parameter lists inside the list of parameter lists provided.
+     * NOTE: If the database is in backup ({@link #pauseQueue} is true) then the task will be submitted for execution
+     * after the backup is done ({@link #pauseQueue} is false), which may result in additional delays.
+     * @param sql The sql statement to execute.
+     * @param listOfParameterLists A {@link List} containing a {@link List} of {@link Parameter}s.
+     * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
+     */
+    public @NotNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NotNull String sql, @NotNull List<List<Parameter<?>>> listOfParameterLists) {
+        CompletableFuture<List<Integer>> future = new CompletableFuture<>();
+
+        Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sql, listOfParameterLists, future);
+
+        if (pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, null, null));
         } else {
             queueOrScheduleTask(runnable, future, null, null);
@@ -204,7 +228,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
     public @NotNull CompletableFuture<Integer> scheduleWriteTransaction(@NotNull String sql, int delay, @NotNull TimeUnit timeUnit) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sql, future);
+        Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, delay, timeUnit));
@@ -227,10 +251,10 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param timeUnit The {@link TimeUnit} of the delay.
      * @return A {@link CompletableFuture} containing the number of rows updated if completed successfully. May complete exceptionally.
      */
-    public CompletableFuture<Integer> scheduleWriteTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, int delay, @NotNull TimeUnit timeUnit) {
+    public @NotNull CompletableFuture<Integer> scheduleWriteTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, int delay, @NotNull TimeUnit timeUnit) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sql, params, future);
+        Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, delay, timeUnit));
@@ -252,10 +276,10 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param timeUnit The {@link TimeUnit} of the delay.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NotNull List<String> sqlList, int delay, @NotNull TimeUnit timeUnit) {
+    public @NotNull CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NotNull List<String> sqlList, int delay, @NotNull TimeUnit timeUnit) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sqlList, future);
+        Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlList, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, delay, timeUnit));
@@ -277,10 +301,36 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param timeUnit The {@link TimeUnit} of the delay.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NotNull Map<String, List<Parameter<?>>> sqlAndParamsMap, int delay, @NotNull TimeUnit timeUnit) {
+    public @NotNull CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NotNull Map<String, List<Parameter<?>>> sqlAndParamsMap, int delay, @NotNull TimeUnit timeUnit) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sqlAndParamsMap, future);
+        Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlAndParamsMap, future);
+
+        if(pauseQueue) {
+            backupTaskQueue.add(new Task(runnable, future, delay, timeUnit));
+        } else {
+            queueOrScheduleTask(runnable, future, delay, timeUnit);
+        }
+
+        future.whenComplete((i, t) -> submittedTasksResults.remove(future));
+
+        return future;
+    }
+
+    /**
+     * Take the sql statement and execute it for the number of parameter lists inside the list of parameter lists provided.
+     * NOTE: If the database is in backup ({@link #pauseQueue} is true) then the task will be submitted for execution
+     * after the backup is done ({@link #pauseQueue} is false), which may result in additional delays.
+     * @param sql The sql statement to execute.
+     * @param listOfParameterLists A {@link List} containing a {@link List} of {@link Parameter}s.
+     * @param delay The delay before the sql statements should be executed.
+     * @param timeUnit The {@link TimeUnit} of the delay.
+     * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
+     */
+    public @NotNull CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NotNull String sql, @NotNull List<List<Parameter<?>>> listOfParameterLists, int delay, @NotNull TimeUnit timeUnit) {
+        CompletableFuture<List<Integer>> future = new CompletableFuture<>();
+
+        Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sql, listOfParameterLists, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, delay, timeUnit));
@@ -305,7 +355,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
     public <T> @NotNull CompletableFuture<T> queueReadTransaction(@NotNull String sql, @NotNull Function<ResultSet, T> mapper) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sql, mapper, future);
+        Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, mapper, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, null, null));
@@ -331,7 +381,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
     public <T> @NotNull CompletableFuture<T> queueReadTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, @NotNull Function<ResultSet, T> mapper) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sql, params, mapper, future);
+        Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, mapper, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, null, null));
@@ -357,10 +407,10 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @return A {@link CompletableFuture} containing the desired value {@link T}. May complete exceptionally. May complete exceptionally.
      * @param <T> The desired value to return after the mapping function is applied.
      */
-    public <T> CompletableFuture<T> scheduleReadTransaction(@NotNull String sql, @NotNull Function<ResultSet, T> mapper, int delay, @NotNull TimeUnit timeUnit) {
+    public <T> @NotNull CompletableFuture<T> scheduleReadTransaction(@NotNull String sql, @NotNull Function<ResultSet, T> mapper, int delay, @NotNull TimeUnit timeUnit) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sql, mapper, future);
+        Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, mapper, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, delay, timeUnit));
@@ -385,10 +435,10 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @return A {@link CompletableFuture} containing the desired value {@link T}. May complete exceptionally.
      * @param <T> The desired value to return after the mapping function is applied.
      */
-    public <T> CompletableFuture<T> scheduleReadTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, @NotNull Function<ResultSet, T> mapper, int delay, @NotNull TimeUnit timeUnit) {
+    public <T> @NotNull CompletableFuture<T> scheduleReadTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, @NotNull Function<ResultSet, T> mapper, int delay, @NotNull TimeUnit timeUnit) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
-        Runnable runnable = RunnableUtil.createRunnable(connectionManager, sql, params, mapper, future);
+        Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, mapper, future);
 
         if(pauseQueue) {
             backupTaskQueue.add(new Task(runnable, future, delay, timeUnit));
