@@ -21,12 +21,13 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.6-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
     implementation("org.spongepowered:configurate-yaml:4.2.0")
     implementation("org.spongepowered:configurate-gson:4.2.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.zaxxer:HikariCP:6.3.0")
+    implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
 }
 
 java {
@@ -35,36 +36,39 @@ java {
     withJavadocJar()
 }
 
-tasks.build {
-    dependsOn(tasks.shadowJar)
-    dependsOn(tasks.publishToMavenLocal)
-    dependsOn(tasks.javadoc)
-}
-
-tasks.processResources {
-    val props = mapOf("version" to version)
-    inputs.properties(props)
-    filteringCharset = "UTF-8"
-    filesMatching("plugin.yml") {
-        expand(props)
-    }
-}
-
-tasks.shadowJar {
-    manifest {
-        attributes["paperweight-mappings-namespace"] = "mojang"
+tasks {
+    processResources {
+        val props = mapOf("version" to version)
+        inputs.properties(props)
+        filteringCharset = "UTF-8"
+        filesMatching("plugin.yml") {
+            expand(props)
+        }
     }
 
-    archiveClassifier.set("")
+    shadowJar {
+        manifest {
+            attributes["paperweight-mappings-namespace"] = "mojang"
+        }
 
-    relocate("org.spongepowered.configurate", "com.github.lukesky19.skylib.libs.configurate")
-    relocate("org.bstats", "com.github.lukesky19.skylib.libs.bstats")
-    relocate("com.zaxxer.hikari", "com.github.lukesky19.skylib.libs.hikaricp")
-}
+        archiveClassifier.set("")
 
-// This allows usage of @apiNode in javadocs
-tasks.javadoc {
-    (options as StandardJavadocDocletOptions).tags("apiNote:a:API Note:")
+        relocate("org.spongepowered.configurate", "com.github.lukesky19.skylib.libs.configurate")
+        relocate("org.bstats", "com.github.lukesky19.skylib.libs.bstats")
+        relocate("com.zaxxer.hikari", "com.github.lukesky19.skylib.libs.hikaricp")
+        relocate("com.jeff_media.morepersistentdatatypes", "com.github.lukesky19.skylib.libs.morepersistentdatatypes")
+    }
+
+    // This allows usage of @apiNode in javadocs
+    javadoc {
+        (options as StandardJavadocDocletOptions).tags("apiNote:a:API Note:")
+    }
+
+    build {
+        dependsOn(shadowJar)
+        dependsOn(publishToMavenLocal)
+        dependsOn(javadoc)
+    }
 }
 
 publishing {
