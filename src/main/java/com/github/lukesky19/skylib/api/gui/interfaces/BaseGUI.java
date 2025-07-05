@@ -29,7 +29,6 @@ import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * This interface provides a base structure for the creation of other GUIs.
