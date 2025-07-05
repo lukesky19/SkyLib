@@ -25,6 +25,7 @@ package com.github.lukesky19.skylib.api.gui.interfaces;
 import com.github.lukesky19.skylib.api.gui.GUIType;
 import com.github.lukesky19.skylib.api.gui.abstracts.ChestGUI;
 import io.papermc.paper.event.player.PlayerTradeEvent;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.event.inventory.TradeSelectEvent;
 import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
@@ -42,16 +43,17 @@ public interface TradeGUI extends BaseGUI {
     /**
      * Used to create the {@link InventoryView} for {@link GUIType} MERCHANT.
      * @param name The name to use for the GUI/{@link InventoryView}.
+     * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
      * @return true if created successfully, otherwise false.
      */
-    boolean create(@NotNull String name);
+    boolean create(@NotNull String name, @NotNull List<TagResolver.Single> placeholders);
 
     /**
      * Refreshes the {@link ItemStack}s displayed in the GUI. By default, this just executes {@link #update()}.
      * @return A {@link CompletableFuture} containing true if successful, otherwise false.
      */
     @Override
-    default @NotNull CompletableFuture<@NotNull Boolean> refresh() {
+    default boolean refresh() {
         return update();
     }
 

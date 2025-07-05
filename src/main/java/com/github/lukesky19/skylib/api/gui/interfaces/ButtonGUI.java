@@ -25,13 +25,13 @@ package com.github.lukesky19.skylib.api.gui.interfaces;
 import com.github.lukesky19.skylib.api.gui.GUIType;
 import com.github.lukesky19.skylib.api.gui.GUIButton;
 import com.github.lukesky19.skylib.api.gui.abstracts.ChestGUI;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * This interface can be implemented to create a new button-style GUI.
@@ -43,16 +43,17 @@ public interface ButtonGUI extends BaseGUI {
      * Used to create the {@link InventoryView} for GUITypes CHEST_9, CHEST_18, CHEST_27, CHEST_36, CHEST_45, and CHEST_54.
      * @param type The {@link GUIType} to create.
      * @param name The name to use for the GUI/{@link InventoryView}.
+     * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
      * @return true if created successfully, otherwise false.
      */
-    boolean create(@NotNull GUIType type, @NotNull String name);
+    boolean create(@NotNull GUIType type, @NotNull String name, @NotNull List<TagResolver.Single> placeholders);
 
     /**
      * Refreshes the {@link ItemStack}s displayed in the GUI. By default, this just executes {@link #update()}.
-     * @return A {@link CompletableFuture} containing true if successful, otherwise false.
+     * @return true if successful, otherwise false.
      */
     @Override
-    default @NotNull CompletableFuture<Boolean> refresh() {
+    default boolean refresh() {
         return update();
     }
 

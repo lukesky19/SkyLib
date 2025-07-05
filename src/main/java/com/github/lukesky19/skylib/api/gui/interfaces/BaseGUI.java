@@ -63,15 +63,15 @@ public interface BaseGUI {
 
     /**
      * Updates what is displayed in the GUI.
-     * @return A {@link CompletableFuture} containing a {@link Boolean} where true if successful, otherwise false.
+     * @return true if successful, otherwise false.
      */
-    @NotNull CompletableFuture<Boolean> update();
+    boolean update();
 
     /**
      * Refreshes the contents of what is displayed in the GUI.
-     * @return A {@link CompletableFuture} containing a {@link Boolean} where true if successful, otherwise false.
+     * @return true if successful, otherwise false.
      */
-    @NotNull CompletableFuture<Boolean> refresh();
+    boolean refresh();
 
     /**
      * Used to define how an {@link InventoryCloseEvent} should be handled.

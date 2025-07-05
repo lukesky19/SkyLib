@@ -28,6 +28,7 @@ import com.github.lukesky19.skylib.api.gui.GUIType;
 import com.github.lukesky19.skylib.api.gui.interfaces.TradeGUI;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.TradeSelectEvent;
@@ -98,7 +99,7 @@ public abstract class MerchantGUI implements TradeGUI {
 
     /**
      * Get the {@link InventoryView} associated with the GUI.
-     * @return An {@link Optional} containing an {@link InventoryView}. If empty, that means {@link #create(String)} was not called.
+     * @return An {@link Optional} containing an {@link InventoryView}. If empty, that means {@link #create(String, List)} was not called.
      */
     @Override
     public @NotNull Optional<@NotNull InventoryView> getInventoryView() {
@@ -108,13 +109,16 @@ public abstract class MerchantGUI implements TradeGUI {
     /**
      * Creates the Inventory or InventoryView for the {@link GUIType} MERCHANT.
      * @param name The name of the Inventory.
+     * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
+     * @return This always returns true as this method always succeeds.
      */
-    public boolean create(@NotNull String name) {
+    @Override
+    public boolean create(@NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
         @NotNull MerchantInventoryViewBuilder<@NotNull MerchantView> inventoryViewBuilder = MenuType.MERCHANT.builder();
 
         merchant = plugin.getServer().createMerchant();
 
-        inventoryViewBuilder.title(AdventureUtil.serialize(name));
+        inventoryViewBuilder.title(AdventureUtil.serialize(player, name, placeholders));
         inventoryViewBuilder.merchant(merchant);
         inventoryViewBuilder.checkReachable(false);
 
@@ -177,15 +181,15 @@ public abstract class MerchantGUI implements TradeGUI {
      * @return A {@link CompletableFuture} containing a {@link Boolean}. true if successful, otherwise false
      */
     @Override
-    public @NotNull CompletableFuture<@NotNull Boolean> update() {
+    public boolean update() {
         if(merchant == null) {
             // If the Merchant was not created, log a warning and return false.
             logger.warn(AdventureUtil.serialize("Unable to add the trades to the Merchant as it was not created."));
-            return CompletableFuture.completedFuture(false);
+            return false;
         }
 
         merchant.setRecipes(trades);
-        return CompletableFuture.completedFuture(true);
+        return true;
     }
 
     /**

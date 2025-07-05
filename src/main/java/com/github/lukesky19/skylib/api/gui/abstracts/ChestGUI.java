@@ -28,6 +28,7 @@ import com.github.lukesky19.skylib.api.gui.GUIButton;
 import com.github.lukesky19.skylib.api.gui.GUIType;
 import com.github.lukesky19.skylib.api.gui.interfaces.ButtonGUI;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -93,7 +94,7 @@ public abstract class ChestGUI implements ButtonGUI {
 
     /**
      * Get the {@link InventoryView} associated with the GUI.
-     * @return An {@link Optional} containing an {@link InventoryView}. If empty, that means {@link #create(GUIType, String)} was not called.
+     * @return An {@link Optional} containing an {@link InventoryView}. If empty, that means {@link #create(GUIType, String, List)} was not called.
      */
     @Override
     public @NotNull Optional<@NotNull InventoryView> getInventoryView() {
@@ -104,17 +105,18 @@ public abstract class ChestGUI implements ButtonGUI {
      * Create the {@link InventoryView} for this GUI.
      * @param guiType The {@link GUIType} for this GUI. Only CHEST_9, CHEST_18, CHEST_27, CHEST_36, CHEST_45, and CHEST_54 are allowed.
      * @param name The name of the GUI to display in the InventoryView.
+     * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
      * @return true if created successfully, otherwise false.
      */
     @Override
-    public boolean create(@NotNull GUIType guiType, @NotNull String name) {
+    public boolean create(@NotNull GUIType guiType, @NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
         switch(guiType) {
             case CHEST_9, CHEST_18, CHEST_27, CHEST_36, CHEST_45, CHEST_54 -> {
                 // Create the InventoryViewBuilder
                 InventoryViewBuilder<@NotNull InventoryView> inventoryViewBuilder = guiType.getMenuType().typed().builder();
 
                 // Set the title of the InventoryView/GUI
-                inventoryViewBuilder.title(AdventureUtil.serialize(name));
+                inventoryViewBuilder.title(AdventureUtil.serialize(player, name, placeholders));
 
                 // Build the InventoryView
                 inventoryView = inventoryViewBuilder.build(player);
@@ -200,11 +202,11 @@ public abstract class ChestGUI implements ButtonGUI {
      * @return A {@link CompletableFuture} containing true if successful, otherwise false.
      */
     @Override
-    public @NotNull CompletableFuture<Boolean> update() {
+    public boolean update() {
         // If the InventoryView was not created, log a warning and return false.
         if(inventoryView == null) {
             logger.warn(AdventureUtil.serialize("Unable to add button ItemStacks to the InventoryView as it was not created."));
-            return CompletableFuture.completedFuture(false);
+            return false;
         }
 
         // Check if any slots are out-of-bounds for the InventoryView's GUI size.
@@ -218,14 +220,14 @@ public abstract class ChestGUI implements ButtonGUI {
         // If any slots were out-of-bounds for the InventoryView's GUI size, log a warning and return false.
         if (!invalidSlots.isEmpty()) {
             logger.warn(AdventureUtil.serialize("Button Mapping has buttons for slots outside of inventory bounds: " + invalidSlots));
-            return CompletableFuture.completedFuture(false);
+            return false;
         }
 
         // Add each button's ItemStack to the InventoryView
         slotButtons.forEach((slot, button) -> inventoryView.setItem(slot, button.itemStack()));
 
         // return true that all buttons were added successfully.
-        return CompletableFuture.completedFuture(true);
+        return true;
     }
 
     @Override
