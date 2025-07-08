@@ -450,6 +450,11 @@ public class ItemStackBuilder {
             itemStack = Objects.requireNonNullElseGet(baseItemStack, () -> itemType.createItemStack(amount));
         }
 
+        // If the created ItemStack's type is AIR, return the item stack as-is.
+        if(itemStack.getType().equals(Material.AIR)) {
+            return Optional.of(itemStack);
+        }
+
         // Get itemStack's ItemMeta.
         ItemMeta itemMeta = itemStack.getItemMeta();
 
