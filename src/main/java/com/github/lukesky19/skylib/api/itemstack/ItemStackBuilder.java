@@ -461,7 +461,7 @@ public class ItemStackBuilder {
         // Set the max stack size.
         itemMeta.setMaxStackSize(maxStackSize);
         // Set the display name.
-        itemMeta.displayName(name);
+        itemMeta.customName(name);
         // Set the lore.
         itemMeta.lore(lore);
         // If the enchantment glint is configured, set that here.
