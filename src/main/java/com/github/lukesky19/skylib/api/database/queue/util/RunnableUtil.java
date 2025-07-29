@@ -105,7 +105,8 @@ public class RunnableUtil {
                         try {
                             statement.setObject(i + 1, parameter.getValue());
                         } catch (SQLException e) {
-                            throw new RuntimeException(e);
+                            future.completeExceptionally(e);
+                            return;
                         }
                     }
 

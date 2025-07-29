@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * This abstract class provides a default implementation to obtain connections to a database using HikariCP.
@@ -54,13 +55,34 @@ public abstract class AbstractConnectionManager {
 
     /**
      * Gets a new {@link Connection} to the database.
+     * For some reason foreign keys are not enabled by default (backwards compatibility reasons?)
+     * When auto commit is false, turning them on doesn't work when calling {@link Connection#commit()}.
+     * So we temporarily turn on auto commit, turn on foreign keys, then turn auto commit off if necessary.
+     * If auto commit is true, we just turn foreign keys on without changing the auto commit setting.
      * @return A new {@link Connection} to access the database.
      * @throws RuntimeException If a new {@link Connection} is unable to be obtained.
      */
-    @NotNull
-    public Connection getConnection() {
+    public @NotNull Connection getConnection() {
         try {
-            return hikariDataSource.getConnection();
+            Connection connection = hikariDataSource.getConnection();
+
+            if(connection.getAutoCommit()) {
+                try(Statement statement = connection.createStatement()) {
+                    statement.executeUpdate("PRAGMA foreign_keys = ON;");
+                }
+
+                return connection;
+            } else {
+                connection.setAutoCommit(true);
+
+                try(Statement statement = connection.createStatement()) {
+                    statement.executeUpdate("PRAGMA foreign_keys = ON;");
+                }
+
+                connection.setAutoCommit(false);
+
+                return connection;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

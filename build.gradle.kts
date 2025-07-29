@@ -26,7 +26,7 @@ dependencies {
     implementation("org.spongepowered:configurate-yaml:4.2.0")
     implementation("org.spongepowered:configurate-gson:4.2.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.zaxxer:HikariCP:6.3.0")
+    implementation("com.zaxxer:HikariCP:6.3.2")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
 }
 
