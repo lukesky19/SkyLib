@@ -141,7 +141,7 @@ public class FormatUtil {
      * @param enumName The name of the enum to format.
      * @return A formatted {@link String}.
      */
-    private static @NotNull String formatEnumName(String enumName) {
+    public static @NotNull String formatEnumName(String enumName) {
         String[] words = enumName.split("_");
         StringBuilder formatted = new StringBuilder();
 
@@ -159,7 +159,7 @@ public class FormatUtil {
      * @param key The {@link NamespacedKey} to format.
      * @return A formatted {@link String}.
      */
-    private static @NotNull String formatKey(@NotNull NamespacedKey key) {
+    public static @NotNull String formatKey(@NotNull NamespacedKey key) {
         String name = key.getKey();
         String[] words = name.split("_");
         StringBuilder formatted = new StringBuilder();
