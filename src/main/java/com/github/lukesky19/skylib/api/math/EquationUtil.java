@@ -24,7 +24,6 @@ package com.github.lukesky19.skylib.api.math;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
@@ -48,7 +47,7 @@ public class EquationUtil {
      * @throws RuntimeException If a equation part is not recognized by the parser.
      * @throws ArithmeticException If a divide-by-zero situation occurs.
      */
-    public static @NotNull Double evaluateEquation(@NotNull String equation, @NotNull HashMap<String, String> variables) {
+    public static @NotNull Double evaluateEquation(@NotNull String equation, @NotNull Map<String, String> variables) {
         // Replace any variables
         for(Map.Entry<String, String> entry : variables.entrySet()) {
             equation = equation.replace(entry.getKey(), entry.getValue());
@@ -58,7 +57,7 @@ public class EquationUtil {
         equation = equation.replace(" ", "");
 
         // Split the equation into parts
-        String[] parts = equation.split("(?<=[-+*/()])|(?=[-+*/()])");
+        String[] parts = equation.split("(?<=[-+*/^()])|(?=[-+*/^()])");
 
         // Two stacks that store the equation's values and operators.
         Stack<Double> values = new Stack<>();
@@ -140,22 +139,32 @@ public class EquationUtil {
      * @return true if an operator, otherwise false.
      */
     private static boolean isOperator(@NotNull String string) {
-        return string.equals("+") || string.equals("-") || string.equals("*") || string.equals("/");
+        return string.equals("+") || string.equals("-") || string.equals("*") || string.equals("/") || string.equals("^");
     }
 
     /**
      * Determines if the first operator has precedence over the second operator.
-     * The precedence rules are based on multiplication and division having higher precedence than addition and subtraction.
+     * The precedence rules are based on square root having higher precedence over multiplication and division and
+     * multiplication and division having higher precedence than addition and subtraction.
      * Parentheses are handled separately and are considered special cases.
      * @param operator1 the first operator to compare
      * @param operator2 the second operator to compare
      * @return true if operator1 has precedence over operator2, false otherwise.
      */
     private static boolean hasPrecedence(char operator1, char operator2) {
-        if (operator2 == '(' || operator2 == ')')
+        if (operator2 == '(' || operator2 == ')') {
             return false;
-        return (operator1 != '*' && operator1 != '/')
-                || (operator2 != '+' && operator2 != '-');
+        }
+
+        if (operator1 == '^') {
+            return true;
+        }
+
+        if(operator1 == '*' || operator1 == '/') {
+            return operator2 != '+' && operator2 != '-';
+        }
+
+        return false;
     }
 
     /**
@@ -177,6 +186,7 @@ public class EquationUtil {
                 if (b == 0) throw new ArithmeticException("Cannot divide by zero");
                 yield a / b;
             }
+            case '^' -> Math.pow(a, b);
 
             default -> throw new RuntimeException("Unknown operator provided: " + operator);
         };
