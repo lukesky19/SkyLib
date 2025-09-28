@@ -136,6 +136,191 @@ public class TimeUtil {
     }
 
     /**
+     * Takes a long representing milliseconds and returns a {@link Time} Record that holds up to the maximum {@link TimeUnit} provided.
+     * @param millis The milliseconds to convert.
+     * @param timeUnit The maximum {@link TimeUnit}.
+     * @return A {@link Time} Record that holds up to the maximum {@link TimeUnit} provided.
+     */
+    public static @NotNull Time millisToTime(long millis, @NotNull TimeUnit timeUnit) {
+        int years = 0;
+        int months = 0;
+        int weeks = 0;
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
+        int seconds = 0;
+
+        switch(timeUnit) {
+            case MILLISECONDS -> {
+                return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+            }
+            case SECONDS -> {
+                if(millis >= SECOND) {
+                    seconds = (int) (millis / SECOND);
+                    millis %= SECOND;
+                }
+
+                return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+            }
+            case MINUTES -> {
+                if(millis >= MINUTE) {
+                    minutes = (int) (millis / MINUTE);
+                    millis %= MINUTE;
+                }
+
+                if(millis >= SECOND) {
+                    seconds = (int) (millis / SECOND);
+                    millis %= SECOND;
+                }
+
+                return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+            }
+            case HOURS -> {
+                if(millis >= HOUR) {
+                    hours = (int) (millis / HOUR);
+                    millis %= HOUR;
+                }
+
+                if(millis >= MINUTE) {
+                    minutes = (int) (millis / MINUTE);
+                    millis %= MINUTE;
+                }
+
+                if(millis >= SECOND) {
+                    seconds = (int) (millis / SECOND);
+                    millis %= SECOND;
+                }
+
+                return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+            }
+            case DAYS -> {
+                if(millis >= DAY) {
+                    days = (int) (millis / DAY);
+                    millis %= DAY;
+                }
+
+                if(millis >= HOUR) {
+                    hours = (int) (millis / HOUR);
+                    millis %= HOUR;
+                }
+
+                if(millis >= MINUTE) {
+                    minutes = (int) (millis / MINUTE);
+                    millis %= MINUTE;
+                }
+
+                if(millis >= SECOND) {
+                    seconds = (int) (millis / SECOND);
+                    millis %= SECOND;
+                }
+
+                return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+            }
+            case WEEKS -> {
+                if(millis >= WEEK) {
+                    weeks = (int) (millis / WEEK);
+                    millis %= WEEK;
+                }
+
+                if(millis >= DAY) {
+                    days = (int) (millis / DAY);
+                    millis %= DAY;
+                }
+
+                if(millis >= HOUR) {
+                    hours = (int) (millis / HOUR);
+                    millis %= HOUR;
+                }
+
+                if(millis >= MINUTE) {
+                    minutes = (int) (millis / MINUTE);
+                    millis %= MINUTE;
+                }
+
+                if(millis >= SECOND) {
+                    seconds = (int) (millis / SECOND);
+                    millis %= SECOND;
+                }
+
+                return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+            }
+            case MONTHS -> {
+                if(millis >= MONTH) {
+                    months = (int) (millis / MONTH);
+                    millis %= MONTH;
+                }
+
+                if(millis >= WEEK) {
+                    weeks = (int) (millis / WEEK);
+                    millis %= WEEK;
+                }
+
+                if(millis >= DAY) {
+                    days = (int) (millis / DAY);
+                    millis %= DAY;
+                }
+
+                if(millis >= HOUR) {
+                    hours = (int) (millis / HOUR);
+                    millis %= HOUR;
+                }
+
+                if(millis >= MINUTE) {
+                    minutes = (int) (millis / MINUTE);
+                    millis %= MINUTE;
+                }
+
+                if(millis >= SECOND) {
+                    seconds = (int) (millis / SECOND);
+                    millis %= SECOND;
+                }
+
+                return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+            }
+            case YEARS -> {
+                if(millis >= YEAR) {
+                    years = (int) (millis / YEAR);
+                    millis %= YEAR;
+                }
+
+                if(millis >= MONTH) {
+                    months = (int) (millis / MONTH);
+                    millis %= MONTH;
+                }
+
+                if(millis >= WEEK) {
+                    weeks = (int) (millis / WEEK);
+                    millis %= WEEK;
+                }
+
+                if(millis >= DAY) {
+                    days = (int) (millis / DAY);
+                    millis %= DAY;
+                }
+
+                if(millis >= HOUR) {
+                    hours = (int) (millis / HOUR);
+                    millis %= HOUR;
+                }
+
+                if(millis >= MINUTE) {
+                    minutes = (int) (millis / MINUTE);
+                    millis %= MINUTE;
+                }
+
+                if(millis >= SECOND) {
+                    seconds = (int) (millis / SECOND);
+                    millis %= SECOND;
+                }
+
+                return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+            }
+        }
+
+        return new Time(years, months, weeks, days, hours, minutes, seconds, (int) millis);
+    }
+
+    /**
      * Converts a {@link Time} Record to milliseconds.
      * @param time A {@link Time} Record
      * @return A long representing the milliseconds.
