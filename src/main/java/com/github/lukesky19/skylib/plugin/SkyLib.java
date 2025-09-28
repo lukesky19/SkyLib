@@ -23,14 +23,17 @@
 package com.github.lukesky19.skylib.plugin;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.api.version.VersionUtil;
 import com.github.lukesky19.skylib.internal.ThreadPoolManager;
 import com.github.lukesky19.skylib.plugin.listener.LoginListener;
-import com.github.lukesky19.skylib.api.version.VersionUtil;
 import com.github.lukesky19.skylib.plugin.settings.Settings;
 import com.github.lukesky19.skylib.plugin.settings.SettingsManager;
 import io.papermc.paper.ServerBuildInfo;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Entry point to the plugin.
@@ -43,19 +46,30 @@ public final class SkyLib extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        ComponentLogger logger = this.getComponentLogger();
+
         // Get ServerBuildInfo and Minecraft version
-        final ServerBuildInfo build = ServerBuildInfo.buildInfo();
-        final String minecraftVersionId = build.minecraftVersionId();
+        ServerBuildInfo build = ServerBuildInfo.buildInfo();
+        String minecraftVersionId = build.minecraftVersionId();
 
         // Store Minecraft Version
         VersionUtil.setMinecraftVersion(minecraftVersionId);
 
-        // Parse Minecraft Version for major and minor
-        final @NotNull String[] splitVersion = minecraftVersionId.split("\\.");
+        // Attempt to parse the Minecraft version
+        Pattern pattern = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:-.*)?$");
+        Matcher matcher = pattern.matcher(minecraftVersionId);
+        if(matcher.find()) {
+            String major = matcher.group(2);
+            String minor = matcher.group(3);
 
-        // Store Minecraft Major and Minor Versions
-        VersionUtil.setMajorVersion(Integer.parseInt(splitVersion[1]));
-        VersionUtil.setMinorVersion(Integer.parseInt(splitVersion[2]));
+            // Store Minecraft Major and Minor Versions
+            VersionUtil.setMajorVersion(Integer.parseInt(major));
+            VersionUtil.setMinorVersion(Integer.parseInt(minor));
+        } else {
+            logger.error(AdventureUtil.serialize("SkyLib was unable to parse your server's Minecraft version. Unrecognized version pattern: " + minecraftVersionId + "."));
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Ensure SkyLib is running on Minecraft version 1.21.4 or newer.
         if(VersionUtil.getMajorVersion() < 21 || VersionUtil.getMinorVersion() < 4) {
