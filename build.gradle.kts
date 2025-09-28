@@ -41,8 +41,12 @@ tasks {
         val props = mapOf("version" to version)
         inputs.properties(props)
         filteringCharset = "UTF-8"
-        filesMatching("plugin.yml") {
-            expand(props)
+        val filePatterns = listOf("plugin.yml", "paper-plugin.yml")
+
+        filePatterns.forEach { filePattern ->
+            filesMatching(filePattern) {
+                expand(props)
+            }
         }
     }
 

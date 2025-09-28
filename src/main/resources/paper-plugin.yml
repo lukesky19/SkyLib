@@ -1,0 +1,12 @@
+name: SkyLib
+version: '${version}'
+main: com.github.lukesky19.skylib.plugin.SkyLib
+description: SkyLib provides API used in many other plugins.
+api-version: '1.21.8'
+bootstrapper: com.github.lukesky19.skylib.plugin.SkyLibBootstrap
+dependencies:
+    server:
+        PlaceholderAPI:
+            load: BEFORE
+            required: true
+            join-classpath: true
