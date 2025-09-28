@@ -28,6 +28,7 @@ import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.BlockType;
@@ -387,6 +388,36 @@ public class RegistryUtil {
             }
 
             return Optional.of(trimMaterial);
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Retrieves a {@link Particle} from the {@link Registry} for {@link Particle}s based on the provided name.
+     * @param logger The {@link ComponentLogger} of the plugin using this method. Used to display error messages.
+     * @param name The name of the {@link Particle} to retrieve.
+     * @return If any error occurred or a {@link Particle} was not found for the given name, an empty {@link Optional}
+     * is returned. Otherwise, an {@link Optional} containing the {@link Particle} is returned.
+     */
+    public static @NotNull Optional<@NotNull Particle> getParticle(@NotNull ComponentLogger logger, @NotNull String name) {
+        Registry<@NotNull Particle> particleRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.PARTICLE_TYPE);
+
+        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(name.toLowerCase());
+        if(optionalNamespacedKey.isPresent()) {
+            NamespacedKey key = optionalNamespacedKey.get();
+
+            // Get the Particle from the registry.
+            @Nullable Particle particle = particleRegistry.get(key);
+            if(particle == null) {
+                logger.error(AdventureUtil.serialize("Failed to find a particle for the NamespacedKey: " + key));
+
+                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid armor trim material."));
+
+                return Optional.empty();
+            }
+
+            return Optional.of(particle);
         }
 
         return Optional.empty();
