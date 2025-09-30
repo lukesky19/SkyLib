@@ -8,7 +8,7 @@
 ## FAQ
 Q: What versions does this plugin support?
 
-A: 1.21.4, 1.21.5, 1.21.6, 1.21.7, and 1.21.8.
+A: 1.21.4, 1.21.5, 1.21.6, 1.21.7, 1.21.8, and 1.21.9.
 
 Q: Are there any plans to support any other versions?
 
@@ -25,7 +25,7 @@ A: I only support Paper, but this will likely also work on forks of Paper (untes
 ```./gradlew build```
 
 ```koitlin
-compileOnly("com.github.lukesky19:SkyLib:1.3.0.0")
+compileOnly("com.github.lukesky19:SkyLib:1.3.1.0")
 ```
 
 ## Why MIT?
