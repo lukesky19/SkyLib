@@ -45,9 +45,9 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * This class can be extended to create an anvil-style GUI. Provides some default functions to assist.
+ * This class can be extended to create a lectern-style GUI. Provides some default functions to assist.
  */
-public abstract class AnvilGUI implements ButtonGUI {
+public abstract class LecternGUI implements ButtonGUI {
     /**
      * The plugin who is extending the abstract class to create a GUI.
      */
@@ -84,7 +84,7 @@ public abstract class AnvilGUI implements ButtonGUI {
      * @param guiManager An {@link AbstractGUIManager} that is used to track open GUIs.
      * @param player The {@link Player} associated with the created GUI.
      */
-    public AnvilGUI(@NotNull Plugin plugin, @NotNull AbstractGUIManager guiManager, @NotNull Player player) {
+    public LecternGUI(@NotNull Plugin plugin, @NotNull AbstractGUIManager guiManager, @NotNull Player player) {
         this.plugin = plugin;
         this.logger = plugin.getComponentLogger();
         this.guiManager = guiManager;
@@ -103,14 +103,14 @@ public abstract class AnvilGUI implements ButtonGUI {
 
     /**
      * Create the {@link InventoryView} for this GUI.
-     * @param guiType The {@link GUIType} for this GUI. Only ANVIL is allowed.
+     * @param guiType The {@link GUIType} for this GUI. Only LECTERN is allowed.
      * @param name The name of the GUI to display in the InventoryView.
      * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
      * @return true if created successfully, otherwise false.
      */
     @Override
     public boolean create(@NotNull GUIType guiType, @NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
-        if(guiType == GUIType.ANVIL) {
+        if(guiType == GUIType.LECTERN) {
             // Create the InventoryViewBuilder
             InventoryViewBuilder<@NotNull InventoryView> inventoryViewBuilder = guiType.getMenuType().typed().builder();
 

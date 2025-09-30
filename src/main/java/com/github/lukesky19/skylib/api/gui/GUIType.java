@@ -58,7 +58,8 @@ public enum GUIType {
     /**
      * Creates a GUIType with a {@link MenuType} of GENERIC_9X2 and an Inventory size of 18.
      */
-    CHEST_18(MenuType.GENERIC_9X2,18),    /**
+    CHEST_18(MenuType.GENERIC_9X2,18),
+    /**
      * Creates a GUIType with a {@link MenuType} of GENERIC_9X3 and an Inventory size of 27.
      */
     CHEST_27(MenuType.GENERIC_9X3,27),
@@ -135,7 +136,7 @@ public enum GUIType {
      */
     STONECUTTER(MenuType.STONECUTTER, 2);
 
-    private final MenuType menuType;
+    private final @NotNull MenuType menuType;
     private final int size;
 
     /**
@@ -143,7 +144,7 @@ public enum GUIType {
      * @param menuType The MenuType for this GUIType. {@link MenuType}
      * @param size The size of the Inventory.
      */
-    GUIType(MenuType menuType, int size) {
+    GUIType(@NotNull MenuType menuType, int size) {
         this.menuType = menuType;
         this.size = size;
     }
@@ -152,8 +153,7 @@ public enum GUIType {
      * Gets the MenuType associated with this GUIType.
      * @return {@link MenuType}
      */
-    @NotNull
-    public MenuType getMenuType() {
+    public @NotNull MenuType getMenuType() {
         return menuType;
     }
 
@@ -170,8 +170,7 @@ public enum GUIType {
      * @param type The name of the GUIType to get.
      * @return the GUIType for the string provided or null if invalid.
      */
-    @Nullable
-    public static GUIType getType(@Nullable String type) {
+    public static @Nullable GUIType getType(@Nullable String type) {
         if(type == null) return null;
 
         try {
