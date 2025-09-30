@@ -1,7 +1,7 @@
 plugins {
     java
     `maven-publish`
-    id("com.gradleup.shadow") version "8.3.6"
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 group = "com.github.lukesky19"
@@ -21,12 +21,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.9-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
     implementation("org.spongepowered:configurate-yaml:4.2.0")
     implementation("org.spongepowered:configurate-gson:4.2.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.zaxxer:HikariCP:6.3.2")
+    implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
 }
 
