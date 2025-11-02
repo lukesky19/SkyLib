@@ -72,7 +72,7 @@ public class SettingsManager {
         try {
             settings = loader.load().get(Settings.class);
         } catch (ConfigurateException e) {
-            skyLib.getComponentLogger().error(AdventureUtil.serialize("Failed to load SkyLib's plugin settings. " + e.getMessage()));
+            skyLib.getComponentLogger().error(AdventureUtil.deserialize("Failed to load SkyLib's plugin settings. " + e.getMessage()));
             return false;
         }
 
@@ -95,7 +95,7 @@ public class SettingsManager {
             this.settings = settings;
             return true;
         } catch (ConfigurateException e) {
-            skyLib.getComponentLogger().error(AdventureUtil.serialize("Failed to save SkyLib's plugin settings. " + e.getMessage()));
+            skyLib.getComponentLogger().error(AdventureUtil.deserialize("Failed to save SkyLib's plugin settings. " + e.getMessage()));
             return false;
         }
     }
@@ -119,17 +119,17 @@ public class SettingsManager {
         ComponentLogger logger = skyLib.getComponentLogger();
 
         if(settings.corePoolSize() < 0) {
-            logger.error(AdventureUtil.serialize("The core pool size must be greater than or equal to 0."));
+            logger.error(AdventureUtil.deserialize("The core pool size must be greater than or equal to 0."));
             return false;
         }
 
         if(settings.maxPoolSize() < 0) {
-            logger.error(AdventureUtil.serialize("The max pool size must be greater than or equal to 0."));
+            logger.error(AdventureUtil.deserialize("The max pool size must be greater than or equal to 0."));
             return false;
         }
 
         if(settings.timeoutTimeSeconds() < 0) {
-            logger.error(AdventureUtil.serialize("The timeout time must be greater than or equal to 0."));
+            logger.error(AdventureUtil.deserialize("The timeout time must be greater than or equal to 0."));
             return false;
         }
 

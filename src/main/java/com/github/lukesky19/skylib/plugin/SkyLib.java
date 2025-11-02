@@ -66,14 +66,14 @@ public final class SkyLib extends JavaPlugin {
             VersionUtil.setMajorVersion(Integer.parseInt(major));
             VersionUtil.setMinorVersion(Integer.parseInt(minor));
         } else {
-            logger.error(AdventureUtil.serialize("SkyLib was unable to parse your server's Minecraft version. Unrecognized version pattern: " + minecraftVersionId + "."));
+            logger.error(AdventureUtil.deserialize("SkyLib was unable to parse your server's Minecraft version. Unrecognized version pattern: " + minecraftVersionId + "."));
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
         // Ensure SkyLib is running on Minecraft version 1.21.4 or newer.
         if(VersionUtil.getMajorVersion() < 21 || VersionUtil.getMinorVersion() < 4) {
-            this.getComponentLogger().error(AdventureUtil.serialize("SkyLib version 1.3.0.0 and newer only works on Minecraft Version 1.21.4 and newer."));
+            this.getComponentLogger().error(AdventureUtil.deserialize("SkyLib version 1.3.0.0 and newer only works on Minecraft Version 1.21.4 and newer."));
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }

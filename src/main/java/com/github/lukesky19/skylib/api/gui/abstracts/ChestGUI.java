@@ -116,7 +116,7 @@ public abstract class ChestGUI implements ButtonGUI {
                 InventoryViewBuilder<@NotNull InventoryView> inventoryViewBuilder = guiType.getMenuType().typed().builder();
 
                 // Set the title of the InventoryView/GUI
-                inventoryViewBuilder.title(AdventureUtil.serialize(player, name, placeholders));
+                inventoryViewBuilder.title(AdventureUtil.deserialize(player, name, placeholders));
 
                 // Build the InventoryView
                 inventoryView = inventoryViewBuilder.build(player);
@@ -126,7 +126,7 @@ public abstract class ChestGUI implements ButtonGUI {
 
             default -> {
                 // If the GUIType provided is unsupported, log a warning and return false.
-                logger.warn(AdventureUtil.serialize("Unsupported GUIType provided."));
+                logger.warn(AdventureUtil.deserialize("Unsupported GUIType provided."));
                 return false;
             }
         }
@@ -140,7 +140,7 @@ public abstract class ChestGUI implements ButtonGUI {
     public boolean open() {
         if(inventoryView == null) {
             // If the InventoryView was not created, log a warning and return false.
-            logger.warn(AdventureUtil.serialize("Unable to open the InventoryView as it was not created."));
+            logger.warn(AdventureUtil.deserialize("Unable to open the InventoryView as it was not created."));
             return false;
         }
 
@@ -205,7 +205,7 @@ public abstract class ChestGUI implements ButtonGUI {
     public boolean update() {
         // If the InventoryView was not created, log a warning and return false.
         if(inventoryView == null) {
-            logger.warn(AdventureUtil.serialize("Unable to add button ItemStacks to the InventoryView as it was not created."));
+            logger.warn(AdventureUtil.deserialize("Unable to add button ItemStacks to the InventoryView as it was not created."));
             return false;
         }
 
@@ -219,7 +219,7 @@ public abstract class ChestGUI implements ButtonGUI {
 
         // If any slots were out-of-bounds for the InventoryView's GUI size, log a warning and return false.
         if (!invalidSlots.isEmpty()) {
-            logger.warn(AdventureUtil.serialize("Button Mapping has buttons for slots outside of inventory bounds: " + invalidSlots));
+            logger.warn(AdventureUtil.deserialize("Button Mapping has buttons for slots outside of inventory bounds: " + invalidSlots));
             return false;
         }
 
@@ -268,7 +268,7 @@ public abstract class ChestGUI implements ButtonGUI {
     @Override
     public boolean clearButtons() {
         if(inventoryView == null) {
-            logger.warn(AdventureUtil.serialize("Unable to clear buttons as the InventoryView was not created."));
+            logger.warn(AdventureUtil.deserialize("Unable to clear buttons as the InventoryView was not created."));
             return false;
         }
 
@@ -290,7 +290,7 @@ public abstract class ChestGUI implements ButtonGUI {
     @Override
     public boolean clearInventory()  {
         if(inventoryView == null) {
-            logger.warn(AdventureUtil.serialize("Unable to clear buttons as the InventoryView was not created."));
+            logger.warn(AdventureUtil.deserialize("Unable to clear buttons as the InventoryView was not created."));
             return false;
         }
 
@@ -313,13 +313,13 @@ public abstract class ChestGUI implements ButtonGUI {
     @Override
     public boolean setButton(int slot, @NotNull GUIButton button) {
         if(inventoryView == null) {
-            logger.warn(AdventureUtil.serialize("Unable to add the slot and button to the button mapping as the InventoryView was not created."));
+            logger.warn(AdventureUtil.deserialize("Unable to add the slot and button to the button mapping as the InventoryView was not created."));
             return false;
         }
 
         int guiSize = inventoryView.getTopInventory().getSize();
         if(slot < 0 || slot >= guiSize) {
-            logger.warn(AdventureUtil.serialize("Provided slot is outside of inventory bounds. Slot must be greater than 0 and less than " + guiSize));
+            logger.warn(AdventureUtil.deserialize("Provided slot is outside of inventory bounds. Slot must be greater than 0 and less than " + guiSize));
             return false;
         }
 
@@ -339,7 +339,7 @@ public abstract class ChestGUI implements ButtonGUI {
             slotButtons.putAll(buttonMap);
             return true;
         } else {
-            logger.warn(AdventureUtil.serialize("Unable to replace the slot-button mapping as existing buttons failed to be cleared."));
+            logger.warn(AdventureUtil.deserialize("Unable to replace the slot-button mapping as existing buttons failed to be cleared."));
             return false;
         }
     }

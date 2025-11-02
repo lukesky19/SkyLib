@@ -32,7 +32,10 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.TradeSelectEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.MenuType;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.view.MerchantView;
 import org.bukkit.inventory.view.builder.MerchantInventoryViewBuilder;
 import org.bukkit.plugin.Plugin;
@@ -118,7 +121,7 @@ public abstract class MerchantGUI implements TradeGUI {
 
         merchant = plugin.getServer().createMerchant();
 
-        inventoryViewBuilder.title(AdventureUtil.serialize(player, name, placeholders));
+        inventoryViewBuilder.title(AdventureUtil.deserialize(player, name, placeholders));
         inventoryViewBuilder.merchant(merchant);
         inventoryViewBuilder.checkReachable(false);
 
@@ -135,7 +138,7 @@ public abstract class MerchantGUI implements TradeGUI {
     public boolean open() {
         if(inventoryView == null) {
             // If the InventoryView was not created, log a warning and return false.
-            logger.warn(AdventureUtil.serialize("Unable to open the InventoryView as it was not created."));
+            logger.warn(AdventureUtil.deserialize("Unable to open the InventoryView as it was not created."));
             return false;
         }
 
@@ -184,7 +187,7 @@ public abstract class MerchantGUI implements TradeGUI {
     public boolean update() {
         if(merchant == null) {
             // If the Merchant was not created, log a warning and return false.
-            logger.warn(AdventureUtil.serialize("Unable to add the trades to the Merchant as it was not created."));
+            logger.warn(AdventureUtil.deserialize("Unable to add the trades to the Merchant as it was not created."));
             return false;
         }
 
@@ -215,7 +218,7 @@ public abstract class MerchantGUI implements TradeGUI {
     public @NotNull Optional<@NotNull List<@NotNull MerchantRecipe>> getLiveTrades() {
         if(merchant == null) {
             // If the Merchant was not created, log a warning and return false.
-            logger.warn(AdventureUtil.serialize("Unable to add the trades to the Merchant as it was not created."));
+            logger.warn(AdventureUtil.deserialize("Unable to add the trades to the Merchant as it was not created."));
             return Optional.empty();
         }
 
