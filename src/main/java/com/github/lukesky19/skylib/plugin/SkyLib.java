@@ -25,13 +25,16 @@ package com.github.lukesky19.skylib.plugin;
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skylib.api.version.VersionUtil;
 import com.github.lukesky19.skylib.internal.ThreadPoolManager;
+import com.github.lukesky19.skylib.plugin.command.SkyLibCommand;
 import com.github.lukesky19.skylib.plugin.listener.LoginListener;
 import com.github.lukesky19.skylib.plugin.settings.Settings;
 import com.github.lukesky19.skylib.plugin.settings.SettingsManager;
 import io.papermc.paper.ServerBuildInfo;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,6 +81,12 @@ public final class SkyLib extends JavaPlugin {
             return;
         }
 
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
+                commands ->
+                        commands.registrar().register(new SkyLibCommand().createCommand(),
+                                "Command to manage and use the SkyLib plugin.",
+                                List.of("library", "lib")));
+
         // Register Listener(s)
         this.getServer().getPluginManager().registerEvents(new LoginListener(), this);
 
@@ -92,7 +101,7 @@ public final class SkyLib extends JavaPlugin {
         Settings settings = settingsManager.getSettings();
         assert settings != null;
 
-        // Initialize the ScheduledThreadPoolExecutor in ExecutorServiceManager
+        // Initialize the ScheduledThreadPoolExecutor in ThreadPoolManager
         ThreadPoolManager.initializeThreadPool(settings);
     }
 
