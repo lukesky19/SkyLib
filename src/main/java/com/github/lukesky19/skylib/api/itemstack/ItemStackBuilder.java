@@ -604,7 +604,12 @@ public class ItemStackBuilder {
      * @return The current {@link ItemStackBuilder}.
      */
     private @NotNull ItemStackBuilder applyEnchantments(@NotNull ItemMeta itemMeta) {
-        enchantments.forEach((enchantment, level) -> itemMeta.addEnchant(enchantment, level, true));
+        if(itemMeta instanceof EnchantmentStorageMeta enchantmentStorageMeta) {
+            enchantments.forEach((enchantment, level) -> enchantmentStorageMeta.addStoredEnchant(enchantment, level, true));
+        } else {
+            enchantments.forEach((enchantment, level) -> itemMeta.addEnchant(enchantment, level, true));
+        }
+
         return this;
     }
 
