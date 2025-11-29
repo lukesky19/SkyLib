@@ -37,7 +37,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.view.builder.InventoryViewBuilder;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +51,7 @@ public abstract class SmokerGUI implements ButtonGUI {
     /**
      * The plugin who is extending the abstract class to create a GUI.
      */
-    protected final @NotNull Plugin plugin;
+    protected final @NotNull JavaPlugin plugin;
     /**
      * The plugin's {@link ComponentLogger} to log warnings or errors with.
      */
@@ -80,11 +80,11 @@ public abstract class SmokerGUI implements ButtonGUI {
 
     /**
      * Constructor.
-     * @param plugin The {@link Plugin} creating the GUI.
+     * @param plugin The {@link JavaPlugin} creating the GUI.
      * @param guiManager An {@link AbstractGUIManager} that is used to track open GUIs.
      * @param player The {@link Player} associated with the created GUI.
      */
-    public SmokerGUI(@NotNull Plugin plugin, @NotNull AbstractGUIManager guiManager, @NotNull Player player) {
+    public SmokerGUI(@NotNull JavaPlugin plugin, @NotNull AbstractGUIManager guiManager, @NotNull Player player) {
         this.plugin = plugin;
         this.logger = plugin.getComponentLogger();
         this.guiManager = guiManager;

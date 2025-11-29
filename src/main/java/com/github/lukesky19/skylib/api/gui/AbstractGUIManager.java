@@ -24,7 +24,7 @@ package com.github.lukesky19.skylib.api.gui;
 
 import com.github.lukesky19.skylib.api.gui.interfaces.BaseGUI;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -36,14 +36,14 @@ import java.util.UUID;
  * This class can be extended to provide a ready-to-use template for storing open GUIs.
  */
 public abstract class AbstractGUIManager {
-    private final @NotNull Plugin plugin;
+    private final @NotNull JavaPlugin plugin;
     private final @NotNull HashMap<UUID, BaseGUI> activeGUIs = new HashMap<>();
 
     /**
      * Constructor
      * @param plugin The plugin extending this {@link AbstractGUIManager} class.
      */
-    public AbstractGUIManager(@NotNull Plugin plugin) {
+    public AbstractGUIManager(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
