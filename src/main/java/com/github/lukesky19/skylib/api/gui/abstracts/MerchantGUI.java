@@ -23,9 +23,9 @@
 package com.github.lukesky19.skylib.api.gui.abstracts;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.gui.AbstractGUIManager;
 import com.github.lukesky19.skylib.api.gui.GUIType;
-import com.github.lukesky19.skylib.api.gui.interfaces.TradeGUI;
+import com.github.lukesky19.skylib.api.gui.interfaces.BaseGUI;
+import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -50,8 +50,9 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * This class can be extended to create a merchant-style (i.e., Villagers) GUI. Provides some default functions to assist.
+ * @param <I> The identifier that this GUI is tied to. Used in conjunction with {@link IGUIManager}.
  */
-public abstract class MerchantGUI implements TradeGUI {
+public abstract class MerchantGUI<I> implements BaseGUI<I> {
     /**
      * The plugin who is extending the abstract class to create a GUI.
      */
@@ -61,9 +62,13 @@ public abstract class MerchantGUI implements TradeGUI {
      */
     protected final @NotNull ComponentLogger logger;
     /**
-     * A class extending {@link AbstractGUIManager} that the plugin is using to track open GUIs with.
+     * A class extending {@link IGUIManager} that the plugin is using to track open GUIs with.
      */
-    protected final @NotNull AbstractGUIManager guiManager;
+    protected final @NotNull IGUIManager<I> guiManager;
+    /**
+     * The identifier that the GUI is tied to. Used in conjunction with {@link IGUIManager}.
+     */
+    protected final @NotNull I identifier;
 
     /**
      * A {@link List} of {@link MerchantRecipe} that will be used to populate the {@link Merchant} associated with this GUI.
@@ -89,13 +94,19 @@ public abstract class MerchantGUI implements TradeGUI {
     /**
      * Constructor.
      * @param plugin The {@link JavaPlugin} creating the GUI.
-     * @param guiManager An {@link AbstractGUIManager} that is used to track open GUIs.
+     * @param guiManager An {@link IGUIManager} that is used to track open GUIs.
+     * @param identifier The identifier that the GUI is tied to. Used in conjunction with {@link IGUIManager}.
      * @param player The {@link Player} associated with the created GUI.
      */
-    public MerchantGUI(@NotNull JavaPlugin plugin, @NotNull AbstractGUIManager guiManager, @NotNull Player player) {
+    public MerchantGUI(
+            @NotNull JavaPlugin plugin,
+            @NotNull IGUIManager<I> guiManager,
+            @NotNull I identifier,
+            @NotNull Player player) {
         this.plugin = plugin;
         this.logger = plugin.getComponentLogger();
         this.guiManager = guiManager;
+        this.identifier = identifier;
         this.player = player;
         this.uuid = player.getUniqueId();
     }
@@ -115,7 +126,6 @@ public abstract class MerchantGUI implements TradeGUI {
      * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
      * @return This always returns true as this method always succeeds.
      */
-    @Override
     public boolean create(@NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
         @NotNull MerchantInventoryViewBuilder<@NotNull MerchantView> inventoryViewBuilder = MenuType.MERCHANT.builder();
 
@@ -149,7 +159,7 @@ public abstract class MerchantGUI implements TradeGUI {
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             inventoryView.open();
 
-            guiManager.addOpenGUI(player.getUniqueId(), this);
+            guiManager.addOpenGUI(identifier, this);
         }, 2L);
 
         return true;
@@ -201,7 +211,6 @@ public abstract class MerchantGUI implements TradeGUI {
      * You can use {@link #getLiveTrades()} to get those.
      * @return A {@link List} of {@link MerchantRecipe}s.
      */
-    @Override
     public @NotNull List<@NotNull MerchantRecipe> getTrades() {
         return trades;
     }
@@ -214,7 +223,6 @@ public abstract class MerchantGUI implements TradeGUI {
      * @return An {@link Optional} of {@link List} containing {@link MerchantRecipe}s.
      * The optional may be empty if there is no {@link Merchant} associated with the GUI.
      */
-    @Override
     public @NotNull Optional<@NotNull List<@NotNull MerchantRecipe>> getLiveTrades() {
         if(merchant == null) {
             // If the Merchant was not created, log a warning and return false.
@@ -230,7 +238,6 @@ public abstract class MerchantGUI implements TradeGUI {
      * @apiNote You must call {@link #update()} to actually add the trades to the {@link Merchant} associated with the GUI.
      * @param merchantRecipe The {@link MerchantRecipe} to add.
      */
-    @Override
     public void addTrade(@NotNull MerchantRecipe merchantRecipe) {
         trades.add(merchantRecipe);
     }
@@ -240,7 +247,6 @@ public abstract class MerchantGUI implements TradeGUI {
      * @apiNote You must call {@link #update()} to actually add the trades to the {@link Merchant} associated with the GUI.
      * @param merchantRecipe A {@link MerchantRecipe} to remove.
      */
-    @Override
     public void removeTrade(@NotNull MerchantRecipe merchantRecipe) {
         trades.remove(merchantRecipe);
     }
@@ -250,7 +256,6 @@ public abstract class MerchantGUI implements TradeGUI {
      * @apiNote You must call {@link #update()} to actually add the trades to the {@link Merchant} associated with the GUI.
      * @param tradeList A {@link List} of {@link MerchantRecipe} to add to the Merchant.
      */
-    @Override
     public void setTrades(@NotNull List<MerchantRecipe> tradeList) {
         trades.clear();
 
@@ -261,13 +266,11 @@ public abstract class MerchantGUI implements TradeGUI {
      * Used to define how a {@link PlayerTradeEvent} should be handled.
      * @param playerTradeEvent A {@link PlayerTradeEvent}.
      */
-    @Override
     public abstract void handlePlayerTrade(@NotNull PlayerTradeEvent playerTradeEvent);
 
     /**
      * Used to define how a {@link TradeSelectEvent} should be handled.
      * @param tradeSelectEvent A {@link TradeSelectEvent}.
      */
-    @Override
     public abstract void handleTradeSelect(@NotNull TradeSelectEvent tradeSelectEvent);
 }

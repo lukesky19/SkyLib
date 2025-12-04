@@ -22,69 +22,54 @@
  */
 package com.github.lukesky19.skylib.api.gui;
 
+import com.github.lukesky19.skylib.api.common.abstracts.data.HashMapDataManager;
 import com.github.lukesky19.skylib.api.gui.interfaces.BaseGUI;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This class can be extended to provide a ready-to-use template for storing open GUIs.
+ * @param <I> The identifier for the GUIs.
  */
-public abstract class AbstractGUIManager {
-    private final @NotNull JavaPlugin plugin;
-    private final @NotNull HashMap<UUID, BaseGUI> activeGUIs = new HashMap<>();
-
+public abstract class AbstractGUIManager<I> extends HashMapDataManager<I, BaseGUI<I>> implements IGUIManager<I> {
     /**
      * Constructor
-     * @param plugin The plugin extending this {@link AbstractGUIManager} class.
      */
-    public AbstractGUIManager(@NotNull JavaPlugin plugin) {
-        this.plugin = plugin;
+    public AbstractGUIManager() {}
+
+    @Override
+    public void addOpenGUI(@NotNull I identifier, @NotNull BaseGUI<I> data) {
+        setData(identifier, data);
     }
 
-    /**
-     * Get the {@link BaseGUI} that is currently open for the provided {@link UUID}.
-     * @param uuid The {@link UUID} of the player.
-     * @return An {@link Optional} containing either the {@link BaseGUI} or empty if that player doesn't have a GUI open.
-     */
-    public @NotNull Optional<@NotNull BaseGUI> getOpenGUI(@NotNull UUID uuid) {
-        return Optional.ofNullable(activeGUIs.get(uuid));
+    @Override
+    public void removeOpenGUI(@NotNull I identifier) {
+        removeDataByIdentifier(identifier);
     }
 
-    /**
-     * Store the {@link BaseGUI} that the player with the provided {@link UUID} has opened.
-     * @param uuid The {@link UUID} of the player.
-     * @param baseGUI The {@link BaseGUI} that they opened.
-     */
-    public void addOpenGUI(@NotNull UUID uuid, @NotNull BaseGUI baseGUI) {
-        activeGUIs.put(uuid, baseGUI);
+    @Override
+    public @Nullable BaseGUI<I> getOpenGUI(@NotNull I identifier) {
+        return getData(identifier);
     }
 
-    /**
-     * Remove any {@link BaseGUI} mapped to the player's {@link UUID}.
-     * @param uuid The {@link UUID} of the player.
-     */
-    public void removeOpenGUI(@NotNull UUID uuid) {
-        activeGUIs.remove(uuid);
+    @Override
+    public void refreshGUIs(@NotNull I identifier) {
+        dataMap.entrySet().stream()
+                .filter(entry -> entry.getKey() != null && entry.getKey().equals(identifier))
+                .forEach(entry -> {
+                    BaseGUI<I> gui = entry.getValue();
+
+                    if(gui != null) {
+                        gui.refresh();
+                    }
+                });
     }
 
-    /**
-     * Closes any open {@link BaseGUI}s for all players.
-     * @param onDisable Whether the GUIs are being closed during plugin disable or not.
-     */
+    @Override
     public void closeOpenGUIs(boolean onDisable) {
-        @NotNull Map<UUID, BaseGUI> guiMap = new HashMap<>(activeGUIs);
-
-        guiMap.forEach((uuid, baseGUI) -> {
-            Player player = plugin.getServer().getPlayer(uuid);
-            if(player != null && player.isOnline() && player.isConnected()) {
-                baseGUI.unload(onDisable);
-            }
+        dataMap.values().forEach(baseGUI -> {
+            if(baseGUI != null) baseGUI.unload(onDisable);
         });
     }
 }

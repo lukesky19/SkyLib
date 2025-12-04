@@ -23,14 +23,10 @@
 package com.github.lukesky19.skylib.plugin.settings;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.configurate.ConfigurationUtility;
+import com.github.lukesky19.skylib.api.common.abstracts.config.SimpleConfigManager;
 import com.github.lukesky19.skylib.plugin.SkyLib;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.configurate.CommentedConfigurationNode;
-import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -38,85 +34,33 @@ import java.nio.file.Path;
 /**
  * This class manages SkyLib's {@link Settings}.
  */
-public class SettingsManager {
-    private final @NotNull SkyLib skyLib;
-    private @Nullable Settings settings;
-
+public class SettingsManager extends SimpleConfigManager<Settings> {
     /**
      * Constructor
      * @param skyLib The plugin's main instance.
      */
     public SettingsManager(@NotNull SkyLib skyLib) {
-        this.skyLib = skyLib;
+        super(skyLib, Path.of(skyLib.getDataFolder() + File.separator + "settings.yml"), Settings.class);
+    }
+
+    @Override
+    public void saveBundledConfig() {
+        plugin.saveResource("settings.yml", false);
+    }
+
+    @Override
+    public @NotNull Settings migrateConfiguration(@NotNull Settings configuration) {
+        return configuration;
     }
 
     /**
-     * Get SkyLib's {@link Settings}
-     * @return A {@link Settings} object.
-     */
-    public @Nullable Settings getSettings() {
-        return settings;
-    }
-
-    /**
-     * Loads SkyLib's setting.yml from the disk.
-     * @return true if successful, otherwise false.
-     */
-    public boolean loadSettings() {
-        settings = null;
-
-        saveDefaultSettings();
-
-        Path path = Path.of(skyLib.getDataFolder() + File.separator + "settings.yml");
-        @NotNull YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
-        try {
-            settings = loader.load().get(Settings.class);
-        } catch (ConfigurateException e) {
-            skyLib.getComponentLogger().error(AdventureUtil.deserialize("Failed to load SkyLib's plugin settings. " + e.getMessage()));
-            return false;
-        }
-
-        return validateConfig();
-    }
-
-    /**
-     * Saves the provided {@link Settings} object to the settings.yml file on the disk.
-     * @param settings The {@link Settings} to save.
-     * @return true if successful, otherwise false.
-     */
-    public boolean saveSettings(@NotNull Settings settings) {
-        Path path = Path.of(skyLib.getDataFolder() + File.separator + "settings.yml");
-        @NotNull YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
-        try {
-            CommentedConfigurationNode node = loader.createNode();
-            node.set(Settings.class, settings);
-            loader.save(node);
-
-            this.settings = settings;
-            return true;
-        } catch (ConfigurateException e) {
-            skyLib.getComponentLogger().error(AdventureUtil.deserialize("Failed to save SkyLib's plugin settings. " + e.getMessage()));
-            return false;
-        }
-    }
-
-    /**
-     * Saves the default settings bundled with the  plugin to the disk. Will not overwrite any existing files.
-     */
-    public void saveDefaultSettings() {
-        Path path = Path.of(skyLib.getDataFolder() + File.separator + "settings.yml");
-        if(!path.toFile().exists()) {
-            skyLib.saveResource("settings.yml", false);
-        }
-    }
-
-    /**
-     * Validates the loaded {@link Settings}. Will set {@link #settings} to null if the loaded {@link Settings} are invalid.
+     * Validates the loaded {@link Settings}.
      * @return true if valid, otherwise false.
      */
-    public boolean validateConfig() {
+    @Override
+    public boolean validateConfiguration() {
+        @Nullable Settings settings = getConfiguration();
         if(settings == null) return false;
-        ComponentLogger logger = skyLib.getComponentLogger();
 
         if(settings.corePoolSize() < 0) {
             logger.error(AdventureUtil.deserialize("The core pool size must be greater than or equal to 0."));
