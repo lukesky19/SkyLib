@@ -20,10 +20,10 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
  */
-package com.github.lukesky19.skylib.api.gui.abstracts;
+package com.github.lukesky19.skylib.api.gui.templates;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.gui.ButtonGUI;
+import com.github.lukesky19.skylib.api.gui.abstracts.ButtonGUI;
 import com.github.lukesky19.skylib.api.gui.GUIType;
 import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -33,13 +33,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
- * This class can be extended to create a crafting table-style GUI. Provides some default functions to assist.
+ * This class can be extended to create a chest-style GUI. Provides some default functions to assist.
  * @param <I> The identifier that this GUI is tied to. Used in conjunction with {@link IGUIManager}.
  */
-public abstract class CraftingTableGUI<I> extends ButtonGUI<I> {
+public abstract class ChestGUI<I> extends ButtonGUI<I> {
     /**
      * Constructor.
      * @param plugin The {@link JavaPlugin} creating the GUI.
@@ -47,33 +46,30 @@ public abstract class CraftingTableGUI<I> extends ButtonGUI<I> {
      * @param identifier The identifier that the GUI is tied to. Used in conjunction with {@link IGUIManager}.
      * @param player The {@link Player} associated with the created GUI.
      */
-    public CraftingTableGUI(@NotNull JavaPlugin plugin, @NotNull IGUIManager<I> guiManager, @NotNull I identifier, @NotNull Player player) {
+    public ChestGUI(@NotNull JavaPlugin plugin, @NotNull IGUIManager<I> guiManager, @NotNull I identifier, @NotNull Player player) {
         super(plugin, guiManager, identifier, player);
     }
 
     /**
-     * Get the {@link InventoryView} associated with the GUI.
-     * @return An {@link Optional} containing an {@link InventoryView}. If empty, that means {@link #create(GUIType, String, List)} was not called.
-     */
-    @Override
-    public @NotNull Optional<@NotNull InventoryView> getInventoryView() {
-        return Optional.ofNullable(inventoryView);
-    }
-
-    /**
      * Create the {@link InventoryView} for this GUI.
-     * @param guiType The {@link GUIType} for this GUI. Only {@link GUIType#CRAFTING_TABLE} is allowed.
+     * @param guiType The {@link GUIType} for this GUI. Only {@link GUIType#CHEST_9}, {@link GUIType#CHEST_18},
+     * {@link GUIType#CHEST_27}, {@link GUIType#CHEST_36}, {@link GUIType#CHEST_45}, and {@link GUIType#CHEST_54} are allowed.
      * @param name The name of the GUI to display in the InventoryView.
      * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
      * @return true if created successfully, otherwise false.
      */
     @Override
     public boolean create(@NotNull GUIType guiType, @NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
-        if(guiType != GUIType.CRAFTING_TABLE) {
-            logger.warn(AdventureUtil.deserialize("Unsupported GUIType provided."));
-            return false;
-        }
+        switch(guiType) {
+            case CHEST_9, CHEST_18, CHEST_27, CHEST_36, CHEST_45, CHEST_54 -> {
+                return super.create(guiType, name, placeholders);
+            }
 
-        return super.create(guiType, name, placeholders);
+            default -> {
+                // If the GUIType provided is unsupported, log a warning and return false.
+                logger.warn(AdventureUtil.deserialize("Unsupported GUIType provided."));
+                return false;
+            }
+        }
     }
 }

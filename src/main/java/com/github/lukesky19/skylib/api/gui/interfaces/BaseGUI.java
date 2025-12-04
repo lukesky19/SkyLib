@@ -22,8 +22,8 @@
  */
 package com.github.lukesky19.skylib.api.gui.interfaces;
 
-import com.github.lukesky19.skylib.api.gui.AbstractGUIManager;
-import com.github.lukesky19.skylib.api.gui.ButtonGUI;
+import com.github.lukesky19.skylib.api.gui.abstracts.AbstractGUIManager;
+import com.github.lukesky19.skylib.api.gui.abstracts.ButtonGUI;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;

@@ -20,10 +20,10 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
  */
-package com.github.lukesky19.skylib.api.gui.abstracts;
+package com.github.lukesky19.skylib.api.gui.templates;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.gui.ButtonGUI;
+import com.github.lukesky19.skylib.api.gui.abstracts.ButtonGUI;
 import com.github.lukesky19.skylib.api.gui.GUIType;
 import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -35,10 +35,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * This class can be extended to create a lectern-style GUI. Provides some default functions to assist.
+ * This class can be extended to create a dispenser-style GUI. Provides some default functions to assist.
  * @param <I> The identifier that this GUI is tied to. Used in conjunction with {@link IGUIManager}.
  */
-public abstract class LecternGUI<I> extends ButtonGUI<I> {
+public abstract class DispenserGUI<I> extends ButtonGUI<I> {
     /**
      * Constructor.
      * @param plugin The {@link JavaPlugin} creating the GUI.
@@ -46,20 +46,20 @@ public abstract class LecternGUI<I> extends ButtonGUI<I> {
      * @param identifier The identifier that the GUI is tied to. Used in conjunction with {@link IGUIManager}.
      * @param player The {@link Player} associated with the created GUI.
      */
-    public LecternGUI(@NotNull JavaPlugin plugin, @NotNull IGUIManager<I> guiManager, @NotNull I identifier, @NotNull Player player) {
+    public DispenserGUI(@NotNull JavaPlugin plugin, @NotNull IGUIManager<I> guiManager, @NotNull I identifier, @NotNull Player player) {
         super(plugin, guiManager, identifier, player);
     }
 
     /**
      * Create the {@link InventoryView} for this GUI.
-     * @param guiType The {@link GUIType} for this GUI. Only {@link GUIType#LECTERN} is allowed.
+     * @param guiType The {@link GUIType} for this GUI. Only {@link GUIType#DISPENSER} is allowed.
      * @param name The name of the GUI to display in the InventoryView.
      * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
      * @return true if created successfully, otherwise false.
      */
     @Override
     public boolean create(@NotNull GUIType guiType, @NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
-        if(guiType != GUIType.LECTERN) {
+        if(guiType != GUIType.DISPENSER) {
             logger.warn(AdventureUtil.deserialize("Unsupported GUIType provided."));
             return false;
         }

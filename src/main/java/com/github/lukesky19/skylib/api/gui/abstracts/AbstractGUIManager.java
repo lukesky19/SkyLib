@@ -20,7 +20,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
  */
-package com.github.lukesky19.skylib.api.gui;
+package com.github.lukesky19.skylib.api.gui.abstracts;
 
 import com.github.lukesky19.skylib.api.common.abstracts.data.HashMapDataManager;
 import com.github.lukesky19.skylib.api.gui.interfaces.BaseGUI;

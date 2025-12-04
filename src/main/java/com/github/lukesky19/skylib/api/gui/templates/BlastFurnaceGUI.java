@@ -20,10 +20,10 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
  */
-package com.github.lukesky19.skylib.api.gui.abstracts;
+package com.github.lukesky19.skylib.api.gui.templates;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.gui.ButtonGUI;
+import com.github.lukesky19.skylib.api.gui.abstracts.ButtonGUI;
 import com.github.lukesky19.skylib.api.gui.GUIType;
 import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
