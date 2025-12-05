@@ -39,7 +39,10 @@ import java.util.UUID;
  * This class listens for when a plugin GUI is clicked or closed.
  */
 public class UUIDGUIListener implements Listener {
-    private final @NotNull UUIDGUIManager guiManager;
+    /**
+     * The {@link UUIDGUIManager} that manages open GUIs.
+     */
+    protected final @NotNull UUIDGUIManager guiManager;
 
     /**
      * Constructor
