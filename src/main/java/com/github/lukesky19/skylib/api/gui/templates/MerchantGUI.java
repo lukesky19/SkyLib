@@ -206,6 +206,15 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
     }
 
     /**
+     * Refreshes the trades displayed in the GUI. By default, this just executes {@link #update()}.
+     * @return true if successful, otherwise false.
+     */
+    @Override
+    public boolean refresh() {
+        return update();
+    }
+
+    /**
      * Get a {@link List} of {@link MerchantRecipe}s that will be or was used to populate the {@link Merchant} associated with the GUI with trades.
      * This will not return the trades within the {@link Merchant} associated with the GUI that are updated as the player interacts with trades.
      * You can use {@link #getLiveTrades()} to get those.
