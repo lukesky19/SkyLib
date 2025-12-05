@@ -49,10 +49,9 @@ public interface IKeyValueConfigManager<K, V> {
      * A method to load the configuration.
      * @param identifier The key to store the loaded configuration under.
      * @param configClass The class of the configuration being loaded.
-     * @param resourcePath The resource path of the default bundled configuration.
      * @param configurationPath The {@link Path} to load the configuration to from.
      */
-    void loadConfiguration(@NotNull K identifier, @NotNull Class<V> configClass, @NotNull String resourcePath, @NotNull Path configurationPath);
+    void loadConfiguration(@NotNull K identifier, @NotNull Class<V> configClass, @NotNull Path configurationPath);
 
     /**
      * Save the configuration.

@@ -80,16 +80,11 @@ public abstract class KeyValueConfigManager<K, V> extends HashMapDataManager<K, 
      * A method to load the configuration.
      * @param identifier The key to store the loaded configuration under.
      * @param configClass The class of the configuration being loaded.
-     * @param resourcePath The resource path of the default bundled configuration.
      * @param configurationPath The {@link Path} to load the configuration to from.
      */
     @Override
-    public void loadConfiguration(@NotNull K identifier, @NotNull Class<V> configClass, @NotNull String resourcePath, @NotNull Path configurationPath) {
+    public void loadConfiguration(@NotNull K identifier, @NotNull Class<V> configClass, @NotNull Path configurationPath) {
         @Nullable V configuration;
-
-        if(!configurationPath.toFile().exists()) {
-            plugin.saveResource(resourcePath, false);
-        }
 
         YamlConfigurationLoader yamlConfigurationLoader = ConfigurationUtility.getYamlConfigurationLoader(configurationPath);
         try {
@@ -135,16 +130,21 @@ public abstract class KeyValueConfigManager<K, V> extends HashMapDataManager<K, 
     }
 
     /**
+     * Save the bundled configuration file(s).
+     */
+    protected abstract void saveBundledConfig();
+
+    /**
      * Migrate the configuration.
      * @param configuration The configuration to migrate.
      * @return V the migrated configuration.
      */
-    public abstract @Nullable V migrateConfiguration(@NotNull V configuration);
+    protected abstract @Nullable V migrateConfiguration(@NotNull V configuration);
 
     /**
      * Validate the configuration.
      * @param configuration The configuration to validate.
      * @return true if valid, or false.
      */
-    public abstract boolean validateConfiguration(@NotNull V configuration);
+    protected abstract boolean validateConfiguration(@NotNull V configuration);
 }
