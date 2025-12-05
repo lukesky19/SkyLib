@@ -68,7 +68,8 @@ public abstract class AbstractGUIManager<I> extends HashMapDataManager<I, BaseGU
 
     @Override
     public void closeOpenGUIs(boolean onDisable) {
-        dataMap.values().forEach(baseGUI -> {
+        dataMap.entrySet().iterator().forEachRemaining(entry -> {
+            BaseGUI<I> baseGUI = entry.getValue();
             if(baseGUI != null) baseGUI.unload(onDisable);
         });
     }
