@@ -60,7 +60,7 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
     /**
      * The configuration object.
      */
-    private @Nullable C configuration;
+    protected @Nullable C configuration;
 
     /**
      * Constructor
