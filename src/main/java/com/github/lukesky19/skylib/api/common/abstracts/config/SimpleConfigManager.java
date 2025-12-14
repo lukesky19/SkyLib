@@ -128,25 +128,27 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
         try {
             configuration = yamlConfigurationLoader.load().get(configClass);
             if(configuration == null) return;
+            @NotNull C preMigrationConfiguration = configuration;
 
-            if(validateConfiguration()) {
-                @Nullable C migratedConfiguration = migrateConfiguration(configuration);
-                if(migratedConfiguration == null) {
-                    configuration = null;
-                    return;
-                }
+            // Migrate configuration
+            configuration = migrateConfiguration(configuration);
+            // If migration failed, return
+            if(configuration == null) {
+                return;
+            }
 
-                // Save the migrated configuration if different
-                if(configuration != migratedConfiguration) {
-                    configuration = migratedConfiguration;
-
-                    saveConfiguration();
-                }
-            } else {
+            // Check if the configuration is invalid
+            if(!validateConfiguration()) {
                 configuration = null;
+                return;
+            }
+
+            // Save the migrated configuration if different
+            if(configuration != preMigrationConfiguration) {
+                saveConfiguration();
             }
         } catch (ConfigurateException configurateException) {
-            logger.error(AdventureUtil.deserialize("Failed to load plugin settings. Error: " + configurateException.getMessage()));
+            logger.error(AdventureUtil.deserialize("Failed to load configuration. Error: " + configurateException.getMessage()));
         }
     }
 
