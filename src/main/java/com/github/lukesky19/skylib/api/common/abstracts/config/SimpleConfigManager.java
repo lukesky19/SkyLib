@@ -127,18 +127,23 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
         YamlConfigurationLoader yamlConfigurationLoader = ConfigurationUtility.getYamlConfigurationLoader(configurationPath);
         try {
             configuration = yamlConfigurationLoader.load().get(configClass);
-            if(configuration == null) return;
+            if(configuration == null) {
+                logger.warn(AdventureUtil.deserialize("Failed to load configuration. Class name: " + this.getClass().getName()));
+                return;
+            }
             @NotNull C preMigrationConfiguration = configuration;
 
             // Migrate configuration
             configuration = migrateConfiguration(configuration);
             // If migration failed, return
             if(configuration == null) {
+                logger.warn(AdventureUtil.deserialize("Migrated configuration is invalid. Class name: " + this.getClass().getName()));
                 return;
             }
 
             // Check if the configuration is invalid
             if(!validateConfiguration()) {
+                logger.warn(AdventureUtil.deserialize("Configuration validation failed. Class name: " + this.getClass().getName()));
                 configuration = null;
                 return;
             }

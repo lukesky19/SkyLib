@@ -89,15 +89,22 @@ public abstract class KeyValueConfigManager<K, V> extends HashMapDataManager<K, 
         YamlConfigurationLoader yamlConfigurationLoader = ConfigurationUtility.getYamlConfigurationLoader(configurationPath);
         try {
             configuration = yamlConfigurationLoader.load().get(configClass);
-            if(configuration == null) return;
+            if(configuration == null) {
+                logger.warn(AdventureUtil.deserialize("Failed to load configuration. Class name: " + this.getClass().getName()));
+                return;
+            }
 
             // Migrate configuration
             @Nullable V migratedConfiguration = migrateConfiguration(configuration);
             // If migration failed, return
-            if(migratedConfiguration == null) return;
+            if(migratedConfiguration == null) {
+                logger.warn(AdventureUtil.deserialize("Migrated configuration is invalid. Class name: " + this.getClass().getName()));
+                return;
+            }
 
             // Check if the configuration is invalid
             if(!validateConfiguration(configuration)) {
+                logger.warn(AdventureUtil.deserialize("Configuration validation failed. Class name: " + this.getClass().getName()));
                 return;
             }
 
