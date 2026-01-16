@@ -25,9 +25,9 @@ package com.github.lukesky19.skylib.api.gui.abstracts;
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skylib.api.gui.GUIButton;
 import com.github.lukesky19.skylib.api.gui.GUIType;
-import com.github.lukesky19.skylib.api.gui.templates.ChestGUI;
 import com.github.lukesky19.skylib.api.gui.interfaces.BaseGUI;
 import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
+import com.github.lukesky19.skylib.api.gui.templates.ChestGUI;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
@@ -116,7 +116,7 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
     }
 
     /**
-     * Used to create the {@link InventoryView} for GUITypes CHEST_9, CHEST_18, CHEST_27, CHEST_36, CHEST_45, and CHEST_54.
+     * Used to create the {@link InventoryView} for {@link GUIType}s.
      * @param guiType The {@link GUIType} to create.
      * @param name The name to use for the GUI/{@link InventoryView}.
      * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
