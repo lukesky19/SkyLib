@@ -52,6 +52,27 @@ public interface ISimpleConfigManager<C> {
 
     /**
      * Save the configuration.
+     * @param configuration The configuration to save.
      */
-    void saveConfiguration();
+    void saveConfiguration(@NotNull C configuration);
+
+    /**
+     * Migrate the configuration.
+     * @param configuration The configuration to migrate.
+     * @return The migrated configuration or null.
+     */
+    @Nullable C migrateConfiguration(@NotNull C configuration);
+
+    /**
+     * Validate the configuration.
+     * @return true if valid, false if not.
+     */
+    boolean validateConfiguration();
+
+    /**
+     * Validate the configuration.
+     * @param configuration The configuration to validate.
+     * @return true if valid, false if not.
+     */
+    boolean validateConfiguration(@Nullable C configuration);
 }

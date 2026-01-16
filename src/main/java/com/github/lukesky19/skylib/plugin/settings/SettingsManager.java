@@ -54,12 +54,12 @@ public class SettingsManager extends SimpleConfigManager<Settings> {
     }
 
     /**
-     * Validates the loaded {@link Settings}.
+     * Validates the provided {@link Settings}.
+     * @param settings The {@link Settings} to validate.
      * @return true if valid, otherwise false.
      */
     @Override
-    public boolean validateConfiguration() {
-        @Nullable Settings settings = getConfiguration();
+    public boolean validateConfiguration(@Nullable Settings settings) {
         if(settings == null) return false;
 
         if(settings.corePoolSize() < 0) {

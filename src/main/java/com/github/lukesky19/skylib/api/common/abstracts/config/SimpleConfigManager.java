@@ -142,7 +142,7 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
             }
 
             // Check if the configuration is invalid
-            if(!validateConfiguration()) {
+            if(!validateConfiguration(configuration)) {
                 logger.warn(AdventureUtil.deserialize("Configuration validation failed. Class name: " + this.getClass().getName()));
                 configuration = null;
                 return;
@@ -150,7 +150,7 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
 
             // Save the migrated configuration if different
             if(configuration != preMigrationConfiguration) {
-                saveConfiguration();
+                saveConfiguration(configuration);
             }
         } catch (ConfigurateException configurateException) {
             logger.error(AdventureUtil.deserialize("Failed to load configuration. Error: " + configurateException.getMessage()));
@@ -161,8 +161,7 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
      * Save the configuration.
      */
     @Override
-    public void saveConfiguration() {
-        if(configuration == null) return;
+    public void saveConfiguration(@NotNull C configuration) {
         if(configurationPath == null) {
             logger.error(AdventureUtil.deserialize("Unable to save the configuration because the configuration path was not set."));
             return;
@@ -191,11 +190,21 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
      * @param configuration The configuration to migrate.
      * @return V the migrated configuration.
      */
-    protected abstract @Nullable C migrateConfiguration(@NotNull C configuration);
+    public abstract @Nullable C migrateConfiguration(@NotNull C configuration);
+
+    /**
+     * Validate the configuration in the class.
+     * This is a convenience method and calls {@link #validateConfiguration(Object)} which should be favored instead.
+     * @return true if valid, or false.
+     */
+    public boolean validateConfiguration() {
+        return validateConfiguration(configuration);
+    }
 
     /**
      * Validate the configuration.
+     * @param configuration The configuration to validate.
      * @return true if valid, or false.
      */
-    protected abstract boolean validateConfiguration();
+    public abstract boolean validateConfiguration(@Nullable C configuration);
 }
