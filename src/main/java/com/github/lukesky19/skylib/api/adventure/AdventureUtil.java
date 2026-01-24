@@ -29,7 +29,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class containing utilities for formatting Strings into Components.
@@ -59,7 +60,7 @@ public class AdventureUtil {
      * @param placeholders A list of TagResolver.Single which can be created using Placeholder.parsed("STRING", REPLACEMENT)
      * @return A modern Component
      */
-    public static Component serialize(@NotNull Player player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+    public static @NotNull Component deserialize(@NotNull Player player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -80,7 +81,7 @@ public class AdventureUtil {
      * @param placeholders A list of TagResolver.Single which can be created using Placeholder.parsed("STRING", REPLACEMENT)
      * @return A modern Component
      */
-    public static Component serialize(@NotNull OfflinePlayer player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+    public static @NotNull Component deserialize(@NotNull OfflinePlayer player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -100,7 +101,7 @@ public class AdventureUtil {
      * @param message A String
      * @return A modern Component
      */
-    public static Component serialize(@NotNull Player player, @NotNull String message) {
+    public static @NotNull Component deserialize(@NotNull Player player, @NotNull String message) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -119,7 +120,7 @@ public class AdventureUtil {
      * @param message A String
      * @return A modern Component
      */
-    public static Component serialize(@NotNull OfflinePlayer player, @NotNull String message) {
+    public static @NotNull Component deserialize(@NotNull OfflinePlayer player, @NotNull String message) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -137,7 +138,7 @@ public class AdventureUtil {
      * @param placeholders A list of TagResolver.Single which can be created using Placeholder.parsed("STRING", REPLACEMENT)
      * @return A modern Component
      */
-    public static Component serialize(@NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+    public static @NotNull Component deserialize(@NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -154,7 +155,7 @@ public class AdventureUtil {
      * @param message A String
      * @return A modern Component
      */
-    public static Component serialize(@NotNull String message) {
+    public static @NotNull Component deserialize(@NotNull String message) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -165,46 +166,54 @@ public class AdventureUtil {
     }
 
     /**
-     * Serializes a {@link Component} into a {@link String}.
+     * Converts a {@link Component} into a {@link String} with MiniMessage tags intact.
      * @param component The {@link Component} to serialize.
      * @return A non-null {@link String} of the Component with the color and formatting MiniMessage codes.
      */
-    @NotNull
-    public static String deserialize(@NotNull Component component) {
+    public static @NotNull String serialize(@NotNull Component component) {
         return MiniMessage.miniMessage().serialize(component);
     }
 
     /**
-     * A hacky way to support legacy color codes.
-     * @param message A String that has legacy color codes to replace
-     * @return A String with clean MiniMessage tags
+     * A method to support legacy color codes and hex codes.
+     * @param message A String that has legacy color codes to replace.
+     * @return A String with clean MiniMessage tags.
      */
-    private static String handleLegacyCodes(String message) {
-        StringBuilder builder = new StringBuilder(message);
+    public static @NotNull String handleLegacyCodes(@NotNull String message) {
+        // Replace hex codes of the format &#FFFFFF
+        Matcher hexMatcher = Pattern.compile("&#([0-9A-Fa-f]{6})").matcher(message);
+        message = hexMatcher.replaceAll(match -> "<#" + match.group(1) + ">");
 
-        for(Map.Entry<String, String> codeEntry : codeConversion.entrySet()) {
-            String target = codeEntry.getKey();
-            String replacement = codeEntry.getValue();
+        // Handle §x or &x formats for hex colors
+        Matcher customHexMatcher = Pattern.compile("(?:§x|&x)((?:§[0-9A-Fa-f]|&[0-9A-Fa-f]){6})").matcher(message);
+        message = customHexMatcher.replaceAll(match -> {
+            StringBuilder hexColor = new StringBuilder("#");
+            String matchedGroup = match.group(1);
 
-            while(builder.toString().contains(target)) {
-                int startIndex = builder.toString().indexOf(target);
-                int stopIndex = startIndex + target.length();
-
-                builder.replace(startIndex, stopIndex, replacement);
+            // Extract hex characters from the matched group
+            for (int i = 1; i < matchedGroup.length(); i += 2) {
+                hexColor.append(matchedGroup.charAt(i));
             }
+            return "<" + hexColor + ">";
+        });
+
+        // Replace legacy & and § color codes
+        for (Map.Entry<String, String> codeEntry : codeConversion.entrySet()) {
+            message = message.replaceAll("(?i)(" + Pattern.quote(codeEntry.getKey()) + ")", codeEntry.getValue());
         }
 
-        return builder.toString();
+        return message;
     }
 
     /**
-     * Credit to mbaxter and the <a href="https://docs.advntr.dev/faq.html#how-can-i-use-bukkits-placeholderapi-in-minimessage-messages">Adventure Wiki</a>.
-     * Creates a tag resolver capable of resolving PlaceholderAPI tags for a given player.
-     * The tag added is of the format <papi:[papi_placeholder]>. For example, <papi:luckperms_prefix>.
+     * Creates a {@link TagResolver} that parses PlaceholderAPI placeholders.
+     * Also handles converting legacy color and formatting codes into MiniMessage tags.
+     * The tag added is of the format {@literal <papi:[papi_placeholder]>}. For example, {@literal <papi:luckperms_prefix>}.
+     * Based on work by mbaxter and the <a href="https://docs.advntr.dev/faq.html#how-can-i-use-bukkits-placeholderapi-in-minimessage-messages">Adventure Wiki</a>.
      * @param player the player
-     * @return the tag resolver
+     * @return The {@link TagResolver}.
      */
-    private static @NotNull TagResolver papiTag(final @NotNull Player player) {
+    public static @NotNull TagResolver papiTag(final @NotNull Player player) {
         return TagResolver.resolver("papi", (argumentQueue, context) -> {
             // Get the string placeholder that they want to use.
             final String papiPlaceholder = argumentQueue.popOr("papi tag requires an argument").value();
@@ -212,22 +221,26 @@ public class AdventureUtil {
             // Then get PAPI to parse the placeholder for the given player.
             final String parsedPlaceholder = PlaceholderAPI.setPlaceholders(player, '%' + papiPlaceholder + '%');
 
-            // We need to turn this ugly legacy string into a nice component.
-            final Component componentPlaceholder = LegacyComponentSerializer.legacySection().deserialize(parsedPlaceholder);
+            // Convert any legacy formatting codes to MiniMessage tags.
+            final String cleanPlaceholder = handleLegacyCodes(parsedPlaceholder);
+
+            // Then we serialize the unparsed placeholder above into the final Component
+            final Component result = serialize(cleanPlaceholder);
 
             // Finally, return the tag instance to insert the placeholder!
-            return Tag.selfClosingInserting(componentPlaceholder);
+            return Tag.selfClosingInserting(result);
         });
     }
 
     /**
-     * Credit to mbaxter and the <a href="https://docs.advntr.dev/faq.html#how-can-i-use-bukkits-placeholderapi-in-minimessage-messages">Adventure Wiki</a>.
-     * Creates a tag resolver capable of resolving PlaceholderAPI tags for a given player.
-     * The tag added is of the format <papi:[papi_placeholder]>. For example, <papi:luckperms_prefix>.
+     * Creates a {@link TagResolver} that parses PlaceholderAPI placeholders.
+     * Also handles converting legacy color and formatting codes into MiniMessage tags.
+     * The tag added is of the format {@literal <papi:[papi_placeholder]>}. For example, {@literal <papi:luckperms_prefix>}.
+     * Based on work by mbaxter and the <a href="https://docs.advntr.dev/faq.html#how-can-i-use-bukkits-placeholderapi-in-minimessage-messages">Adventure Wiki</a>.
      * @param player the player
-     * @return the tag resolver
+     * @return The {@link TagResolver}.
      */
-    private static @NotNull TagResolver papiTag(final @NotNull OfflinePlayer player) {
+    public static @NotNull TagResolver papiTag(final @NotNull OfflinePlayer player) {
         return TagResolver.resolver("papi", (argumentQueue, context) -> {
             // Get the string placeholder that they want to use.
             final String papiPlaceholder = argumentQueue.popOr("papi tag requires an argument").value();
@@ -235,15 +248,18 @@ public class AdventureUtil {
             // Then get PAPI to parse the placeholder for the given player.
             final String parsedPlaceholder = PlaceholderAPI.setPlaceholders(player, '%' + papiPlaceholder + '%');
 
-            // We need to turn this ugly legacy string into a nice component.
-            final Component componentPlaceholder = LegacyComponentSerializer.legacySection().deserialize(parsedPlaceholder);
+            // Convert any legacy formatting codes to MiniMessage tags.
+            final String cleanPlaceholder = handleLegacyCodes(parsedPlaceholder);
+
+            // Then we serialize the unparsed placeholder above into the final Component
+            final Component result = serialize(cleanPlaceholder);
 
             // Finally, return the tag instance to insert the placeholder!
-            return Tag.selfClosingInserting(componentPlaceholder);
+            return Tag.selfClosingInserting(result);
         });
     }
 
-    private static final Map<String, String> codeConversion = Map.ofEntries(
+    private static final @NotNull Map<String, String> codeConversion = Map.ofEntries(
             new AbstractMap.SimpleEntry<>("§0", "<black>"),
             new AbstractMap.SimpleEntry<>("§1", "<dark_blue>"),
             new AbstractMap.SimpleEntry<>("§2", "<dark_green>"),
@@ -289,5 +305,141 @@ public class AdventureUtil {
             new AbstractMap.SimpleEntry<>("&o", "<italic>"),
             new AbstractMap.SimpleEntry<>("&r", "<reset>")
     );
-}
 
+    /**
+     * Converts a String to a modern Component using MiniMessage.
+     * Handles PlaceholderAPI placeholders.
+     * Handles legacy color codes.
+     * @param player A Bukkit Player
+     * @param message A String
+     * @param placeholders A list of TagResolver.Single which can be created using Placeholder.parsed("STRING", REPLACEMENT)
+     * @return A modern Component
+     * @deprecated This method was originally named incorrectly. Use {@link #deserialize(Player, String, List)} instead.
+     */
+    @Deprecated(since = "1.4.0.0", forRemoval = true)
+    public static @NotNull Component serialize(@NotNull Player player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+        MiniMessage mm = MiniMessage.builder()
+                .tags(TagResolver.builder()
+                        .resolver(StandardTags.defaults())
+                        .resolver(papiTag(player))
+                        .resolvers(placeholders)
+                        .build())
+                .build();
+
+        return mm.deserialize(handleLegacyCodes(message)).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+    }
+
+    /**
+     * Converts a String to a modern Component using MiniMessage.
+     * Handles PlaceholderAPI placeholders.
+     * Handles legacy color codes.
+     * @param player A Bukkit OfflinePlayer
+     * @param message A String
+     * @param placeholders A list of TagResolver.Single which can be created using Placeholder.parsed("STRING", REPLACEMENT)
+     * @return A modern Component
+     * @deprecated This method was originally named incorrectly. Use {@link #deserialize(OfflinePlayer, String, List)} instead.
+     */
+    @Deprecated(since = "1.4.0.0", forRemoval = true)
+    public static @NotNull Component serialize(@NotNull OfflinePlayer player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+        MiniMessage mm = MiniMessage.builder()
+                .tags(TagResolver.builder()
+                        .resolver(StandardTags.defaults())
+                        .resolver(papiTag(player))
+                        .resolvers(placeholders)
+                        .build())
+                .build();
+
+        return mm.deserialize(handleLegacyCodes(message)).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+    }
+
+    /**
+     * Converts a String to a modern Component using MiniMessage.
+     * Handles PlaceholderAPI placeholders.
+     * Handles legacy color codes.
+     * @param player A Bukkit Player
+     * @param message A String
+     * @return A modern Component
+     * @deprecated This method was originally named incorrectly. Use {@link #deserialize(Player, String)} instead.
+     */
+    @Deprecated(since = "1.4.0.0", forRemoval = true)
+    public static @NotNull Component serialize(@NotNull Player player, @NotNull String message) {
+        MiniMessage mm = MiniMessage.builder()
+                .tags(TagResolver.builder()
+                        .resolver(StandardTags.defaults())
+                        .resolver(papiTag(player))
+                        .build())
+                .build();
+
+        return mm.deserialize(handleLegacyCodes(message)).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+    }
+
+    /**
+     * Converts a String to a modern Component using MiniMessage.
+     * Handles PlaceholderAPI placeholders.
+     * Handles legacy color codes.
+     * @param player A Bukkit OfflinePlayer
+     * @param message A String
+     * @return A modern Component
+     * @deprecated This method was originally named incorrectly. Use {@link #deserialize(OfflinePlayer, String)} instead.
+     */
+    @Deprecated(since = "1.4.0.0", forRemoval = true)
+    public static @NotNull Component serialize(@NotNull OfflinePlayer player, @NotNull String message) {
+        MiniMessage mm = MiniMessage.builder()
+                .tags(TagResolver.builder()
+                        .resolver(StandardTags.defaults())
+                        .resolver(papiTag(player))
+                        .build())
+                .build();
+
+        return mm.deserialize(handleLegacyCodes(message)).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+    }
+
+    /**
+     * Converts a String to a modern Component using MiniMessage.
+     * Handles legacy color codes.
+     * @param message A String
+     * @param placeholders A list of TagResolver.Single which can be created using Placeholder.parsed("STRING", REPLACEMENT)
+     * @return A modern Component
+     * @deprecated This method was originally named incorrectly. Use {@link #deserialize(String, List)} instead.
+     */
+    @Deprecated(since = "1.4.0.0", forRemoval = true)
+    public static @NotNull Component serialize(@NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+        MiniMessage mm = MiniMessage.builder()
+                .tags(TagResolver.builder()
+                        .resolver(StandardTags.defaults())
+                        .resolvers(placeholders)
+                        .build())
+                .build();
+
+        return mm.deserialize(handleLegacyCodes(message)).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+    }
+
+    /**
+     * Converts a String to a modern Component using MiniMessage.
+     * Handles legacy color codes.
+     * @param message A String
+     * @return A modern Component
+     * @deprecated This method was originally named incorrectly. Use {@link #deserialize(String)} instead.
+     */
+    @Deprecated(since = "1.4.0.0", forRemoval = true)
+    public static @NotNull Component serialize(@NotNull String message) {
+        MiniMessage mm = MiniMessage.builder()
+                .tags(TagResolver.builder()
+                        .resolver(StandardTags.defaults())
+                        .build())
+                .build();
+
+        return mm.deserialize(handleLegacyCodes(message)).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+    }
+
+    /**
+     * Serializes a {@link Component} into a {@link String}.
+     * @param component The {@link Component} to serialize.
+     * @return A non-null {@link String} of the Component with the color and formatting MiniMessage codes.
+     * @deprecated This method was originally named incorrectly. Use {@link #serialize(Component)} instead.
+     */
+    @Deprecated(since = "1.4.0.0", forRemoval = true)
+    public static @NotNull String deserialize(@NotNull Component component) {
+        return MiniMessage.miniMessage().serialize(component);
+    }
+}

@@ -88,8 +88,8 @@ public class RegistryUtil {
             // Get the ItemType from the registry.
             @Nullable ItemType itemType = itemTypeRegistry.get(key);
             if(itemType == null) {
-                logger.error(AdventureUtil.serialize("Failed to find a ItemType for the NamespacedKey: " + key));
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid ItemType."));
+                logger.error(AdventureUtil.deserialize("Failed to find a ItemType for the NamespacedKey: " + key));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid ItemType."));
 
                 return Optional.empty();
             }
@@ -120,9 +120,9 @@ public class RegistryUtil {
             // Get the BlockType from the registry.
             @Nullable BlockType blockType = blockTypeRegistry.get(key);
             if(blockType == null) {
-                logger.error(AdventureUtil.serialize("Failed to find a BlockType for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find a BlockType for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid BlockType."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid BlockType."));
 
                 return Optional.empty();
             }
@@ -153,9 +153,9 @@ public class RegistryUtil {
             // Get the EntityType from the registry.
             @Nullable EntityType entityType = entityTypeRegistry.get(key);
             if(entityType == null) {
-                logger.error(AdventureUtil.serialize("Failed to find a EntityType for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find a EntityType for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid EntityType."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid EntityType."));
 
                 return Optional.empty();
             }
@@ -186,9 +186,9 @@ public class RegistryUtil {
             // Get the PotionType from the registry.
             @Nullable PotionType potionType = potionTypeRegistry.get(key);
             if(potionType == null) {
-                logger.error(AdventureUtil.serialize("Failed to find a PotionType for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find a PotionType for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid PotionType."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid PotionType."));
 
                 return Optional.empty();
             }
@@ -219,9 +219,9 @@ public class RegistryUtil {
             // Get the PotionEffectType from the registry.
             @Nullable PotionEffectType potionEffectType = potionEffectTypeRegistry.get(key);
             if(potionEffectType == null) {
-                logger.error(AdventureUtil.serialize("Failed to find a PotionEffectType for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find a PotionEffectType for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid PotionEffectType."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid PotionEffectType."));
 
                 return Optional.empty();
             }
@@ -252,9 +252,9 @@ public class RegistryUtil {
             // Get the Enchantment from the registry.
             @Nullable Enchantment enchantment = enchantmentRegistry.get(key);
             if(enchantment == null) {
-                logger.error(AdventureUtil.serialize("Failed to find a Enchantment for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find a Enchantment for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid Enchantment."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid Enchantment."));
 
                 return Optional.empty();
             }
@@ -285,9 +285,9 @@ public class RegistryUtil {
             // Get the Attribute from the registry.
             @Nullable Attribute attribute = attributeRegistry.get(key);
             if(attribute == null) {
-                logger.error(AdventureUtil.serialize("Failed to find a Attribute for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find a Attribute for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid Attribute."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid Attribute."));
 
                 return Optional.empty();
             }
@@ -317,9 +317,9 @@ public class RegistryUtil {
             // Get the MusicInstrument from the registry.
             @Nullable MusicInstrument instrument = instrumentRegistry.get(key);
             if(instrument == null) {
-                logger.error(AdventureUtil.serialize("Failed to find an instrument for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find an instrument for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid instrument."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid instrument."));
 
                 return Optional.empty();
             }
@@ -349,9 +349,9 @@ public class RegistryUtil {
             // Get the TrimPattern from the registry.
             @Nullable TrimPattern trimPattern = armorTrimPatternRegistry.get(key);
             if(trimPattern == null) {
-                logger.error(AdventureUtil.serialize("Failed to find an armor trim pattern for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find an armor trim pattern for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid armor trim pattern."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid armor trim pattern."));
 
                 return Optional.empty();
             }
@@ -380,9 +380,9 @@ public class RegistryUtil {
             // Get the TrimMaterial from the registry.
             @Nullable TrimMaterial trimMaterial = armorTrimMaterialRegistry.get(key);
             if(trimMaterial == null) {
-                logger.error(AdventureUtil.serialize("Failed to find an armor trim material for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find an armor trim material for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid armor trim material."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid armor trim material."));
 
                 return Optional.empty();
             }
@@ -410,9 +410,9 @@ public class RegistryUtil {
             // Get the Particle from the registry.
             @Nullable Particle particle = particleRegistry.get(key);
             if(particle == null) {
-                logger.error(AdventureUtil.serialize("Failed to find a particle for the NamespacedKey: " + key));
+                logger.error(AdventureUtil.deserialize("Failed to find a particle for the NamespacedKey: " + key));
 
-                logger.info(AdventureUtil.serialize("Ensure that the name corresponds to a valid armor trim material."));
+                logger.info(AdventureUtil.deserialize("Ensure that the name corresponds to a valid armor trim material."));
 
                 return Optional.empty();
             }

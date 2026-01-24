@@ -140,7 +140,7 @@ public class ItemStackBuilder {
             @Nullable OfflinePlayer offlinePlayer,
             @NotNull List<TagResolver.Single> placeholders) {
         if(config.itemType() == null) {
-            logger.error(AdventureUtil.serialize("Unable to parse ItemStackConfig due to the ItemType being null."));
+            logger.error(AdventureUtil.deserialize("Unable to parse ItemStackConfig due to the ItemType being null."));
             return this;
         }
 
@@ -149,7 +149,7 @@ public class ItemStackBuilder {
         // If the ItemType is present, set the class variable. Otherwise, display error and info messages.
         optionalItemType.ifPresentOrElse(
                 itemType -> this.itemType = itemType,
-                () -> logger.error(AdventureUtil.serialize("Unable to get a ItemType due to a configuration error.")));
+                () -> logger.error(AdventureUtil.deserialize("Unable to get a ItemType due to a configuration error.")));
 
         // If the ItemType is null, exit the method.
         if(itemType == null) return this;
@@ -162,8 +162,8 @@ public class ItemStackBuilder {
             if(config.maxStackSize() >= 1 && config.maxStackSize() <= 99) {
                 maxStackSize = config.maxStackSize();
             } else {
-                logger.warn(AdventureUtil.serialize("Max stack size is limited to greater than or equal to 1 and less than or equal to 99."));
-                logger.warn(AdventureUtil.serialize("The default max stack size will be used instead."));
+                logger.warn(AdventureUtil.deserialize("Max stack size is limited to greater than or equal to 1 and less than or equal to 99."));
+                logger.warn(AdventureUtil.deserialize("The default max stack size will be used instead."));
                 maxStackSize = itemType.getMaxStackSize();
             }
         } else {
@@ -177,8 +177,8 @@ public class ItemStackBuilder {
             if(config.amount() >= 1 && config.amount() <= maxStackSize) {
                 amount = config.amount();
             } else {
-                logger.warn(AdventureUtil.serialize("The amount is limited to greater than or equal to 1 and less than or equal to 99."));
-                logger.warn(AdventureUtil.serialize("The amount will be clamped to it's min or max value."));
+                logger.warn(AdventureUtil.deserialize("The amount is limited to greater than or equal to 1 and less than or equal to 99."));
+                logger.warn(AdventureUtil.deserialize("The amount will be clamped to it's min or max value."));
                 amount = Math.max(1, Math.min(maxStackSize, config.amount()));
             }
         }
@@ -187,23 +187,23 @@ public class ItemStackBuilder {
         // The Player or Offline Player is used to parse any Adventure/MiniMessage placeholders or PlaceholderAPI placeholders.
         if(player != null) {
             // If a name is configured, format the name.
-            if(config.name() != null) name = AdventureUtil.serialize(player, config.name(), placeholders);
+            if(config.name() != null) name = AdventureUtil.deserialize(player, config.name(), placeholders);
             // Format the lore.
-            lore = config.lore().stream().map(line -> AdventureUtil.serialize(player, line, placeholders)).toList();
+            lore = config.lore().stream().map(line -> AdventureUtil.deserialize(player, line, placeholders)).toList();
 
             this.offlinePlayer = player;
         } else if(offlinePlayer != null) {
             // If a name is configured, format the name.
-            if(config.name() != null) name = AdventureUtil.serialize(offlinePlayer, config.name(), placeholders);
+            if(config.name() != null) name = AdventureUtil.deserialize(offlinePlayer, config.name(), placeholders);
             // Format the lore.
-            lore = config.lore().stream().map(line -> AdventureUtil.serialize(offlinePlayer, line, placeholders)).toList();
+            lore = config.lore().stream().map(line -> AdventureUtil.deserialize(offlinePlayer, line, placeholders)).toList();
 
             this.offlinePlayer = offlinePlayer;
         } else {
             // If a name is configured, format the name.
-            if(config.name() != null) name = AdventureUtil.serialize(config.name(), placeholders);
+            if(config.name() != null) name = AdventureUtil.deserialize(config.name(), placeholders);
             // Format the lore.
-            lore = config.lore().stream().map(line -> AdventureUtil.serialize(line, placeholders)).toList();
+            lore = config.lore().stream().map(line -> AdventureUtil.deserialize(line, placeholders)).toList();
         }
 
         // Attempt to get the EntityType from the registry if an EntityType is configured.
@@ -215,12 +215,12 @@ public class ItemStackBuilder {
         // Validate and apply configured enchantments
         for(ItemStackConfig.EnchantmentConfig enchantmentConfig : config.enchantments()) {
             if(enchantmentConfig.enchantment() == null) {
-                logger.warn(AdventureUtil.serialize("Unable to process enchantment due to a null enchantment name."));
+                logger.warn(AdventureUtil.deserialize("Unable to process enchantment due to a null enchantment name."));
                 continue;
             }
 
             if(enchantmentConfig.level() == null) {
-                logger.warn(AdventureUtil.serialize("Unable to process enchantment due to a missing enchantment level for enchantment: " + enchantmentConfig.enchantment() + "."));
+                logger.warn(AdventureUtil.deserialize("Unable to process enchantment due to a missing enchantment level for enchantment: " + enchantmentConfig.enchantment() + "."));
                 continue;
             }
 
@@ -235,26 +235,26 @@ public class ItemStackBuilder {
             @NotNull Optional<@NotNull PotionType> optionalPotionType = RegistryUtil.getPotionType(logger, potionConfig.potionType());
             optionalPotionType.ifPresentOrElse(
                     potionType -> this.potionType = potionType,
-                    () -> logger.error(AdventureUtil.serialize("Unable to get a PotionType due to a configuration error.")));
+                    () -> logger.error(AdventureUtil.deserialize("Unable to get a PotionType due to a configuration error.")));
         }
 
         // Validate and apply any extra potion effects.
         for(ItemStackConfig.PotionEffectConfig potionEffectConfig : potionConfig.potionEffects()) {
             // Send a warning if the potion effect type name is null.
             if(potionEffectConfig.type() == null) {
-                logger.warn(AdventureUtil.serialize("Unable to parse potion effect type due to an invalid potion effect type name."));
+                logger.warn(AdventureUtil.deserialize("Unable to parse potion effect type due to an invalid potion effect type name."));
                 continue;
             }
 
             // Send a warning if the potion effect durationSeconds is null.
             if(potionEffectConfig.durationSeconds() == null) {
-                logger.warn(AdventureUtil.serialize("Missing durationSeconds for potion effect type: " + potionEffectConfig.type() + "."));
+                logger.warn(AdventureUtil.deserialize("Missing durationSeconds for potion effect type: " + potionEffectConfig.type() + "."));
                 continue;
             }
 
             // Send a warning if the potion effect amplifier is null.
             if(potionEffectConfig.amplifier() == null) {
-                logger.warn(AdventureUtil.serialize("Missing amplifier for potion effect type: " + potionEffectConfig.type() + "."));
+                logger.warn(AdventureUtil.deserialize("Missing amplifier for potion effect type: " + potionEffectConfig.type() + "."));
                 continue;
             }
 
@@ -268,7 +268,7 @@ public class ItemStackBuilder {
                 PotionEffect potionEffect = potionEffectType.createEffect(ticks, potionEffectConfig.amplifier());
                 // Add the created PotionEffect to the list of PotionEffects.
                 potionEffects.add(potionEffect);
-            }, () -> logger.error(AdventureUtil.serialize("Unable to get a PotionEffectType due to a configuration error.")));
+            }, () -> logger.error(AdventureUtil.deserialize("Unable to get a PotionEffectType due to a configuration error.")));
         }
 
         // Create the Color object to be applied to armor that can be dyed (i.e., leather).
@@ -300,7 +300,7 @@ public class ItemStackBuilder {
             try {
                 itemFlags.add(ItemFlag.valueOf(flagName));
             } catch(IllegalArgumentException ignored) {
-                logger.warn(AdventureUtil.serialize("Invalid item flag name: " + flagName + "."));
+                logger.warn(AdventureUtil.deserialize("Invalid item flag name: " + flagName + "."));
             }
         }
 
@@ -309,22 +309,22 @@ public class ItemStackBuilder {
         if(decoratedPot.frontSherd() != null) {
             frontSherd = Material.getMaterial(decoratedPot.frontSherd());
 
-            if(frontSherd == null) logger.warn(AdventureUtil.serialize("No front sherd Material found for: " + decoratedPot.frontSherd() + "."));
+            if(frontSherd == null) logger.warn(AdventureUtil.deserialize("No front sherd Material found for: " + decoratedPot.frontSherd() + "."));
         }
         if(decoratedPot.leftSherd() != null) {
             leftSherd = Material.getMaterial(decoratedPot.leftSherd());
 
-            if(leftSherd == null) logger.warn(AdventureUtil.serialize("No left sherd Material found for: " + decoratedPot.leftSherd() + "."));
+            if(leftSherd == null) logger.warn(AdventureUtil.deserialize("No left sherd Material found for: " + decoratedPot.leftSherd() + "."));
         }
         if(decoratedPot.rightSherd() != null) {
             rightSherd = Material.getMaterial(decoratedPot.rightSherd());
 
-            if(rightSherd == null) logger.warn(AdventureUtil.serialize("No right sherd Material found for: " + decoratedPot.rightSherd() + "."));
+            if(rightSherd == null) logger.warn(AdventureUtil.deserialize("No right sherd Material found for: " + decoratedPot.rightSherd() + "."));
         }
         if(decoratedPot.backSherd() != null) {
             backSherd = Material.getMaterial(decoratedPot.backSherd());
 
-            if(backSherd == null) logger.warn(AdventureUtil.serialize("No back sherd Material found for: " + decoratedPot.backSherd() + "."));
+            if(backSherd == null) logger.warn(AdventureUtil.deserialize("No back sherd Material found for: " + decoratedPot.backSherd() + "."));
         }
 
         // If an armor trim pattern and material are configured, attempt to create the ArmorTrim
@@ -336,14 +336,14 @@ public class ItemStackBuilder {
             if(optionalTrimPattern.isPresent() && optionalTrimMaterial.isPresent()) {
                 armorTrim = new ArmorTrim(optionalTrimMaterial.get(), optionalTrimPattern.get());
             } else if(optionalTrimPattern.isEmpty() && optionalTrimMaterial.isPresent()) {
-                logger.warn(AdventureUtil.serialize("Failed to create ArmorTrim as no valid armor trim pattern was found for: " + armorTrimConfig.trimPattern() + "."));
+                logger.warn(AdventureUtil.deserialize("Failed to create ArmorTrim as no valid armor trim pattern was found for: " + armorTrimConfig.trimPattern() + "."));
             } else if(optionalTrimPattern.isPresent()) {
-                logger.warn(AdventureUtil.serialize("Failed to create ArmorTrim as no valid armor trim material was found for: " + armorTrimConfig.trimMaterial() + "."));
+                logger.warn(AdventureUtil.deserialize("Failed to create ArmorTrim as no valid armor trim material was found for: " + armorTrimConfig.trimMaterial() + "."));
             }
         } else if(armorTrimConfig.trimPattern() == null && armorTrimConfig.trimMaterial() != null) {
-            logger.warn(AdventureUtil.serialize("No armor trim pattern configured, but an armor trim material was configured."));
+            logger.warn(AdventureUtil.deserialize("No armor trim pattern configured, but an armor trim material was configured."));
         } else if(armorTrimConfig.trimPattern() != null) {
-            logger.warn(AdventureUtil.serialize("No armor trim material configured, but an armor trim pattern was configured."));
+            logger.warn(AdventureUtil.deserialize("No armor trim material configured, but an armor trim pattern was configured."));
         }
 
         // If an instrument is configured, attempt to get the MusicInstrument for that name.
@@ -351,7 +351,7 @@ public class ItemStackBuilder {
             Optional<MusicInstrument> optionalMusicInstrument = RegistryUtil.getInstrument(logger, config.instrument());
             optionalMusicInstrument.ifPresentOrElse(
                     instrument -> this.instrument = instrument,
-                    () -> logger.warn(AdventureUtil.serialize("Failed to find an Instrument for the name: " + config.instrument() + ".")));
+                    () -> logger.warn(AdventureUtil.deserialize("Failed to find an Instrument for the name: " + config.instrument() + ".")));
         }
 
         // If any attributes are configured, parse the attribute config and add it to the attribute map.
@@ -359,19 +359,19 @@ public class ItemStackBuilder {
         for(ItemStackConfig.AttributeConfig attributeConfig : config.attributes()) {
             // If the attribute name is null, display a warning and process the next object in the list.
             if(attributeConfig.attribute() == null) {
-                logger.warn(AdventureUtil.serialize("Invalid attribute name."));
+                logger.warn(AdventureUtil.deserialize("Invalid attribute name."));
                 continue;
             }
 
             // If the attribute amount is null, display a warning and process the next object in the list.
             if(attributeConfig.amount() == null) {
-                logger.warn(AdventureUtil.serialize("Invalid attribute value."));
+                logger.warn(AdventureUtil.deserialize("Invalid attribute value."));
                 continue;
             }
 
             // If the attribute operation is null, display a warning and process the next object in the list.
             if(attributeConfig.operation() == null) {
-                logger.warn(AdventureUtil.serialize("Invalid attribute option name."));
+                logger.warn(AdventureUtil.deserialize("Invalid attribute option name."));
                 continue;
             }
 
@@ -382,7 +382,7 @@ public class ItemStackBuilder {
 
             // If the attribute is null, display a warning and process the next object in the list.
             if(attribute == null) {
-                logger.error(AdventureUtil.serialize("Unable to get an Attribute due to a configuration error."));
+                logger.error(AdventureUtil.deserialize("Unable to get an Attribute due to a configuration error."));
                 continue;
             }
 
@@ -392,7 +392,7 @@ public class ItemStackBuilder {
             try {
                 operation = AttributeModifier.Operation.valueOf(attributeConfig.operation());
             } catch (IllegalArgumentException ignored) {
-                logger.warn(AdventureUtil.serialize("Unable to find operation for operation name: " + attributeConfig.operation() + "."));
+                logger.warn(AdventureUtil.deserialize("Unable to find operation for operation name: " + attributeConfig.operation() + "."));
                 continue;
             }
 
@@ -403,7 +403,7 @@ public class ItemStackBuilder {
                 try {
                     equipmentSlot = EquipmentSlot.valueOf(attributeConfig.equipmentSlot());
                 } catch (IllegalArgumentException ignored) {
-                    logger.warn(AdventureUtil.serialize("Unable to find equipment slot for equipment slot name: " + attributeConfig.equipmentSlot() + "."));
+                    logger.warn(AdventureUtil.deserialize("Unable to find equipment slot for equipment slot name: " + attributeConfig.equipmentSlot() + "."));
                     continue;
                 }
             }
@@ -441,10 +441,10 @@ public class ItemStackBuilder {
         // Create a copy of the base ItemStack or create a new ItemStack using the ItemType. Handle any errors as needed.
         ItemStack itemStack;
         if(baseItemStack == null && itemType == null) {
-            logger.error(AdventureUtil.serialize("Unable to create an ItemStack due to an invalid base ItemStack or ItemType."));
+            logger.error(AdventureUtil.deserialize("Unable to create an ItemStack due to an invalid base ItemStack or ItemType."));
             return Optional.empty();
         } else if(itemType == null) {
-            logger.error(AdventureUtil.serialize("Unable to create an ItemStack due to an invalid ItemType."));
+            logger.error(AdventureUtil.deserialize("Unable to create an ItemStack due to an invalid ItemType."));
             return Optional.empty();
         } else {
             itemStack = Objects.requireNonNullElseGet(baseItemStack, () -> itemType.createItemStack(amount));
@@ -591,7 +591,7 @@ public class ItemStackBuilder {
         if(value == null) return false;
 
         if (value < 0 || value > 255) {
-            logger.warn(AdventureUtil.serialize("The " + colorName + " color value must be greater than or equal to 0 and less than or equal to 255."));
+            logger.warn(AdventureUtil.deserialize("The " + colorName + " color value must be greater than or equal to 0 and less than or equal to 255."));
             return false;
         }
 
@@ -604,7 +604,12 @@ public class ItemStackBuilder {
      * @return The current {@link ItemStackBuilder}.
      */
     private @NotNull ItemStackBuilder applyEnchantments(@NotNull ItemMeta itemMeta) {
-        enchantments.forEach((enchantment, level) -> itemMeta.addEnchant(enchantment, level, true));
+        if(itemMeta instanceof EnchantmentStorageMeta enchantmentStorageMeta) {
+            enchantments.forEach((enchantment, level) -> enchantmentStorageMeta.addStoredEnchant(enchantment, level, true));
+        } else {
+            enchantments.forEach((enchantment, level) -> itemMeta.addEnchant(enchantment, level, true));
+        }
+
         return this;
     }
 
@@ -664,7 +669,7 @@ public class ItemStackBuilder {
         if(amount >= 1 && amount <= maxSize) {
             this.amount = amount;
         } else {
-            logger.warn(AdventureUtil.serialize("Amount is limited to greater than or equal to 1 and less than or equal to " + maxSize + "."));
+            logger.warn(AdventureUtil.deserialize("Amount is limited to greater than or equal to 1 and less than or equal to " + maxSize + "."));
         }
 
         return this;
@@ -680,7 +685,7 @@ public class ItemStackBuilder {
         if(amount >= 1 && amount <= 99) {
             maxStackSize = amount;
         } else {
-            logger.warn(AdventureUtil.serialize("Max stack size is limited to greater than or equal to 1 and less than or equal to 99."));
+            logger.warn(AdventureUtil.deserialize("Max stack size is limited to greater than or equal to 1 and less than or equal to 99."));
         }
 
         return this;

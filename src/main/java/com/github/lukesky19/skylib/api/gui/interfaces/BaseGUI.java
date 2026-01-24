@@ -22,6 +22,8 @@
  */
 package com.github.lukesky19.skylib.api.gui.interfaces;
 
+import com.github.lukesky19.skylib.api.gui.abstracts.AbstractGUIManager;
+import com.github.lukesky19.skylib.api.gui.abstracts.ButtonGUI;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -32,9 +34,10 @@ import java.util.Optional;
 
 /**
  * This interface provides a base structure for the creation of other GUIs.
- * You should use {@link ButtonGUI} and {@link TradeGUI} unless you are creating a brand-new type of GUI.
+ * You should use {@link ButtonGUI} unless you are creating a brand-new type of GUI.
+ * @param <I> The identifier that this GUI is tied to. Used in conjunction with {@link AbstractGUIManager}.
  */
-public interface BaseGUI {
+public interface BaseGUI<I> {
     /**
      * Get the {@link InventoryView} associated with this GUI.
      * @return An {@link InventoryView}.

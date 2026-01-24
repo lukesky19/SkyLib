@@ -29,7 +29,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -38,10 +40,19 @@ import java.util.concurrent.CompletableFuture;
 /**
  * This class manages access to a database. Also provides the ability to backup a database.
  */
-public class AbstractDatabaseManager {
-    private final @NotNull AbstractConnectionManager connectionManager;
-    private final @NotNull QueueManager queueManager;
-    private @Nullable CompletableFuture<Void> backupTask;
+public abstract class AbstractDatabaseManager {
+    /**
+     * The {@link AbstractConnectionManager}.
+     */
+    protected final @NotNull AbstractConnectionManager connectionManager;
+    /**
+     * The {@link QueueManager}.
+     */
+    protected final @NotNull QueueManager queueManager;
+    /**
+     * A {@link CompletableFuture} for the backup task. Used to know when a backup is complete.
+     */
+    protected @Nullable CompletableFuture<Void> backupTask;
 
     /**
      * Constructor
@@ -122,7 +133,7 @@ public class AbstractDatabaseManager {
             return queueManager.shutdownQueue().thenCompose(v2 -> {
                 // Then close connections
                 connectionManager.closeConnections();
-                return null;
+                return CompletableFuture.completedFuture(null);
             });
         }
     }
