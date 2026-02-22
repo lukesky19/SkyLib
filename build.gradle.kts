@@ -29,6 +29,13 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
+
+    testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    testImplementation("com.github.lukesky19:SkyLib:1.4.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.14.1")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.21.0")
 }
 
 java {
@@ -49,6 +56,16 @@ tasks {
                 expand(props)
             }
         }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    compileTestJava {
+        dependsOn(shadowJar)
+        dependsOn(jar)
+        mustRunAfter(shadowJar)
     }
 
     shadowJar {

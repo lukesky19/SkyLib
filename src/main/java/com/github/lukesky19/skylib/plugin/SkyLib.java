@@ -24,7 +24,6 @@ package com.github.lukesky19.skylib.plugin;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skylib.api.common.abstracts.SkyPlugin;
-import com.github.lukesky19.skylib.api.player.PlayerUtil;
 import com.github.lukesky19.skylib.api.version.VersionUtil;
 import com.github.lukesky19.skylib.internal.ThreadPoolManager;
 import com.github.lukesky19.skylib.plugin.command.SkyLibCommand;
@@ -32,12 +31,8 @@ import com.github.lukesky19.skylib.plugin.settings.Settings;
 import com.github.lukesky19.skylib.plugin.settings.SettingsManager;
 import io.papermc.paper.ServerBuildInfo;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Entry point to the plugin.
@@ -56,30 +51,12 @@ public final class SkyLib extends SkyPlugin {
 
     @Override
     public void onEnable() {
-        ComponentLogger logger = this.getComponentLogger();
-
         // Get ServerBuildInfo and Minecraft version
         ServerBuildInfo build = ServerBuildInfo.buildInfo();
         String minecraftVersionId = build.minecraftVersionId();
 
-        // Store Minecraft Version
-        VersionUtil.setMinecraftVersion(minecraftVersionId);
-
-        // Attempt to parse the Minecraft version
-        Pattern pattern = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:-.*)?$");
-        Matcher matcher = pattern.matcher(minecraftVersionId);
-        if(matcher.find()) {
-            String major = matcher.group(2);
-            String minor = matcher.group(3);
-
-            // Store Minecraft Major and Minor Versions
-            VersionUtil.setMajorVersion(Integer.parseInt(major));
-            VersionUtil.setMinorVersion(Integer.parseInt(minor));
-        } else {
-            logger.error(AdventureUtil.deserialize("SkyLib was unable to parse your server's Minecraft version. Unrecognized version pattern: " + minecraftVersionId + "."));
-            this.getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
+        // Parse Minecraft Version
+        VersionUtil.parseVersion(minecraftVersionId);
 
         // Ensure SkyLib is running on Minecraft version 1.21.4 or newer.
         if(VersionUtil.getMajorVersion() < 21 || VersionUtil.getMinorVersion() < 4) {
@@ -97,7 +74,7 @@ public final class SkyLib extends SkyPlugin {
         // Load plugin settings and disable SkyLib if plugin settings fail to load.
         SettingsManager settingsManager = new SettingsManager(this);
         settingsManager.loadConfiguration();
-        @Nullable Settings settings = settingsManager.getConfiguration();
+        Settings settings = settingsManager.getConfiguration();
         if(settings == null) {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
@@ -105,9 +82,6 @@ public final class SkyLib extends SkyPlugin {
 
         // Initialize the ScheduledThreadPoolExecutor in ThreadPoolManager
         ThreadPoolManager.initializeThreadPool(settings);
-
-        // Initialize the PlayerProfile cache
-        PlayerUtil.init(this);
     }
 
     @Override
