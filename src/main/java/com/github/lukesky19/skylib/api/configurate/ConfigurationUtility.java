@@ -22,12 +22,29 @@
  */
 package com.github.lukesky19.skylib.api.configurate;
 
-import java.nio.file.Path;
+import com.github.lukesky19.skylib.internal.serializer.*;
+import org.bukkit.Material;
+import org.bukkit.MusicInstrument;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.BlockType;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemType;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
+import org.bukkit.inventory.meta.trim.TrimPattern;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.gson.GsonConfigurationLoader;
+import org.spongepowered.configurate.serialize.TypeSerializer;
+import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+
+import java.nio.file.Path;
 
 /**
  * Class that contains utilities for using Configurate to load configuration files.
@@ -52,6 +69,54 @@ public class ConfigurationUtility {
                 .nodeStyle(NodeStyle.BLOCK)
                 .path(path)
                 .indent(4)
+                .defaultOptions(configurationOptions ->
+                        configurationOptions.serializers(builder -> {
+                            builder.registerExact(AttributeModifier.Operation.class, new AttributeModifierOperationSerializer());
+                            builder.registerExact(Attribute.class, new AttributeSerializer());
+                            builder.registerExact(BlockType.class, new BlockTypeSerializer());
+                            builder.registerExact(Enchantment.class, new EnchantmentSerializer());
+                            builder.registerExact(EntityType.class, new EntityTypeSerializer());
+                            builder.registerExact(EquipmentSlot.class, new EquipmentSlotSerializer());
+                            builder.registerExact(ItemType.class, new ItemTypeSerializer());
+                            builder.registerExact(Material.class, new MaterialSerializer());
+                            builder.registerExact(MusicInstrument.class, new MusicInstrumentSerializer());
+                            builder.registerExact(PotionEffectType.class, new PotionEffectTypeSerializer());
+                            builder.registerExact(PotionType.class, new PotionTypeSerializer());
+                            builder.registerExact(TrimMaterial.class, new TrimMaterialSerializer());
+                            builder.registerExact(TrimPattern.class, new TrimPatternSerializer());
+                        }))
+                .build();
+    }
+
+    /**
+     * Get a {@link YamlConfigurationLoader} object for the given {@link Path}.
+     * @param path A {@link Path} to a file.
+     * @param serializerCollection The {@link TypeSerializerCollection} containing additional {@link TypeSerializer}s to add.
+     * @return A {@link YamlConfigurationLoader} for the given {@link Path}
+     */
+    @Contract("_, _ -> new")
+    public static @NotNull YamlConfigurationLoader getYamlConfigurationLoader(@NotNull Path path, @NotNull TypeSerializerCollection serializerCollection) {
+        return YamlConfigurationLoader.builder()
+                .nodeStyle(NodeStyle.BLOCK)
+                .path(path)
+                .indent(4)
+                .defaultOptions(configurationOptions ->
+                        configurationOptions.serializers(builder -> {
+                            builder.registerExact(AttributeModifier.Operation.class, new AttributeModifierOperationSerializer());
+                            builder.registerExact(Attribute.class, new AttributeSerializer());
+                            builder.registerExact(BlockType.class, new BlockTypeSerializer());
+                            builder.registerExact(Enchantment.class, new EnchantmentSerializer());
+                            builder.registerExact(EntityType.class, new EntityTypeSerializer());
+                            builder.registerExact(EquipmentSlot.class, new EquipmentSlotSerializer());
+                            builder.registerExact(ItemType.class, new ItemTypeSerializer());
+                            builder.registerExact(Material.class, new MaterialSerializer());
+                            builder.registerExact(MusicInstrument.class, new MusicInstrumentSerializer());
+                            builder.registerExact(PotionEffectType.class, new PotionEffectTypeSerializer());
+                            builder.registerExact(PotionType.class, new PotionTypeSerializer());
+                            builder.registerExact(TrimMaterial.class, new TrimMaterialSerializer());
+                            builder.registerExact(TrimPattern.class, new TrimPatternSerializer());
+                            builder.registerAll(serializerCollection);
+                        }))
                 .build();
     }
 
@@ -65,6 +130,53 @@ public class ConfigurationUtility {
         return GsonConfigurationLoader.builder()
                 .path(path)
                 .indent(4)
+                .defaultOptions(configurationOptions ->
+                        configurationOptions.serializers(builder -> {
+                            builder.registerExact(AttributeModifier.Operation.class, new AttributeModifierOperationSerializer());
+                            builder.registerExact(Attribute.class, new AttributeSerializer());
+                            builder.registerExact(BlockType.class, new BlockTypeSerializer());
+                            builder.registerExact(Enchantment.class, new EnchantmentSerializer());
+                            builder.registerExact(EntityType.class, new EntityTypeSerializer());
+                            builder.registerExact(EquipmentSlot.class, new EquipmentSlotSerializer());
+                            builder.registerExact(ItemType.class, new ItemTypeSerializer());
+                            builder.registerExact(Material.class, new MaterialSerializer());
+                            builder.registerExact(MusicInstrument.class, new MusicInstrumentSerializer());
+                            builder.registerExact(PotionEffectType.class, new PotionEffectTypeSerializer());
+                            builder.registerExact(PotionType.class, new PotionTypeSerializer());
+                            builder.registerExact(TrimMaterial.class, new TrimMaterialSerializer());
+                            builder.registerExact(TrimPattern.class, new TrimPatternSerializer());
+                        }))
+                .build();
+    }
+
+    /**
+     * Get a {@link GsonConfigurationLoader} object for the given {@link Path}.
+     * @param path A {@link Path} to a file.
+     * @param serializerCollection The {@link TypeSerializerCollection} containing additional {@link TypeSerializer}s to add.
+     * @return A {@link GsonConfigurationLoader} for the given {@link Path}
+     */
+    @Contract("_, _ -> new")
+    public static @NotNull GsonConfigurationLoader getGsonConfigurationLoader(@NotNull Path path,  @NotNull TypeSerializerCollection serializerCollection) {
+        return GsonConfigurationLoader.builder()
+                .path(path)
+                .indent(4)
+                .defaultOptions(configurationOptions ->
+                        configurationOptions.serializers(builder -> {
+                            builder.registerExact(AttributeModifier.Operation.class, new AttributeModifierOperationSerializer());
+                            builder.registerExact(Attribute.class, new AttributeSerializer());
+                            builder.registerExact(BlockType.class, new BlockTypeSerializer());
+                            builder.registerExact(Enchantment.class, new EnchantmentSerializer());
+                            builder.registerExact(EntityType.class, new EntityTypeSerializer());
+                            builder.registerExact(EquipmentSlot.class, new EquipmentSlotSerializer());
+                            builder.registerExact(ItemType.class, new ItemTypeSerializer());
+                            builder.registerExact(Material.class, new MaterialSerializer());
+                            builder.registerExact(MusicInstrument.class, new MusicInstrumentSerializer());
+                            builder.registerExact(PotionEffectType.class, new PotionEffectTypeSerializer());
+                            builder.registerExact(PotionType.class, new PotionTypeSerializer());
+                            builder.registerExact(TrimMaterial.class, new TrimMaterialSerializer());
+                            builder.registerExact(TrimPattern.class, new TrimPatternSerializer());
+                            builder.registerAll(serializerCollection);
+                        }))
                 .build();
     }
 }

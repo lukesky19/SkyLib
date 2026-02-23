@@ -23,6 +23,7 @@
 package com.github.lukesky19.skylib.api.itemstack;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.api.format.FormatUtil;
 import com.github.lukesky19.skylib.api.registry.RegistryUtil;
 import io.papermc.paper.potion.SuspiciousEffectEntry;
 import net.kyori.adventure.text.Component;
@@ -37,7 +38,6 @@ import org.bukkit.block.DecoratedPot;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ItemType;
@@ -46,7 +46,6 @@ import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.tag.DamageTypeTags;
 import org.jetbrains.annotations.NotNull;
@@ -133,10 +132,32 @@ public class ItemStackBuilder {
      * @param offlinePlayer An optional {@link OfflinePlayer} to use when parsing PlaceholderAPI placeholders when formatting an item's name and lore.
      * @param placeholders A list of placeholders to replace when formatting an item's name and lore.
      * @return The current {@link ItemStackBuilder}.
+     * @deprecated Use {@link #fromItemStackConfig(ItemStackConfig, OfflinePlayer, List)} instead. This method just calls that method.
      */
+    @Deprecated(forRemoval = true)
     public @NotNull ItemStackBuilder fromItemStackConfig(
             @NotNull ItemStackConfig config,
             @Nullable Player player,
+            @Nullable OfflinePlayer offlinePlayer,
+            @NotNull List<TagResolver.Single> placeholders) {
+        if(player != null) {
+            return fromItemStackConfig(config, player, placeholders);
+        } else if(offlinePlayer != null) {
+            return fromItemStackConfig(config, offlinePlayer, placeholders);
+        } else {
+            return fromItemStackConfig(config, null, placeholders);
+        }
+    }
+
+    /**
+     * Takes an {@link ItemStackConfig} record to parse and populate required information.
+     * @param config The {@link ItemStackConfig} to parse.
+     * @param offlinePlayer The {@link OfflinePlayer} to use when parsing PlaceholderAPI placeholders when formatting an item's name and lore. May be null
+     * @param placeholders A list of placeholders to replace when formatting an item's name and lore.
+     * @return The current {@link ItemStackBuilder}.
+     */
+    public @NotNull ItemStackBuilder fromItemStackConfig(
+            @NotNull ItemStackConfig config,
             @Nullable OfflinePlayer offlinePlayer,
             @NotNull List<TagResolver.Single> placeholders) {
         if(config.itemType() == null) {
@@ -145,14 +166,7 @@ public class ItemStackBuilder {
         }
 
         // Get the ItemType from the registry.
-        Optional<ItemType> optionalItemType = RegistryUtil.getItemType(logger, config.itemType());
-        // If the ItemType is present, set the class variable. Otherwise, display error and info messages.
-        optionalItemType.ifPresentOrElse(
-                itemType -> this.itemType = itemType,
-                () -> logger.error(AdventureUtil.deserialize("Unable to get a ItemType due to a configuration error.")));
-
-        // If the ItemType is null, exit the method.
-        if(itemType == null) return this;
+        this.itemType = config.itemType();
 
         // Check if the max stack size is configured.
         // If not, use the default ItemType's max stack size.
@@ -172,27 +186,12 @@ public class ItemStackBuilder {
 
         // Check if the configured amount is valid
         if(config.amount() != null) {
-            // Check if the configured amount is inside the valid bounds.
-            // If not, clamp the amount to be always valid and display a warning message.
-            if(config.amount() >= 1 && config.amount() <= maxStackSize) {
-                amount = config.amount();
-            } else {
-                logger.warn(AdventureUtil.deserialize("The amount is limited to greater than or equal to 1 and less than or equal to 99."));
-                logger.warn(AdventureUtil.deserialize("The amount will be clamped to it's min or max value."));
-                amount = Math.max(1, Math.min(maxStackSize, config.amount()));
-            }
+            this.amount = config.amount();
         }
 
         // Format the name and lore.
-        // The Player or Offline Player is used to parse any Adventure/MiniMessage placeholders or PlaceholderAPI placeholders.
-        if(player != null) {
-            // If a name is configured, format the name.
-            if(config.name() != null) name = AdventureUtil.deserialize(player, config.name(), placeholders);
-            // Format the lore.
-            lore = config.lore().stream().map(line -> AdventureUtil.deserialize(player, line, placeholders)).toList();
-
-            this.offlinePlayer = player;
-        } else if(offlinePlayer != null) {
+        // The Offline Player is used to parse any Adventure/MiniMessage placeholders or PlaceholderAPI placeholders.
+        if(offlinePlayer != null) {
             // If a name is configured, format the name.
             if(config.name() != null) name = AdventureUtil.deserialize(offlinePlayer, config.name(), placeholders);
             // Format the lore.
@@ -206,36 +205,29 @@ public class ItemStackBuilder {
             lore = config.lore().stream().map(line -> AdventureUtil.deserialize(line, placeholders)).toList();
         }
 
-        // Attempt to get the EntityType from the registry if an EntityType is configured.
         if(config.entityType() != null) {
-            @NotNull Optional<@NotNull EntityType> optionalEntityType = RegistryUtil.getEntityType(logger, config.entityType());
-            optionalEntityType.ifPresent(entityType -> this.entityType = entityType);
+            this.entityType = config.entityType();
         }
 
         // Validate and apply configured enchantments
         for(ItemStackConfig.EnchantmentConfig enchantmentConfig : config.enchantments()) {
             if(enchantmentConfig.enchantment() == null) {
-                logger.warn(AdventureUtil.deserialize("Unable to process enchantment due to a null enchantment name."));
+                logger.warn(AdventureUtil.deserialize("Unable to process enchantment due to a null enchantment."));
                 continue;
             }
 
             if(enchantmentConfig.level() == null) {
-                logger.warn(AdventureUtil.deserialize("Unable to process enchantment due to a missing enchantment level for enchantment: " + enchantmentConfig.enchantment() + "."));
+                logger.warn(AdventureUtil.deserialize("Unable to process enchantment due to a missing enchantment level for enchantment: " + FormatUtil.formatKey(enchantmentConfig.enchantment().getKey()) + "."));
                 continue;
             }
 
-            @NotNull Optional<@NotNull Enchantment> optionalEnchantment = RegistryUtil.getEnchantment(logger, enchantmentConfig.enchantment());
-            optionalEnchantment.ifPresent(enchantment -> enchantments.put(enchantment, enchantmentConfig.level()));
+            enchantments.put(enchantmentConfig.enchantment(), enchantmentConfig.level());
         }
 
         // Parse the PotionConfig
         ItemStackConfig.PotionConfig potionConfig = config.potionConfig();
-        // If a PotionType name is configured, attempt to get the PotionType from the registry.
         if(potionConfig.potionType() != null) {
-            @NotNull Optional<@NotNull PotionType> optionalPotionType = RegistryUtil.getPotionType(logger, potionConfig.potionType());
-            optionalPotionType.ifPresentOrElse(
-                    potionType -> this.potionType = potionType,
-                    () -> logger.error(AdventureUtil.deserialize("Unable to get a PotionType due to a configuration error.")));
+            this.potionType = potionConfig.potionType();
         }
 
         // Validate and apply any extra potion effects.
@@ -247,28 +239,25 @@ public class ItemStackBuilder {
             }
 
             // Send a warning if the potion effect durationSeconds is null.
-            if(potionEffectConfig.durationSeconds() == null) {
-                logger.warn(AdventureUtil.deserialize("Missing durationSeconds for potion effect type: " + potionEffectConfig.type() + "."));
+            if(potionEffectConfig.durationSeconds() == null || potionEffectConfig.durationSeconds() <= 0) {
+                logger.warn(AdventureUtil.deserialize("The duration seconds for potion effect type: " + potionEffectConfig.type() + " is null or less than or equal to 0."));
                 continue;
             }
 
             // Send a warning if the potion effect amplifier is null.
-            if(potionEffectConfig.amplifier() == null) {
-                logger.warn(AdventureUtil.deserialize("Missing amplifier for potion effect type: " + potionEffectConfig.type() + "."));
+            if(potionEffectConfig.amplifier() == null || potionEffectConfig.amplifier() < 0) {
+                logger.warn(AdventureUtil.deserialize("The amplifier for potion effect type: " + potionEffectConfig.type() + "is null or less than 0."));
                 continue;
             }
 
-            @NotNull Optional<@NotNull PotionEffectType> optionalPotionEffectType = RegistryUtil.getPotionEffectType(logger, potionEffectConfig.type());
-            optionalPotionEffectType.ifPresentOrElse(potionEffectType -> {
-                // Calculate the duration in ticks
-                double durationInTicks = (potionEffectConfig.durationSeconds() * 20);
-                // Convert the durationInTicks to an int
-                int ticks = (int) durationInTicks;
-                // Create the PotionEffect
-                PotionEffect potionEffect = potionEffectType.createEffect(ticks, potionEffectConfig.amplifier());
-                // Add the created PotionEffect to the list of PotionEffects.
-                potionEffects.add(potionEffect);
-            }, () -> logger.error(AdventureUtil.deserialize("Unable to get a PotionEffectType due to a configuration error.")));
+            // Calculate the duration in ticks
+            double durationInTicks = (potionEffectConfig.durationSeconds() * 20);
+            // Convert the durationInTicks to an int
+            int ticks = (int) durationInTicks;
+            // Create the PotionEffect
+            PotionEffect potionEffect = potionEffectConfig.type().createEffect(ticks, potionEffectConfig.amplifier());
+            // Add the created PotionEffect to the list of PotionEffects.
+            potionEffects.add(potionEffect);
         }
 
         // Create the Color object to be applied to armor that can be dyed (i.e., leather).
@@ -307,51 +296,31 @@ public class ItemStackBuilder {
         // If any sherds are configured, parse the Material names.
         ItemStackConfig.DecoratedPotConfig decoratedPot = config.decoratedPot();
         if(decoratedPot.frontSherd() != null) {
-            frontSherd = Material.getMaterial(decoratedPot.frontSherd());
-
-            if(frontSherd == null) logger.warn(AdventureUtil.deserialize("No front sherd Material found for: " + decoratedPot.frontSherd() + "."));
+            this.frontSherd = decoratedPot.frontSherd();
         }
         if(decoratedPot.leftSherd() != null) {
-            leftSherd = Material.getMaterial(decoratedPot.leftSherd());
-
-            if(leftSherd == null) logger.warn(AdventureUtil.deserialize("No left sherd Material found for: " + decoratedPot.leftSherd() + "."));
+            leftSherd = decoratedPot.leftSherd();
         }
         if(decoratedPot.rightSherd() != null) {
-            rightSherd = Material.getMaterial(decoratedPot.rightSherd());
-
-            if(rightSherd == null) logger.warn(AdventureUtil.deserialize("No right sherd Material found for: " + decoratedPot.rightSherd() + "."));
+            rightSherd = decoratedPot.rightSherd();
         }
         if(decoratedPot.backSherd() != null) {
-            backSherd = Material.getMaterial(decoratedPot.backSherd());
-
-            if(backSherd == null) logger.warn(AdventureUtil.deserialize("No back sherd Material found for: " + decoratedPot.backSherd() + "."));
+            backSherd = decoratedPot.backSherd();
         }
 
         // If an armor trim pattern and material are configured, attempt to create the ArmorTrim
         ItemStackConfig.ArmorTrimConfig armorTrimConfig = config.armorTrim();
         if(armorTrimConfig.trimPattern() != null && armorTrimConfig.trimMaterial() != null) {
-            Optional<TrimPattern> optionalTrimPattern = RegistryUtil.getTrimPattern(logger, armorTrimConfig.trimPattern());
-            Optional<TrimMaterial> optionalTrimMaterial = RegistryUtil.getTrimMaterial(logger, armorTrimConfig.trimMaterial());
-
-            if(optionalTrimPattern.isPresent() && optionalTrimMaterial.isPresent()) {
-                armorTrim = new ArmorTrim(optionalTrimMaterial.get(), optionalTrimPattern.get());
-            } else if(optionalTrimPattern.isEmpty() && optionalTrimMaterial.isPresent()) {
-                logger.warn(AdventureUtil.deserialize("Failed to create ArmorTrim as no valid armor trim pattern was found for: " + armorTrimConfig.trimPattern() + "."));
-            } else if(optionalTrimPattern.isPresent()) {
-                logger.warn(AdventureUtil.deserialize("Failed to create ArmorTrim as no valid armor trim material was found for: " + armorTrimConfig.trimMaterial() + "."));
-            }
+            armorTrim = new ArmorTrim(armorTrimConfig.trimMaterial(), armorTrimConfig.trimPattern());
         } else if(armorTrimConfig.trimPattern() == null && armorTrimConfig.trimMaterial() != null) {
             logger.warn(AdventureUtil.deserialize("No armor trim pattern configured, but an armor trim material was configured."));
         } else if(armorTrimConfig.trimPattern() != null) {
             logger.warn(AdventureUtil.deserialize("No armor trim material configured, but an armor trim pattern was configured."));
         }
 
-        // If an instrument is configured, attempt to get the MusicInstrument for that name.
+        // Instrument
         if(config.instrument() != null) {
-            Optional<MusicInstrument> optionalMusicInstrument = RegistryUtil.getInstrument(logger, config.instrument());
-            optionalMusicInstrument.ifPresentOrElse(
-                    instrument -> this.instrument = instrument,
-                    () -> logger.warn(AdventureUtil.deserialize("Failed to find an Instrument for the name: " + config.instrument() + ".")));
+            this.instrument = config.instrument();
         }
 
         // If any attributes are configured, parse the attribute config and add it to the attribute map.
@@ -359,7 +328,7 @@ public class ItemStackBuilder {
         for(ItemStackConfig.AttributeConfig attributeConfig : config.attributes()) {
             // If the attribute name is null, display a warning and process the next object in the list.
             if(attributeConfig.attribute() == null) {
-                logger.warn(AdventureUtil.deserialize("Invalid attribute name."));
+                logger.warn(AdventureUtil.deserialize("Invalid attribute."));
                 continue;
             }
 
@@ -371,55 +340,21 @@ public class ItemStackBuilder {
 
             // If the attribute operation is null, display a warning and process the next object in the list.
             if(attributeConfig.operation() == null) {
-                logger.warn(AdventureUtil.deserialize("Invalid attribute option name."));
+                logger.warn(AdventureUtil.deserialize("Invalid attribute operation."));
                 continue;
-            }
-
-            // Get the attribute from the registry.
-            Attribute attribute = null;
-            @NotNull Optional<Attribute> optionalAttribute = RegistryUtil.getAttribute(logger, attributeConfig.attribute());
-            if(optionalAttribute.isPresent()) attribute = optionalAttribute.get();
-
-            // If the attribute is null, display a warning and process the next object in the list.
-            if(attribute == null) {
-                logger.error(AdventureUtil.deserialize("Unable to get an Attribute due to a configuration error."));
-                continue;
-            }
-
-            // Attempt to get the operation for the attribute modifier.
-            // Displays a warning and then skips to process the next object in the list on an error.
-            AttributeModifier.Operation operation;
-            try {
-                operation = AttributeModifier.Operation.valueOf(attributeConfig.operation());
-            } catch (IllegalArgumentException ignored) {
-                logger.warn(AdventureUtil.deserialize("Unable to find operation for operation name: " + attributeConfig.operation() + "."));
-                continue;
-            }
-
-            // Attempt to get the equipment slot for the attribute modifier if configured.
-            EquipmentSlot equipmentSlot = null;
-            if(attributeConfig.equipmentSlot() != null) {
-                // Attempt to get the equipment slot or display a warning on error and then skips to process the next object in the list.
-                try {
-                    equipmentSlot = EquipmentSlot.valueOf(attributeConfig.equipmentSlot());
-                } catch (IllegalArgumentException ignored) {
-                    logger.warn(AdventureUtil.deserialize("Unable to find equipment slot for equipment slot name: " + attributeConfig.equipmentSlot() + "."));
-                    continue;
-                }
             }
 
             // Create the AttributeModifier.
             AttributeModifier attributeModifier;
-            // If a valid EquipmentSlot was created, create the modifier using that.
-            // Otherwise, create the modifier without one.
-            if(equipmentSlot != null) {
-                attributeModifier = new AttributeModifier(attribute.getKey(), amount, operation, equipmentSlot.getGroup());
+            // If the EquipmentSlot is valid, create the modifier using that. Otherwise, create the modifier without one.
+            if(attributeConfig.equipmentSlot() != null) {
+                attributeModifier = new AttributeModifier(attributeConfig.attribute().getKey(), amount, attributeConfig.operation(), attributeConfig.equipmentSlot().getGroup());
             } else {
-                attributeModifier = new AttributeModifier(attribute.getKey(), amount, operation);
+                attributeModifier = new AttributeModifier(attributeConfig.attribute().getKey(), amount, attributeConfig.operation());
             }
 
             // Add the attribute and attribute modifier to the attributes map.
-            attributes.put(attribute, attributeModifier);
+            attributes.put(attributeConfig.attribute(), attributeModifier);
         }
 
         // Apply any other configuration options.
@@ -647,30 +582,11 @@ public class ItemStackBuilder {
 
     /**
      * Set the amount of items in the {@link ItemStack}.
-     * The amount provided is validated to ensure it is {@literal >}= 1 and {@literal <}= the max stack size.
-     * The max stack size is selected in one of three ways:<br>
-     * 1. Against the {@link #maxStackSize} if configured.<br>
-     * 2. If not, it is validated against the {@link #itemType}'s default max stack size if configured.<br>
-     * 3. Otherwise, the value is validated against a maximum of 99. NOTE: This may change to log an error instead.<br>
      * @param amount The amount of items in the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
     public @NotNull ItemStackBuilder setAmount(int amount) {
-        int maxSize;
-
-        if(maxStackSize != null) {
-            maxSize = maxStackSize;
-        } else if(itemType != null) {
-            maxSize = itemType.getMaxStackSize();
-        } else {
-            maxSize = 99;
-        }
-
-        if(amount >= 1 && amount <= maxSize) {
-            this.amount = amount;
-        } else {
-            logger.warn(AdventureUtil.deserialize("Amount is limited to greater than or equal to 1 and less than or equal to " + maxSize + "."));
-        }
+        this.amount = amount;
 
         return this;
     }

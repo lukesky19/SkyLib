@@ -26,6 +26,7 @@ import org.bukkit.Material;
 import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
@@ -47,13 +48,13 @@ import java.util.List;
 
 /**
  * This record contains the data necessary to create an {@link ItemStack} using {@link ItemStackBuilder}.
- * @param itemType The {@link NamespacedKey} for an {@link ItemType} as a {@link String}. The format can be either {@code namespace:key} or just {@code key}.
+ * @param itemType The {@link ItemType}.
  * @param amount The amount of items in the {@link ItemStack}.
- * @param maxStackSize The maximium amount of items that can be in the {@link ItemStack}. This must be at greater than or equal to 1 and less than or equal to 99.
+ * @param maxStackSize The maximum amount of items that can be in the {@link ItemStack}. This must be at greater than or equal to 1 and less than or equal to 99.
  * @param name The name to give the {@link ItemStack} as a {@link String} with MiniMessage tags for formatting.
  * @param lore The lore to give the {@link ItemStack} as a {@link List} of {@link String}s with MiniMessage tags for formatting.
- * @param entityType The {@link NamespacedKey} for an {@link EntityType} as a {@link String} that may be associated with the {@link ItemStack}. Currently only applies to Spawners. The format can be either {@code namespace:key} or just {@code key}.
- * @param instrument The {@link NamespacedKey} for a {@link MusicInstrument} as a {@link String} that may be associated with the {@link ItemStack}. Currently only applies to goat horns. The format can be either {@code namespace:key} or just {@code key}.
+ * @param entityType The {@link EntityType} that may be associated with the {@link ItemStack}. Currently only applies to Spawners.
+ * @param instrument The {@link MusicInstrument} that may be associated with the {@link ItemStack}. Currently only applies to goat horns.
  * @param enchantments A {@link List} of {@link EnchantmentConfig}s that may be applied to the {@link ItemStack}.
  * @param potionConfig The {@link PotionConfig}.
  * @param color The {@link ColorConfig}.
@@ -66,13 +67,13 @@ import java.util.List;
  */
 @ConfigSerializable
 public record ItemStackConfig(
-        @Nullable String itemType,
+        @Nullable ItemType itemType,
         @Nullable Integer amount,
         @Nullable Integer maxStackSize,
         @Nullable String name,
         @NotNull List<String> lore,
-        @Nullable String entityType,
-        @Nullable String instrument,
+        @Nullable EntityType entityType,
+        @Nullable MusicInstrument instrument,
         @NotNull List<EnchantmentConfig> enchantments,
         @NotNull PotionConfig potionConfig,
         @NotNull ItemStackConfig.ColorConfig color,
@@ -84,34 +85,34 @@ public record ItemStackConfig(
         @NotNull OptionsConfig options) {
     /**
      * This record contains the information to create a potion {@link ItemStack}.
-     * @param potionType The {@link NamespacedKey} for a {@link PotionType} as a {@link String} that may be associated with the {@link ItemStack}. The format can be either {@code namespace:key} or just {@code key}.
+     * @param potionType The {@link PotionType} that may be associated with the {@link ItemStack}.
      * @param potionEffects A {@link List} of {@link PotionEffectConfig}s that may additionally be associated with the {@link ItemStack}.
      */
     @ConfigSerializable
     public record PotionConfig(
-            @Nullable String potionType,
+            @Nullable PotionType potionType,
             @NotNull List<PotionEffectConfig> potionEffects) {}
 
     /**
      * This record contains the information to create a {@link PotionEffect} to apply to a potion {@link ItemStack}
-     * @param type The {@link NamespacedKey} for a {@link PotionEffectType} as a {@link String}. The format can be either {@code namespace:key} or just {@code key}.
-     * @param durationSeconds The durationSeconds of the {@link PotionEffect} as an {@link Integer}.
+     * @param type The {@link PotionEffectType}.
+     * @param durationSeconds The duration in seconds of the {@link PotionEffect} as a {@link Double}.
      * @param amplifier The amplifier of the {@link PotionEffect} as an {@link Integer}.
      */
     @ConfigSerializable
     public record PotionEffectConfig(
-            @Nullable String type,
+            @Nullable PotionEffectType type,
             @Nullable Double durationSeconds,
             @Nullable Integer amplifier) {}
 
     /**
      * This record contains the information to create an {@link Enchantment} to apply to an {@link ItemStack}.
-     * @param enchantment The {@link NamespacedKey} for an {@link Enchantment} as a {@link String}. The format can be either {@code namespace:key} or just {@code key}.
+     * @param enchantment The {@link Enchantment}.
      * @param level The level of the {@link Enchantment} as an {@link Integer}.
      */
     @ConfigSerializable
     public record EnchantmentConfig(
-            @Nullable String enchantment,
+            @Nullable Enchantment enchantment,
             @Nullable Integer level) {}
 
     /**
@@ -141,36 +142,36 @@ public record ItemStackConfig(
     @ApiStatus.Experimental
     @ConfigSerializable
     public record DecoratedPotConfig(
-            @Nullable String frontSherd,
-            @Nullable String leftSherd,
-            @Nullable String rightSherd,
-            @Nullable String backSherd) {}
+            @Nullable Material frontSherd,
+            @Nullable Material leftSherd,
+            @Nullable Material rightSherd,
+            @Nullable Material backSherd) {}
 
     /**
      * This record contains the information for an {@link ArmorTrim} that may be applied to an {@link ItemStack}. Currently only used for armors.
-     * @param trimMaterial The {@link NamespacedKey} for a {@link TrimMaterial} as a {@link String}. The format can be either {@code namespace:key} or just {@code key}.
-     * @param trimPattern The {@link NamespacedKey} for a {@link TrimPattern} as a {@link String}. The format can be either {@code namespace:key} or just {@code key}.
+     * @param trimMaterial The {@link TrimMaterial}.
+     * @param trimPattern The {@link TrimPattern}.
      */
     @ConfigSerializable
     public record ArmorTrimConfig(
-            @Nullable String trimMaterial,
-            @Nullable String trimPattern) {}
+            @Nullable TrimMaterial trimMaterial,
+            @Nullable TrimPattern trimPattern) {}
 
     /**
      * This record contains the information to apply an {@link Attribute} to an {@link ItemStack}.
-     * @param attribute The {@link NamespacedKey} for an {@link Attribute} as a {@link String}. The format can be either {@code namespace:key} or just {@code key}.
+     * @param attribute The {@link Attribute}.
      * @param amount The amount associated with the {@link Attribute}.
-     * @param operation The {@link org.bukkit.attribute.AttributeModifier.Operation} as a {@link String} associated with the {@link Attribute}.
-     * @param equipmentSlot An optional {@link EquipmentSlot} as a {@link String} associated with the {@link Attribute}.
+     * @param operation The {@link org.bukkit.attribute.AttributeModifier.Operation} associated with the {@link Attribute}.
+     * @param equipmentSlot The {@link EquipmentSlot} associated with the {@link Attribute}.
      * @apiNote This is marked as experimental as this has been untested and may break when Minecraft updates.
      */
     @ApiStatus.Experimental
     @ConfigSerializable
     public record AttributeConfig(
-            @Nullable String attribute,
+            @Nullable Attribute attribute,
             @Nullable Double amount,
-            @Nullable String operation,
-            @Nullable String equipmentSlot) {}
+            @Nullable AttributeModifier.Operation operation,
+            @Nullable EquipmentSlot equipmentSlot) {}
 
     /**
      * Extra options that may be applied to an {@link ItemStack}.
