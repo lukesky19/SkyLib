@@ -26,8 +26,8 @@ import com.github.lukesky19.skylib.api.registry.RegistryUtil;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -51,7 +51,7 @@ public class EntityTypeSerializer implements TypeSerializer<EntityType> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public @Nullable EntityType deserialize(@NotNull Type type, @NotNull ConfigurationNode node) throws SerializationException {
+    public @Nullable EntityType deserialize(@NonNull Type type, @NonNull ConfigurationNode node) throws SerializationException {
         @Nullable String key = node.getString();
         if(key == null) return null;
 
@@ -66,7 +66,7 @@ public class EntityTypeSerializer implements TypeSerializer<EntityType> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public void serialize(@NotNull Type type, @Nullable EntityType entityType, @NotNull ConfigurationNode node) throws SerializationException {
+    public void serialize(@NonNull Type type, @Nullable EntityType entityType, @NonNull ConfigurationNode node) throws SerializationException {
         if(entityType == null) {
             node.raw(null);
             return;

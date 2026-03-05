@@ -24,7 +24,7 @@ package com.github.lukesky19.skylib.plugin;
 
 import io.papermc.paper.plugin.bootstrap.BootstrapContext;
 import io.papermc.paper.plugin.bootstrap.PluginBootstrap;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * The plugin's boostrap.
@@ -40,5 +40,5 @@ public final class SkyLibBootstrap implements PluginBootstrap {
      * @param bootstrapContext A {@link BootstrapContext}.
      */
     @Override
-    public void bootstrap(@NotNull BootstrapContext bootstrapContext) {}
+    public void bootstrap(@NonNull BootstrapContext bootstrapContext) {}
 }

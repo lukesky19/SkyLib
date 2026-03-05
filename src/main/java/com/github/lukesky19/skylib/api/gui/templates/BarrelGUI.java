@@ -23,14 +23,14 @@
 package com.github.lukesky19.skylib.api.gui.templates;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.gui.abstracts.ButtonGUI;
 import com.github.lukesky19.skylib.api.gui.GUIType;
+import com.github.lukesky19.skylib.api.gui.abstracts.ButtonGUI;
 import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +47,7 @@ public abstract class BarrelGUI<I> extends ButtonGUI<I> {
      * @param identifier The identifier that the GUI is tied to. Used in conjunction with {@link IGUIManager}.
      * @param player The {@link Player} associated with the created GUI.
      */
-    public BarrelGUI(@NotNull JavaPlugin plugin, @NotNull IGUIManager<I> guiManager, @NotNull I identifier, @NotNull Player player) {
+    public BarrelGUI(@NonNull JavaPlugin plugin, @NonNull IGUIManager<I> guiManager, @NonNull I identifier, @NonNull Player player) {
         super(plugin, guiManager, identifier, player);
     }
 
@@ -56,7 +56,7 @@ public abstract class BarrelGUI<I> extends ButtonGUI<I> {
      * @return An {@link Optional} containing an {@link InventoryView}. If empty, that means {@link #create(GUIType, String, List)} was not called.
      */
     @Override
-    public @NotNull Optional<@NotNull InventoryView> getInventoryView() {
+    public @NonNull Optional<@NonNull InventoryView> getInventoryView() {
         return Optional.ofNullable(inventoryView);
     }
 
@@ -68,7 +68,7 @@ public abstract class BarrelGUI<I> extends ButtonGUI<I> {
      * @return true if created successfully, otherwise false.
      */
     @Override
-    public boolean create(@NotNull GUIType guiType, @NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
+    public boolean create(@NonNull GUIType guiType, @NonNull String name, @NonNull List<TagResolver.Single> placeholders) {
         if(guiType != GUIType.BARREL) {
             logger.warn(AdventureUtil.deserialize("Unsupported GUIType provided."));
             return false;

@@ -22,8 +22,8 @@
  */
 package com.github.lukesky19.skylib.api.common.interfaces.data;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -38,32 +38,32 @@ public interface IKeyValueDataManager<K, V> {
      * @param identifier The {@link K} identifier.
      * @return The {@link V} data or null.
      */
-    @Nullable V getData(@NotNull K identifier);
+    @Nullable V getData(@NonNull K identifier);
 
     /**
      * Get the {@link Map} mapping {@link K} to {@link V}.
      * @return A {@link Map} mapping {@link K} to {@link V}.
      */
-    @NotNull Map<K, V> getAllData();
+    @NonNull Map<K, V> getAllData();
 
     /**
      * Store the {@link V} data for the {@link K} identifier.
      * @param identifier The {@link K} identifier.
      * @param data The {@link V} data.
      */
-    void setData(@NotNull K identifier, @NotNull V data);
+    void setData(@NonNull K identifier, @NonNull V data);
 
     /**
      * Remove the {@link V} data for the {@link K} identifier.
      * @param identifier The {@link K} identifier.
      */
-    void removeDataByIdentifier(@NotNull K identifier);
+    void removeDataByIdentifier(@NonNull K identifier);
 
     /**
      * Remove the {@link V} data provided from the map
      * @param data The data to remove.
      */
-    void removeDataByData(@NotNull V data);
+    void removeDataByData(@NonNull V data);
 
     /**
      * Clear all data.

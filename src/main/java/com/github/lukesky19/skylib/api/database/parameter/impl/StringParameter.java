@@ -23,7 +23,7 @@
 package com.github.lukesky19.skylib.api.database.parameter.impl;
 
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Takes a {@link String} and converts it to lowercase for storage in a database.
@@ -35,7 +35,7 @@ public class StringParameter implements Parameter<String> {
      * Stores a {@link String} that is made lowercase to later use to replace a parameter with.
      * @param string The {@link String} to make lowercase and store.
      */
-    public StringParameter(@NotNull String string) {
+    public StringParameter(@NonNull String string) {
         value = string.toLowerCase();
     }
 
@@ -44,7 +44,7 @@ public class StringParameter implements Parameter<String> {
      * @return A {@link String} to replace a parameter with.
      */
     @Override
-    public @NotNull String getValue() {
+    public @NonNull String getValue() {
         return value;
     }
 }

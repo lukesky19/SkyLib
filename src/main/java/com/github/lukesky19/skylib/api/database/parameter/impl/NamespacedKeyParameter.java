@@ -24,7 +24,7 @@ package com.github.lukesky19.skylib.api.database.parameter.impl;
 
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
 import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Takes a {@link NamespacedKey} and converts to a string for storage in a database.
@@ -36,7 +36,7 @@ public class NamespacedKeyParameter implements Parameter<String> {
      * Takes a {@link NamespacedKey} and converts it to a {@link String} to later use to replace a parameter with.
      * @param namespacedKey The {@link NamespacedKey} to convert to a {@link String}.
      */
-    public NamespacedKeyParameter(@NotNull NamespacedKey namespacedKey) {
+    public NamespacedKeyParameter(@NonNull NamespacedKey namespacedKey) {
         value = namespacedKey.toString();
     }
 
@@ -45,7 +45,7 @@ public class NamespacedKeyParameter implements Parameter<String> {
      * @return A {@link String} representing a {@link NamespacedKey} to replace a parameter with.
      */
     @Override
-    public @NotNull String getValue() {
+    public @NonNull String getValue() {
         return value;
     }
 }

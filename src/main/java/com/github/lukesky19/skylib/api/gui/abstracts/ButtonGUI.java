@@ -39,8 +39,8 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.view.builder.InventoryViewBuilder;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -55,32 +55,32 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
     /**
      * The plugin who is extending the abstract class to create a GUI.
      */
-    protected final @NotNull JavaPlugin plugin;
+    protected final @NonNull JavaPlugin plugin;
     /**
      * The plugin's {@link ComponentLogger} to log warnings or errors with.
      */
-    protected final @NotNull ComponentLogger logger;
+    protected final @NonNull ComponentLogger logger;
     /**
      * A class implementing {@link IGUIManager} that the plugin is using to track open GUIs with.
      */
-    protected final @NotNull IGUIManager<I> guiManager;
+    protected final @NonNull IGUIManager<I> guiManager;
     /**
      * The identifier that the GUI is tied to. Used in conjunction with {@link AbstractGUIManager}.
      */
-    protected final @NotNull I identifier;
+    protected final @NonNull I identifier;
 
     /**
      * The {@link Map} to store the mapping of slots to {@link GUIButton}s for.
      */
-    protected final @NotNull Map<Integer, GUIButton> slotButtons = new HashMap<>();
+    protected final @NonNull Map<Integer, GUIButton> slotButtons = new HashMap<>();
     /**
      * The {@link Player} to create the GUI for.
      */
-    protected final @NotNull Player player;
+    protected final @NonNull Player player;
     /**
      * The {@link UUID} of the {@link Player}.
      */
-    protected final @NotNull UUID uuid;
+    protected final @NonNull UUID uuid;
     /**
      * The {@link InventoryView} associated with this GUI.
      */
@@ -94,10 +94,10 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
      * @param player The {@link Player} associated with the created GUI.
      */
     public ButtonGUI(
-            @NotNull JavaPlugin plugin,
-            @NotNull IGUIManager<I> guiManager,
-            @NotNull I identifier,
-            @NotNull Player player) {
+            @NonNull JavaPlugin plugin,
+            @NonNull IGUIManager<I> guiManager,
+            @NonNull I identifier,
+            @NonNull Player player) {
         this.plugin = plugin;
         this.logger = plugin.getComponentLogger();
         this.guiManager = guiManager;
@@ -111,7 +111,7 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
      * @return An {@link Optional} containing an {@link InventoryView}. If empty, that means {@link #create(GUIType, String, List)} was not called.
      */
     @Override
-    public @NotNull Optional<@NotNull InventoryView> getInventoryView() {
+    public @NonNull Optional<@NonNull InventoryView> getInventoryView() {
         return Optional.ofNullable(inventoryView);
     }
 
@@ -122,9 +122,9 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
      * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
      * @return true if created successfully, otherwise false.
      */
-    public boolean create(@NotNull GUIType guiType, @NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
+    public boolean create(@NonNull GUIType guiType, @NonNull String name, @NonNull List<TagResolver.Single> placeholders) {
         // Create the InventoryViewBuilder
-        InventoryViewBuilder<@NotNull InventoryView> inventoryViewBuilder = guiType.getMenuType().typed().builder();
+        InventoryViewBuilder<@NonNull InventoryView> inventoryViewBuilder = guiType.getMenuType().typed().builder();
 
         // Set the title of the InventoryView/GUI
         inventoryViewBuilder.title(AdventureUtil.deserialize(player, name, placeholders));
@@ -247,7 +247,7 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
      * @param inventoryCloseEvent An {@link InventoryCloseEvent}.
      */
     @Override
-    public void handleClose(@NotNull InventoryCloseEvent inventoryCloseEvent) {
+    public void handleClose(@NonNull InventoryCloseEvent inventoryCloseEvent) {
         if(inventoryCloseEvent.getReason().equals(InventoryCloseEvent.Reason.UNLOADED) 
                 || inventoryCloseEvent.getReason().equals(InventoryCloseEvent.Reason.OPEN_NEW)) return;
 
@@ -261,22 +261,22 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
      * @param inventoryDragEvent An {@link InventoryDragEvent}.
      */
     @Override
-    public void handleTopDrag(@NotNull InventoryDragEvent inventoryDragEvent) {
+    public void handleTopDrag(@NonNull InventoryDragEvent inventoryDragEvent) {
         inventoryDragEvent.setCancelled(true);
     }
 
     @Override
-    public abstract void handleBottomDrag(@NotNull InventoryDragEvent inventoryDragEvent);
+    public abstract void handleBottomDrag(@NonNull InventoryDragEvent inventoryDragEvent);
 
     @Override
-    public abstract void handleGlobalDrag(@NotNull InventoryDragEvent inventoryDragEvent);
+    public abstract void handleGlobalDrag(@NonNull InventoryDragEvent inventoryDragEvent);
 
     /**
      * Cancels any click events for slots that have associated buttons and calls the button's action.
      * @param inventoryClickEvent An {@link InventoryClickEvent}
      */
     @Override
-    public void handleTopClick(@NotNull InventoryClickEvent inventoryClickEvent) {
+    public void handleTopClick(@NonNull InventoryClickEvent inventoryClickEvent) {
         int slot = inventoryClickEvent.getSlot();
 
         GUIButton button = slotButtons.get(slot);
@@ -287,10 +287,10 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
     }
 
     @Override
-    public abstract void handleBottomClick(@NotNull InventoryClickEvent inventoryClickEvent);
+    public abstract void handleBottomClick(@NonNull InventoryClickEvent inventoryClickEvent);
 
     @Override
-    public abstract void handleGlobalClick(@NotNull InventoryClickEvent inventoryClickEvent);
+    public abstract void handleGlobalClick(@NonNull InventoryClickEvent inventoryClickEvent);
 
     /**
      * Clear the {@link InventoryView} of all {@link ItemStack}s associated with {@link GUIButton}s.
@@ -339,7 +339,7 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
      * @param button The {@link GUIButton} for the given slot.
      * @return true if successful, otherwise false.
      */
-    public boolean setButton(int slot, @NotNull GUIButton button) {
+    public boolean setButton(int slot, @NonNull GUIButton button) {
         if(inventoryView == null) {
             logger.warn(AdventureUtil.deserialize("Unable to add the slot and button to the button mapping as the InventoryView was not created."));
             return false;
@@ -361,7 +361,7 @@ public abstract class ButtonGUI<I> implements BaseGUI<I> {
      * @param buttonMap The mapping of slots and {@link GUIButton}s.
      * @return true if successful, otherwise false.
      */
-    public boolean setButtons(@NotNull Map<Integer, GUIButton> buttonMap) {
+    public boolean setButtons(@NonNull Map<Integer, GUIButton> buttonMap) {
         if(clearButtons()) {
             slotButtons.putAll(buttonMap);
             return true;

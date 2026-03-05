@@ -28,8 +28,8 @@ import io.papermc.paper.registry.RegistryKey;
 import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -53,7 +53,7 @@ public class MusicInstrumentSerializer implements TypeSerializer<MusicInstrument
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public @Nullable MusicInstrument deserialize(@NotNull Type type, @NotNull ConfigurationNode node) throws SerializationException {
+    public @Nullable MusicInstrument deserialize(@NonNull Type type, @NonNull ConfigurationNode node) throws SerializationException {
         @Nullable String key = node.getString();
         if(key == null) return null;
 
@@ -68,7 +68,7 @@ public class MusicInstrumentSerializer implements TypeSerializer<MusicInstrument
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public void serialize(@NotNull Type type, @Nullable MusicInstrument musicInstrument, @NotNull ConfigurationNode node) throws SerializationException {
+    public void serialize(@NonNull Type type, @Nullable MusicInstrument musicInstrument, @NonNull ConfigurationNode node) throws SerializationException {
         if(musicInstrument == null) {
             node.raw(null);
             return;

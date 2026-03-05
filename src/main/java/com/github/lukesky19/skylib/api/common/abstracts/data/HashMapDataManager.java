@@ -24,8 +24,8 @@ package com.github.lukesky19.skylib.api.common.abstracts.data;
 
 import com.github.lukesky19.skylib.api.common.interfaces.data.IKeyValueDataManager;
 import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public abstract class HashMapDataManager<K, V> implements IKeyValueDataManager<K
     /**
      * The {@link Map} that stores the data using {@link K} as the key and {@link V} as the value.
      */
-    protected final @NotNull Map<K, V> dataMap = new HashMap<>();
+    protected final @NonNull Map<K, V> dataMap = new HashMap<>();
 
     /**
      * Constructor
@@ -52,7 +52,7 @@ public abstract class HashMapDataManager<K, V> implements IKeyValueDataManager<K
      * @return The {@link V} data or null.
      */
     @Override
-    public @Nullable V getData(@NotNull K identifier) {
+    public @Nullable V getData(@NonNull K identifier) {
         return dataMap.get(identifier);
     }
 
@@ -61,7 +61,7 @@ public abstract class HashMapDataManager<K, V> implements IKeyValueDataManager<K
      * @return A {@link Map} mapping {@link K} to {@link V}.
      */
     @Override
-    public @NotNull Map<K, V> getAllData() {
+    public @NonNull Map<K, V> getAllData() {
         return ImmutableMap.copyOf(dataMap);
     }
 
@@ -71,7 +71,7 @@ public abstract class HashMapDataManager<K, V> implements IKeyValueDataManager<K
      * @param data The {@link V} data.
      */
     @Override
-    public void setData(@NotNull K identifier, @NotNull V data) {
+    public void setData(@NonNull K identifier, @NonNull V data) {
         dataMap.put(identifier, data);
     }
 
@@ -80,7 +80,7 @@ public abstract class HashMapDataManager<K, V> implements IKeyValueDataManager<K
      * @param identifier The {@link K} identifier.
      */
     @Override
-    public void removeDataByIdentifier(@NotNull K identifier) {
+    public void removeDataByIdentifier(@NonNull K identifier) {
         dataMap.remove(identifier);
     }
 
@@ -89,7 +89,7 @@ public abstract class HashMapDataManager<K, V> implements IKeyValueDataManager<K
      * @param data The data to remove.
      */
     @Override
-    public void removeDataByData(@NotNull V data) {
+    public void removeDataByData(@NonNull V data) {
         dataMap.values().removeIf(iteratorData -> iteratorData.equals(data));
     }
 

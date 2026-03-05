@@ -23,7 +23,7 @@
 package com.github.lukesky19.skylib.api.database.parameter.impl;
 
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Takes an {@link Double} to store inside a database. No processing is done to the {@link Double}.
@@ -35,7 +35,7 @@ public class DoubleParameter implements Parameter<Double> {
      * Stores a {@link Double} to later use to replace a parameter with.
      * @param number The number to replace a parameter with.
      */
-    public DoubleParameter(@NotNull Double number) {
+    public DoubleParameter(@NonNull Double number) {
         value = number;
     }
 
@@ -44,7 +44,7 @@ public class DoubleParameter implements Parameter<Double> {
      * @return A {@link Double} to replace a parameter with.
      */
     @Override
-    public @NotNull Double getValue() {
+    public @NonNull Double getValue() {
         return value;
     }
 }

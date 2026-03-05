@@ -25,8 +25,8 @@ package com.github.lukesky19.skylib.plugin.settings;
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skylib.api.common.abstracts.config.SimpleConfigManager;
 import com.github.lukesky19.skylib.plugin.SkyLib;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -39,7 +39,7 @@ public class SettingsManager extends SimpleConfigManager<Settings> {
      * Constructor
      * @param skyLib The plugin's main instance.
      */
-    public SettingsManager(@NotNull SkyLib skyLib) {
+    public SettingsManager(@NonNull SkyLib skyLib) {
         super(skyLib, Path.of(skyLib.getDataFolder() + File.separator + "settings.yml"), Settings.class);
     }
 
@@ -49,8 +49,18 @@ public class SettingsManager extends SimpleConfigManager<Settings> {
     }
 
     @Override
-    public @NotNull Settings migrateConfiguration(@NotNull Settings configuration) {
-        return configuration;
+    public @Nullable Settings migrateConfiguration(@NonNull Settings configuration) {
+        switch(configuration.version()) {
+            // 0 -> 1
+            case 0 -> {
+                return new Settings(1, configuration.corePoolSize(), configuration.maxPoolSize(), configuration.timeoutTimeSeconds());
+            }
+
+            default -> {
+                logger.warn(AdventureUtil.deserialize("Failed to migrate settings.yml due to an unrecognized version: " + configuration.version()));
+                return null;
+            }
+        }
     }
 
     /**
@@ -61,6 +71,11 @@ public class SettingsManager extends SimpleConfigManager<Settings> {
     @Override
     public boolean validateConfiguration(@Nullable Settings settings) {
         if(settings == null) return false;
+
+        if(settings.version() < 0 || settings.version() > 1) {
+            logger.error(AdventureUtil.deserialize("The config version is not a recognized version."));
+            return false;
+        }
 
         if(settings.corePoolSize() < 0) {
             logger.error(AdventureUtil.deserialize("The core pool size must be greater than or equal to 0."));

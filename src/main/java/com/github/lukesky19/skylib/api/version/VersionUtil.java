@@ -22,7 +22,7 @@
  */
 package com.github.lukesky19.skylib.api.version;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Class that contains data about the server's Minecraft Version.
@@ -68,7 +68,7 @@ public class VersionUtil {
      * Sets the Minecraft version the server is running.
      * @param minecraftVersion The server's Minecraft version.
      */
-    public static void setMinecraftVersion(@NotNull String minecraftVersion) {
+    public static void setMinecraftVersion(@NonNull String minecraftVersion) {
         VersionUtil.minecraftVersion = minecraftVersion;
     }
 

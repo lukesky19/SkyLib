@@ -27,8 +27,8 @@ import com.github.lukesky19.skylib.api.common.abstracts.SkyPlugin;
 import com.github.lukesky19.skylib.api.common.interfaces.config.ISimpleConfigManager;
 import com.github.lukesky19.skylib.api.configurate.ConfigurationUtility;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -43,11 +43,11 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
     /**
      * The {@link SkyPlugin}.
      */
-    protected final @NotNull SkyPlugin plugin;
+    protected final @NonNull SkyPlugin plugin;
     /**
      * The {@link ComponentLogger} of the plugin.
      */
-    protected final @NotNull ComponentLogger logger;
+    protected final @NonNull ComponentLogger logger;
     /**
      * The {@link Path} the configuration is loaded from and saved to.
      */
@@ -55,7 +55,7 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
     /**
      * The class of the configuration being loaded.
      */
-    protected final @NotNull Class<C> configClass;
+    protected final @NonNull Class<C> configClass;
 
     /**
      * The configuration object.
@@ -69,9 +69,9 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
      * @param configClass The {@link Class} of the {@link C} configuration object.
      */
     public SimpleConfigManager(
-            @NotNull SkyPlugin plugin,
-            @NotNull Path configurationPath,
-            @NotNull Class<C> configClass) {
+            @NonNull SkyPlugin plugin,
+            @NonNull Path configurationPath,
+            @NonNull Class<C> configClass) {
         this.plugin = plugin;
         this.logger = plugin.getComponentLogger();
         this.configurationPath = configurationPath;
@@ -84,8 +84,8 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
      * @param configClass The {@link Class} of the {@link C} configuration object.
      */
     public SimpleConfigManager(
-            @NotNull SkyPlugin plugin,
-            @NotNull Class<C> configClass) {
+            @NonNull SkyPlugin plugin,
+            @NonNull Class<C> configClass) {
         this.plugin = plugin;
         this.logger = plugin.getComponentLogger();
         this.configClass = configClass;
@@ -96,7 +96,7 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
      * @param configurationPath A {@link Path}.
      */
     @Override
-    public void setConfigurationPath(@NotNull Path configurationPath) {
+    public void setConfigurationPath(@NonNull Path configurationPath) {
         this.configurationPath = configurationPath;
     }
 
@@ -131,7 +131,7 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
                 logger.warn(AdventureUtil.deserialize("Failed to load configuration. Class name: " + this.getClass().getName()));
                 return;
             }
-            @NotNull C preMigrationConfiguration = configuration;
+            C preMigrationConfiguration = configuration;
 
             // Migrate configuration
             configuration = migrateConfiguration(configuration);
@@ -161,14 +161,14 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
      * Save the configuration.
      */
     @Override
-    public void saveConfiguration(@NotNull C configuration) {
+    public void saveConfiguration(@NonNull C configuration) {
         if(configurationPath == null) {
             logger.error(AdventureUtil.deserialize("Unable to save the configuration because the configuration path was not set."));
             return;
         }
 
         try {
-            @NotNull YamlConfigurationLoader yamlConfigurationLoader = ConfigurationUtility.getYamlConfigurationLoader(configurationPath);
+            YamlConfigurationLoader yamlConfigurationLoader = ConfigurationUtility.getYamlConfigurationLoader(configurationPath);
 
             ConfigurationNode node = yamlConfigurationLoader.createNode();
 
@@ -188,9 +188,9 @@ public abstract class SimpleConfigManager<C> implements ISimpleConfigManager<C> 
     /**
      * Migrate the configuration.
      * @param configuration The configuration to migrate.
-     * @return V the migrated configuration.
+     * @return The migrated configuration.
      */
-    public abstract @Nullable C migrateConfiguration(@NotNull C configuration);
+    public abstract @Nullable C migrateConfiguration(@NonNull C configuration);
 
     /**
      * Validate the configuration in the class.

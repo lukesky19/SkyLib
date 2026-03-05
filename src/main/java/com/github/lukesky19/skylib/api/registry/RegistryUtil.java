@@ -39,8 +39,8 @@ import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -48,17 +48,17 @@ import java.util.Optional;
  * Utility class for retrieving various objects from their respective registries.
  */
 public class RegistryUtil {
-    private static @Nullable Registry<@NotNull ItemType> itemTypeRegistry;
-    private static @Nullable Registry<@NotNull BlockType> blockTypeRegistry;
-    private static @Nullable Registry<@NotNull EntityType> entityTypeRegistry;
-    private static @Nullable Registry<@NotNull PotionType> potionTypeRegistry;
-    private static @Nullable Registry<@NotNull PotionEffectType> potionEffectTypeRegistry;
-    private static @Nullable Registry<@NotNull Enchantment> enchantmentRegistry;
-    private static @Nullable Registry<@NotNull Attribute> attributeRegistry;
-    private static @Nullable Registry<@NotNull MusicInstrument> instrumentRegistry;
-    private static @Nullable Registry<@NotNull TrimPattern> trimPatternRegistry;
-    private static @Nullable Registry<@NotNull TrimMaterial> trimMaterialRegistry;
-    private static @Nullable Registry<@NotNull Particle> particleRegistry;
+    private static @Nullable Registry<@NonNull ItemType> itemTypeRegistry;
+    private static @Nullable Registry<@NonNull BlockType> blockTypeRegistry;
+    private static @Nullable Registry<@NonNull EntityType> entityTypeRegistry;
+    private static @Nullable Registry<@NonNull PotionType> potionTypeRegistry;
+    private static @Nullable Registry<@NonNull PotionEffectType> potionEffectTypeRegistry;
+    private static @Nullable Registry<@NonNull Enchantment> enchantmentRegistry;
+    private static @Nullable Registry<@NonNull Attribute> attributeRegistry;
+    private static @Nullable Registry<@NonNull MusicInstrument> instrumentRegistry;
+    private static @Nullable Registry<@NonNull TrimPattern> trimPatternRegistry;
+    private static @Nullable Registry<@NonNull TrimMaterial> trimMaterialRegistry;
+    private static @Nullable Registry<@NonNull Particle> particleRegistry;
 
     /**
      * All methods in this class are static so this constructor will throw a runtime exception if used.
@@ -74,7 +74,7 @@ public class RegistryUtil {
      * @param name The name of the key or the name with a namespace and key following the namespace:key format.
      * @return An {@link Optional} containing a {@link NamespacedKey} if one was created successfully. May be empty if the NamespacedKey fails to be created.
      */
-    public static @NotNull Optional<NamespacedKey> createNamespacedKey(@NotNull String name) {
+    public static @NonNull Optional<NamespacedKey> createNamespacedKey(@NonNull String name) {
         if(name.contains(":")) {
             return Optional.ofNullable(NamespacedKey.fromString(name));
         } else {
@@ -88,7 +88,7 @@ public class RegistryUtil {
      * @param key The key of the {@link ItemType} to retrieve.
      * @return An {@link Optional} containing the {@link ItemType}.
      */
-    public static @NotNull Optional<ItemType> getItemType(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<ItemType> getItemType(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<ItemType> optionalItemType = getItemType(key);
         if(optionalItemType.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find a ItemType for the NamespacedKey: " + key));
@@ -103,10 +103,10 @@ public class RegistryUtil {
      * @param key The key of the {@link ItemType} to retrieve or null.
      * @return An {@link Optional} containing the {@link ItemType}.
      */
-    public static @NotNull Optional<ItemType> getItemType(@NotNull String key) {
+    public static @NonNull Optional<ItemType> getItemType(@NonNull String key) {
         if(itemTypeRegistry == null) itemTypeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ITEM);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(itemTypeRegistry.get(namespacedKey));
@@ -121,7 +121,7 @@ public class RegistryUtil {
      * @param key The key of the {@link BlockType} to retrieve.
      * @return An {@link Optional} containing the {@link BlockType}.
      */
-    public static @NotNull Optional<BlockType> getBlockType(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<BlockType> getBlockType(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<BlockType> optionalBlockType = getBlockType(key);
         if(optionalBlockType.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find a BlockType for the NamespacedKey: " + key));
@@ -136,10 +136,10 @@ public class RegistryUtil {
      * @param key The name of the {@link BlockType} to retrieve.
      * @return An {@link Optional} containing the {@link BlockType}.
      */
-    public static @NotNull Optional<BlockType> getBlockType(@NotNull String key) {
+    public static @NonNull Optional<BlockType> getBlockType(@NonNull String key) {
         if(blockTypeRegistry == null) blockTypeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.BLOCK);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(blockTypeRegistry.get(namespacedKey));
@@ -154,7 +154,7 @@ public class RegistryUtil {
      * @param key The key of the {@link EntityType} to retrieve or null.
      * @return An {@link Optional} containing the {@link EntityType}.
      */
-    public static @NotNull Optional<EntityType> getEntityType(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<EntityType> getEntityType(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<EntityType> optionalEntityType = getEntityType(key);
         if(optionalEntityType.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find a EntityType for the NamespacedKey: " + key));
@@ -169,10 +169,10 @@ public class RegistryUtil {
      * @param key The key of the {@link EntityType} to retrieve or null.
      * @return An {@link Optional} containing the {@link EntityType}.
      */
-    public static @NotNull Optional<EntityType> getEntityType(@NotNull String key) {
+    public static @NonNull Optional<EntityType> getEntityType(@NonNull String key) {
         if(entityTypeRegistry == null) entityTypeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENTITY_TYPE);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(entityTypeRegistry.get(namespacedKey));
@@ -187,7 +187,7 @@ public class RegistryUtil {
      * @param key The key of the {@link PotionType} to retrieve or null.
      * @return An {@link Optional} containing the {@link PotionType}.
      */
-    public static @NotNull Optional<PotionType> getPotionType(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<PotionType> getPotionType(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<PotionType> optionalPotionType = getPotionType(key);
         if(optionalPotionType.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find a PotionType for the NamespacedKey: " + key));
@@ -202,10 +202,10 @@ public class RegistryUtil {
      * @param key The key of the {@link PotionType} to retrieve or null.
      * @return An {@link Optional} containing the {@link PotionType}.
      */
-    public static @NotNull Optional<PotionType> getPotionType(@NotNull String key) {
+    public static @NonNull Optional<PotionType> getPotionType(@NonNull String key) {
         if(potionTypeRegistry == null) potionTypeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.POTION);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(potionTypeRegistry.get(namespacedKey));
@@ -220,7 +220,7 @@ public class RegistryUtil {
      * @param key The key of the {@link PotionEffectType} to retrieve.
      * @return An {@link Optional} containing the {@link PotionEffectType}.
      */
-    public static @NotNull Optional<PotionEffectType> getPotionEffectType(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<PotionEffectType> getPotionEffectType(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<PotionEffectType> optionalPotionEffectType = getPotionEffectType(key);
         if(optionalPotionEffectType.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find a PotionEffectType for the NamespacedKey: " + key));
@@ -235,10 +235,10 @@ public class RegistryUtil {
      * @param key The key of the {@link PotionEffectType} to retrieve.
      * @return An {@link Optional} containing the {@link PotionEffectType}.
      */
-    public static @NotNull Optional<PotionEffectType> getPotionEffectType(@NotNull String key) {
+    public static @NonNull Optional<PotionEffectType> getPotionEffectType(@NonNull String key) {
         if(potionEffectTypeRegistry == null) potionEffectTypeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.MOB_EFFECT);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(potionEffectTypeRegistry.get(namespacedKey));
@@ -253,7 +253,7 @@ public class RegistryUtil {
      * @param key The key of the {@link Enchantment} to retrieve or null.
      * @return An {@link Optional} containing the {@link Enchantment}.
      */
-    public static @NotNull Optional<Enchantment> getEnchantment(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<Enchantment> getEnchantment(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<Enchantment> optionalEnchantment = getEnchantment(key);
         if(optionalEnchantment.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find a Enchantment for the NamespacedKey: " + key));
@@ -268,10 +268,10 @@ public class RegistryUtil {
      * @param key The key of the {@link Enchantment} to retrieve or null.
      * @return An {@link Optional} containing the {@link Enchantment}.
      */
-    public static @NotNull Optional<Enchantment> getEnchantment(@NotNull String key) {
+    public static @NonNull Optional<Enchantment> getEnchantment(@NonNull String key) {
         if(enchantmentRegistry == null) enchantmentRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(enchantmentRegistry.get(namespacedKey));
@@ -286,7 +286,7 @@ public class RegistryUtil {
      * @param key The key of the {@link Attribute} to retrieve.
      * @return An {@link Optional} containing the {@link Attribute}.
      */
-    public static @NotNull Optional<Attribute> getAttribute(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<Attribute> getAttribute(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<Attribute> optionalAttribute = getAttribute(key);
         if(optionalAttribute.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find a Attribute for the NamespacedKey: " + key));
@@ -301,10 +301,10 @@ public class RegistryUtil {
      * @param key The key of the {@link Attribute} to retrieve.
      * @return An {@link Optional} containing the {@link Attribute}.
      */
-    public static @NotNull Optional<Attribute> getAttribute(@NotNull String key) {
+    public static @NonNull Optional<Attribute> getAttribute(@NonNull String key) {
         if(attributeRegistry == null) attributeRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ATTRIBUTE);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(attributeRegistry.get(namespacedKey));
@@ -319,7 +319,7 @@ public class RegistryUtil {
      * @param key The key of the {@link MusicInstrument} to retrieve.
      * @return An {@link Optional} containing the {@link MusicInstrument}.
      */
-    public static @NotNull Optional<MusicInstrument> getInstrument(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<MusicInstrument> getInstrument(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<MusicInstrument> optionalMusicInstrument = getInstrument(key);
         if(optionalMusicInstrument.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find an instrument for the NamespacedKey: " + key));
@@ -334,10 +334,10 @@ public class RegistryUtil {
      * @param key The key of the {@link MusicInstrument} to retrieve.
      * @return An {@link Optional} containing the {@link MusicInstrument}.
      */
-    public static @NotNull Optional<MusicInstrument> getInstrument(@NotNull String key) {
+    public static @NonNull Optional<MusicInstrument> getInstrument(@NonNull String key) {
         if(instrumentRegistry == null) instrumentRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.INSTRUMENT);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(instrumentRegistry.get(namespacedKey));
@@ -352,7 +352,7 @@ public class RegistryUtil {
      * @param key The name of the {@link TrimPattern} to retrieve.
      * @return An {@link Optional} containing the {@link TrimPattern}.
      */
-    public static @NotNull Optional<TrimPattern> getTrimPattern(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<TrimPattern> getTrimPattern(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<TrimPattern> optionalTrimPattern = getTrimPattern(key);
         if(optionalTrimPattern.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find an armor trim pattern for the NamespacedKey: " + key));
@@ -367,10 +367,10 @@ public class RegistryUtil {
      * @param key The name of the {@link TrimPattern} to retrieve.
      * @return An {@link Optional} containing the {@link TrimPattern}.
      */
-    public static @NotNull Optional<TrimPattern> getTrimPattern(@NotNull String key) {
+    public static @NonNull Optional<TrimPattern> getTrimPattern(@NonNull String key) {
         if(trimPatternRegistry == null) trimPatternRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.TRIM_PATTERN);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(trimPatternRegistry.get(namespacedKey));
@@ -385,7 +385,7 @@ public class RegistryUtil {
      * @param key The name of the {@link TrimMaterial} to retrieve.
      * @return An {@link Optional} containing the {@link TrimMaterial}.
      */
-    public static @NotNull Optional<TrimMaterial> getTrimMaterial(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<TrimMaterial> getTrimMaterial(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<TrimMaterial> optionalTrimMaterial = getTrimMaterial(key);
         if(optionalTrimMaterial.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find an armor trim material for the NamespacedKey: " + key));
@@ -400,10 +400,10 @@ public class RegistryUtil {
      * @param key The name of the {@link TrimMaterial} to retrieve.
      * @return An {@link Optional} containing the {@link TrimMaterial}.
      */
-    public static @NotNull Optional<TrimMaterial> getTrimMaterial(@NotNull String key) {
+    public static @NonNull Optional<TrimMaterial> getTrimMaterial(@NonNull String key) {
         if(trimMaterialRegistry == null) trimMaterialRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.TRIM_MATERIAL);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(trimMaterialRegistry.get(namespacedKey));
@@ -418,7 +418,7 @@ public class RegistryUtil {
      * @param key The key of the {@link Particle} to retrieve.
      * @return An {@link Optional} containing the {@link Particle}.
      */
-    public static @NotNull Optional<@NotNull Particle> getParticle(@NotNull ComponentLogger logger, @NotNull String key) {
+    public static @NonNull Optional<@NonNull Particle> getParticle(@NonNull ComponentLogger logger, @NonNull String key) {
         Optional<Particle> optionalParticle = getParticle(key);
         if(optionalParticle.isEmpty()) {
             logger.warn(AdventureUtil.deserialize("Failed to find a particle for the NamespacedKey: " + key));
@@ -433,10 +433,10 @@ public class RegistryUtil {
      * @param key The key of the {@link Particle} to retrieve.
      * @return An {@link Optional} containing the {@link Particle}.
      */
-    public static @NotNull Optional<Particle> getParticle(@NotNull String key) {
+    public static @NonNull Optional<Particle> getParticle(@NonNull String key) {
         if(particleRegistry == null) particleRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.PARTICLE_TYPE);
 
-        @NotNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
+        @NonNull Optional<NamespacedKey> optionalNamespacedKey = createNamespacedKey(key.toLowerCase());
         if(optionalNamespacedKey.isPresent()) {
             NamespacedKey namespacedKey = optionalNamespacedKey.get();
             return Optional.ofNullable(particleRegistry.get(namespacedKey));

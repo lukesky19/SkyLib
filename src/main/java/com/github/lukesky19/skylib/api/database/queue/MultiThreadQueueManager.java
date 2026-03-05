@@ -23,18 +23,20 @@
 package com.github.lukesky19.skylib.api.database.queue;
 
 import com.github.lukesky19.skylib.api.database.connection.AbstractConnectionManager;
-import com.github.lukesky19.skylib.api.database.queue.util.RunnableUtil;
-import com.github.lukesky19.skylib.internal.ThreadPoolManager;
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
+import com.github.lukesky19.skylib.api.database.queue.util.RunnableUtil;
 import com.github.lukesky19.skylib.api.database.queue.util.Task;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.github.lukesky19.skylib.internal.ThreadPoolManager;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import java.sql.*;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -44,17 +46,17 @@ import java.util.function.Function;
  * You can use {@link SingleThreadQueueManager} to asynchronously read and write to a database in a synchronous manner.
  */
 public abstract class MultiThreadQueueManager implements QueueManager {
-    private final @NotNull AbstractConnectionManager connectionManager;
-    private final @NotNull ScheduledExecutorService executorService;
-    private final @NotNull List<CompletableFuture<?>> submittedTasksResults = new ArrayList<>();
+    private final @NonNull AbstractConnectionManager connectionManager;
+    private final @NonNull ScheduledExecutorService executorService;
+    private final @NonNull List<CompletableFuture<?>> submittedTasksResults = new ArrayList<>();
     private boolean pauseQueue = false;
-    private final @NotNull List<@NotNull Task> backupTaskQueue = new ArrayList<>();
+    private final @NonNull List<@NonNull Task> backupTaskQueue = new ArrayList<>();
 
     /**
      * Constructor that takes a class that extends {@link AbstractConnectionManager}.
      * @param connectionManager A class that extends {@link AbstractConnectionManager} to use.
      */
-    public MultiThreadQueueManager(@NotNull AbstractConnectionManager connectionManager) {
+    public MultiThreadQueueManager(@NonNull AbstractConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
         this.executorService = ThreadPoolManager.getThreadPoolExecutor();
     }
@@ -77,7 +79,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * You should use {@link #setQueueStatus(boolean)} with the boolean false after this method completes.
      */
     public void processBackupQueue() {
-        List<@NotNull Task> backupQueue = new ArrayList<>(backupTaskQueue);
+        List<@NonNull Task> backupQueue = new ArrayList<>(backupTaskQueue);
         backupTaskQueue.clear();
 
         backupQueue.forEach(task -> queueOrScheduleTask(task.runnable(), task.future(), task.time(), task.timeUnit()));
@@ -88,14 +90,14 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * You should use {@link #setQueueStatus(boolean)} with the boolean true to pause tasks being submitted to the {@link #executorService} before calling this method.
      * @return A {@link CompletableFuture} of type {@link Void}.
      */
-    public @NotNull CompletableFuture<Void> waitForQueueEmpty() {
+    public @NonNull CompletableFuture<Void> waitForQueueEmpty() {
         if(submittedTasksResults.isEmpty()) return CompletableFuture.completedFuture(null);
 
         return CompletableFuture.allOf(submittedTasksResults.toArray(new CompletableFuture[0]));
     }
 
     @Override
-    public @NotNull CompletableFuture<Void> shutdownQueue() {
+    public @NonNull CompletableFuture<Void> shutdownQueue() {
         return waitForQueueEmpty();
     }
 
@@ -106,7 +108,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param sql The sql statement to execute.
      * @return A {@link CompletableFuture} containing the number of rows updated if completed successfully. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<Integer> queueWriteTransaction(@NotNull String sql) {
+    public @NonNull CompletableFuture<Integer> queueWriteTransaction(@NonNull String sql) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, future);
@@ -130,7 +132,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param params A {@link List} of {@link Parameter}s in the order the parameters are written in the sql statement.
      * @return A {@link CompletableFuture} containing the number of rows updated if completed successfully. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<Integer> queueWriteTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params) {
+    public @NonNull CompletableFuture<Integer> queueWriteTransaction(@NonNull String sql, @NonNull List<Parameter<?>> params) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, future);
@@ -153,7 +155,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param sqlList The {@link List} of {@link String} representing sql statements.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NotNull List<String> sqlList) {
+    public @NonNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NonNull List<String> sqlList) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlList, future);
@@ -176,7 +178,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param sqlAndParamsMap The {@link Map} mapping sql statements to a {@link List} of {@link Parameter}s.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NotNull Map<String, List<Parameter<?>>> sqlAndParamsMap) {
+    public @NonNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NonNull Map<String, List<Parameter<?>>> sqlAndParamsMap) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlAndParamsMap, future);
@@ -200,7 +202,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param listOfParameterLists A {@link List} containing a {@link List} of {@link Parameter}s.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NotNull String sql, @NotNull List<List<Parameter<?>>> listOfParameterLists) {
+    public @NonNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NonNull String sql, @NonNull List<List<Parameter<?>>> listOfParameterLists) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sql, listOfParameterLists, future);
@@ -225,7 +227,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param timeUnit The {@link TimeUnit} of the delay.
      * @return A {@link CompletableFuture} containing the number of rows updated if completed successfully. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<Integer> scheduleWriteTransaction(@NotNull String sql, int delay, @NotNull TimeUnit timeUnit) {
+    public @NonNull CompletableFuture<Integer> scheduleWriteTransaction(@NonNull String sql, int delay, @NonNull TimeUnit timeUnit) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, future);
@@ -251,7 +253,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param timeUnit The {@link TimeUnit} of the delay.
      * @return A {@link CompletableFuture} containing the number of rows updated if completed successfully. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<Integer> scheduleWriteTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, int delay, @NotNull TimeUnit timeUnit) {
+    public @NonNull CompletableFuture<Integer> scheduleWriteTransaction(@NonNull String sql, @NonNull List<Parameter<?>> params, int delay, @NonNull TimeUnit timeUnit) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, future);
@@ -276,7 +278,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param timeUnit The {@link TimeUnit} of the delay.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NotNull List<String> sqlList, int delay, @NotNull TimeUnit timeUnit) {
+    public @NonNull CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NonNull List<String> sqlList, int delay, @NonNull TimeUnit timeUnit) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlList, future);
@@ -301,7 +303,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param timeUnit The {@link TimeUnit} of the delay.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NotNull Map<String, List<Parameter<?>>> sqlAndParamsMap, int delay, @NotNull TimeUnit timeUnit) {
+    public @NonNull CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NonNull Map<String, List<Parameter<?>>> sqlAndParamsMap, int delay, @NonNull TimeUnit timeUnit) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlAndParamsMap, future);
@@ -327,7 +329,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param timeUnit The {@link TimeUnit} of the delay.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NotNull String sql, @NotNull List<List<Parameter<?>>> listOfParameterLists, int delay, @NotNull TimeUnit timeUnit) {
+    public @NonNull CompletableFuture<List<Integer>> scheduleBulkWriteTransaction(@NonNull String sql, @NonNull List<List<Parameter<?>>> listOfParameterLists, int delay, @NonNull TimeUnit timeUnit) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sql, listOfParameterLists, future);
@@ -352,7 +354,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @return A {@link CompletableFuture} containing the desired value {@link T}. May complete exceptionally.
      * @param <T> The desired value to return after the mapping function is applied.
      */
-    public <T> @NotNull CompletableFuture<T> queueReadTransaction(@NotNull String sql, @NotNull Function<ResultSet, T> mapper) {
+    public <T> @NonNull CompletableFuture<T> queueReadTransaction(@NonNull String sql, @NonNull Function<ResultSet, T> mapper) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, mapper, future);
@@ -378,7 +380,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @return A {@link CompletableFuture} containing the desired value {@link T}. May complete exceptionally.
      * @param <T> The desired value to return after the mapping function is applied.
      */
-    public <T> @NotNull CompletableFuture<T> queueReadTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, @NotNull Function<ResultSet, T> mapper) {
+    public <T> @NonNull CompletableFuture<T> queueReadTransaction(@NonNull String sql, @NonNull List<Parameter<?>> params, @NonNull Function<ResultSet, T> mapper) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, mapper, future);
@@ -407,7 +409,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @return A {@link CompletableFuture} containing the desired value {@link T}. May complete exceptionally. May complete exceptionally.
      * @param <T> The desired value to return after the mapping function is applied.
      */
-    public <T> @NotNull CompletableFuture<T> scheduleReadTransaction(@NotNull String sql, @NotNull Function<ResultSet, T> mapper, int delay, @NotNull TimeUnit timeUnit) {
+    public <T> @NonNull CompletableFuture<T> scheduleReadTransaction(@NonNull String sql, @NonNull Function<ResultSet, T> mapper, int delay, @NonNull TimeUnit timeUnit) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, mapper, future);
@@ -435,7 +437,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @return A {@link CompletableFuture} containing the desired value {@link T}. May complete exceptionally.
      * @param <T> The desired value to return after the mapping function is applied.
      */
-    public <T> @NotNull CompletableFuture<T> scheduleReadTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, @NotNull Function<ResultSet, T> mapper, int delay, @NotNull TimeUnit timeUnit) {
+    public <T> @NonNull CompletableFuture<T> scheduleReadTransaction(@NonNull String sql, @NonNull List<Parameter<?>> params, @NonNull Function<ResultSet, T> mapper, int delay, @NonNull TimeUnit timeUnit) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, mapper, future);
@@ -458,7 +460,7 @@ public abstract class MultiThreadQueueManager implements QueueManager {
      * @param time Used to schedule when the task should be executed. Optional.
      * @param timeUnit Used to schedule when the task should be executed. Optional.
      */
-    private void queueOrScheduleTask(@NotNull Runnable runnable, @NotNull CompletableFuture<?> future, @Nullable Integer time, @Nullable TimeUnit timeUnit) {
+    private void queueOrScheduleTask(@NonNull Runnable runnable, @NonNull CompletableFuture<?> future, @Nullable Integer time, @Nullable TimeUnit timeUnit) {
         if(time != null && timeUnit != null) {
             executorService.schedule(runnable, time, timeUnit);
         } else {

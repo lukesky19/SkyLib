@@ -30,8 +30,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -42,13 +42,13 @@ public class UUIDGUIListener implements Listener {
     /**
      * The {@link UUIDGUIManager} that manages open GUIs.
      */
-    protected final @NotNull UUIDGUIManager guiManager;
+    protected final @NonNull UUIDGUIManager guiManager;
 
     /**
      * Constructor
      * @param guiManager A {@link UUIDGUIManager} instance.
      */
-    public UUIDGUIListener(@NotNull UUIDGUIManager guiManager) {
+    public UUIDGUIListener(@NonNull UUIDGUIManager guiManager) {
         this.guiManager = guiManager;
     }
 

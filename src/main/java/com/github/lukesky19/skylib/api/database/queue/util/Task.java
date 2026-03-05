@@ -22,8 +22,8 @@
  */
 package com.github.lukesky19.skylib.api.database.queue.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -36,8 +36,8 @@ import java.util.concurrent.TimeUnit;
  * @param timeUnit The {@link TimeUnit} of the delay time above.
  */
 public record Task(
-        @NotNull Runnable runnable,
-        @NotNull CompletableFuture<?> future,
+        @NonNull Runnable runnable,
+        @NonNull CompletableFuture<?> future,
         @Nullable Integer time,
         @Nullable TimeUnit timeUnit) {
 }

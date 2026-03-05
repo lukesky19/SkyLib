@@ -37,7 +37,7 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.configurate.gson.GsonConfigurationLoader;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
@@ -64,7 +64,7 @@ public class ConfigurationUtility {
      * @return A {@link YamlConfigurationLoader} for the given {@link Path}
      */
     @Contract("_ -> new")
-    public static @NotNull YamlConfigurationLoader getYamlConfigurationLoader(@NotNull Path path) {
+    public static @NonNull YamlConfigurationLoader getYamlConfigurationLoader(@NonNull Path path) {
         return YamlConfigurationLoader.builder()
                 .nodeStyle(NodeStyle.BLOCK)
                 .path(path)
@@ -95,7 +95,7 @@ public class ConfigurationUtility {
      * @return A {@link YamlConfigurationLoader} for the given {@link Path}
      */
     @Contract("_, _ -> new")
-    public static @NotNull YamlConfigurationLoader getYamlConfigurationLoader(@NotNull Path path, @NotNull TypeSerializerCollection serializerCollection) {
+    public static @NonNull YamlConfigurationLoader getYamlConfigurationLoader(@NonNull Path path, @NonNull TypeSerializerCollection serializerCollection) {
         return YamlConfigurationLoader.builder()
                 .nodeStyle(NodeStyle.BLOCK)
                 .path(path)
@@ -126,7 +126,7 @@ public class ConfigurationUtility {
      * @return A {@link GsonConfigurationLoader} for the given {@link Path}
      */
     @Contract("_ -> new")
-    public static @NotNull GsonConfigurationLoader getGsonConfigurationLoader(@NotNull Path path) {
+    public static @NonNull GsonConfigurationLoader getGsonConfigurationLoader(@NonNull Path path) {
         return GsonConfigurationLoader.builder()
                 .path(path)
                 .indent(4)
@@ -156,7 +156,7 @@ public class ConfigurationUtility {
      * @return A {@link GsonConfigurationLoader} for the given {@link Path}
      */
     @Contract("_, _ -> new")
-    public static @NotNull GsonConfigurationLoader getGsonConfigurationLoader(@NotNull Path path,  @NotNull TypeSerializerCollection serializerCollection) {
+    public static @NonNull GsonConfigurationLoader getGsonConfigurationLoader(@NonNull Path path,  @NonNull TypeSerializerCollection serializerCollection) {
         return GsonConfigurationLoader.builder()
                 .path(path)
                 .indent(4)

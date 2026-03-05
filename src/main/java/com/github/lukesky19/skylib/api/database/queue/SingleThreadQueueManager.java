@@ -26,9 +26,9 @@ import com.github.lukesky19.skylib.api.database.connection.AbstractConnectionMan
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
 import com.github.lukesky19.skylib.api.database.queue.util.RunnableUtil;
 import com.github.lukesky19.skylib.api.database.queue.util.Task;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import java.sql.*;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,16 +43,16 @@ import java.util.function.Function;
 public abstract class SingleThreadQueueManager implements QueueManager {
     private final AbstractConnectionManager connectionManager;
     private final ExecutorService executorService;
-    private final @NotNull List<CompletableFuture<?>> submittedTasksResults = new ArrayList<>();
+    private final @NonNull List<CompletableFuture<?>> submittedTasksResults = new ArrayList<>();
     private boolean pauseQueue = false;
-    private final @NotNull List<@NotNull Task> backupTaskQueue = new ArrayList<>();
+    private final @NonNull List<@NonNull Task> backupTaskQueue = new ArrayList<>();
 
     /**
      * Constructor that takes a class that extends {@link AbstractConnectionManager} and the
      * number of threads to use for the {@link ScheduledExecutorService}.
      * @param connectionManager A class that extends {@link AbstractConnectionManager} to use.
      */
-    public SingleThreadQueueManager(@NotNull AbstractConnectionManager connectionManager) {
+    public SingleThreadQueueManager(@NonNull AbstractConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
         this.executorService = Executors.newFixedThreadPool(1);
     }
@@ -75,7 +75,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * You should use {@link #setQueueStatus(boolean)} with the boolean false after this method completes.
      */
     public void processBackupQueue() {
-        List<@NotNull Task> backupQueue = new ArrayList<>(backupTaskQueue);
+        List<@NonNull Task> backupQueue = new ArrayList<>(backupTaskQueue);
         backupTaskQueue.clear();
 
         backupQueue.forEach(task -> queueTask(task.runnable(), task.future()));
@@ -86,7 +86,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * You should use {@link #setQueueStatus(boolean)} with the boolean true to pause tasks being submitted to the {@link #executorService} before calling this method.
      * @return A {@link CompletableFuture} of type {@link Void}.
      */
-    public @NotNull CompletableFuture<Void> waitForQueueEmpty() {
+    public @NonNull CompletableFuture<Void> waitForQueueEmpty() {
         if(submittedTasksResults.isEmpty()) return CompletableFuture.completedFuture(null);
 
         return CompletableFuture.allOf(submittedTasksResults.toArray(new CompletableFuture[0]));
@@ -98,7 +98,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * @return A {@link CompletableFuture} of {@link Void} when the queue has finished shutting down.
      */
     @Override
-    public @NotNull CompletableFuture<Void> shutdownQueue() {
+    public @NonNull CompletableFuture<Void> shutdownQueue() {
         return CompletableFuture.runAsync(() -> {
             try {
                 executorService.shutdown();
@@ -120,7 +120,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * @param sql The sql statement to queue.
      * @return A {@link CompletableFuture} containing the number of rows updated if completed successfully. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<Integer> queueWriteTransaction(@NotNull String sql) {
+    public @NonNull CompletableFuture<Integer> queueWriteTransaction(@NonNull String sql) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, future);
@@ -144,7 +144,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * @param params A {@link List} of {@link Parameter}s in the order the parameters are written in the sql statement.
      * @return A {@link CompletableFuture} containing the number of rows updated if completed successfully. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<Integer> queueWriteTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params) {
+    public @NonNull CompletableFuture<Integer> queueWriteTransaction(@NonNull String sql, @NonNull List<Parameter<?>> params) {
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, future);
@@ -167,7 +167,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * @param sqlList The {@link List} of {@link String} representing sql statements.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NotNull List<String> sqlList) {
+    public @NonNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NonNull List<String> sqlList) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlList, future);
@@ -190,7 +190,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * @param sqlAndParamsMap The {@link Map} mapping sql statements to a {@link List} of {@link Parameter}s.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NotNull Map<String, List<Parameter<?>>> sqlAndParamsMap) {
+    public @NonNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NonNull Map<String, List<Parameter<?>>> sqlAndParamsMap) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sqlAndParamsMap, future);
@@ -214,7 +214,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * @param listOfParameterLists A {@link List} containing a {@link List} of {@link Parameter}s.
      * @return A {@link CompletableFuture} containing a {@link List} of the number of rows updated for each statement. May complete exceptionally.
      */
-    public @NotNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NotNull String sql, @NotNull List<List<Parameter<?>>> listOfParameterLists) {
+    public @NonNull CompletableFuture<List<Integer>> queueBulkWriteTransaction(@NonNull String sql, @NonNull List<List<Parameter<?>>> listOfParameterLists) {
         CompletableFuture<List<Integer>> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForBatchSqlExecution(connectionManager, sql, listOfParameterLists, future);
@@ -239,7 +239,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * @return A {@link CompletableFuture} containing the desired value {@link T}. May complete exceptionally.
      * @param <T> The desired value to return after the mapping function is applied.
      */
-    public <T> @NotNull CompletableFuture<T> queueReadTransaction(@NotNull String sql, @NotNull Function<ResultSet, T> mapper) {
+    public <T> @NonNull CompletableFuture<T> queueReadTransaction(@NonNull String sql, @NonNull Function<ResultSet, T> mapper) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, mapper, future);
@@ -265,7 +265,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * @return A {@link CompletableFuture} containing the desired value {@link T}. May complete exceptionally.
      * @param <T> The desired value to return after the mapping function is applied.
      */
-    public <T> @NotNull CompletableFuture<T> queueReadTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, @NotNull Function<ResultSet, T> mapper) {
+    public <T> @NonNull CompletableFuture<T> queueReadTransaction(@NonNull String sql, @NonNull List<Parameter<?>> params, @NonNull Function<ResultSet, T> mapper) {
         CompletableFuture<T> future = new CompletableFuture<>();
 
         Runnable runnable = RunnableUtil.createRunnableForSingleSqlExecution(connectionManager, sql, params, mapper, future);
@@ -286,7 +286,7 @@ public abstract class SingleThreadQueueManager implements QueueManager {
      * @param runnable The {@link Runnable} to pass to the {@link #executorService}.
      * @param future The {@link CompletableFuture} that will hold the result of the task.
      */
-    private void queueTask(@NotNull Runnable runnable, @NotNull CompletableFuture<?> future) {
+    private void queueTask(@NonNull Runnable runnable, @NonNull CompletableFuture<?> future) {
         executorService.submit(runnable);
 
         submittedTasksResults.add(future);

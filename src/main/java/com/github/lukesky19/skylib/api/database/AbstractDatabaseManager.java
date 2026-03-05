@@ -24,8 +24,8 @@ package com.github.lukesky19.skylib.api.database;
 
 import com.github.lukesky19.skylib.api.database.connection.AbstractConnectionManager;
 import com.github.lukesky19.skylib.api.database.queue.QueueManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,11 +44,11 @@ public abstract class AbstractDatabaseManager {
     /**
      * The {@link AbstractConnectionManager}.
      */
-    protected final @NotNull AbstractConnectionManager connectionManager;
+    protected final @NonNull AbstractConnectionManager connectionManager;
     /**
      * The {@link QueueManager}.
      */
-    protected final @NotNull QueueManager queueManager;
+    protected final @NonNull QueueManager queueManager;
     /**
      * A {@link CompletableFuture} for the backup task. Used to know when a backup is complete.
      */
@@ -60,8 +60,8 @@ public abstract class AbstractDatabaseManager {
      * @param queueManager A class that implements {@link QueueManager}.
      */
     public AbstractDatabaseManager(
-            @NotNull AbstractConnectionManager connectionManager,
-            @NotNull QueueManager queueManager) {
+            @NonNull AbstractConnectionManager connectionManager,
+            @NonNull QueueManager queueManager) {
         this.connectionManager = connectionManager;
         this.queueManager = queueManager;
     }
@@ -72,7 +72,7 @@ public abstract class AbstractDatabaseManager {
      * @param sourcePath The {@link Path} of the database.
      * @return A {@link CompletableFuture} of type {@link Void} that can be used to know when the operation is complete.
      */
-    protected @NotNull CompletableFuture<Void> backupDatabase(@NotNull Path sourcePath) {
+    protected @NonNull CompletableFuture<Void> backupDatabase(@NonNull Path sourcePath) {
         queueManager.setQueueStatus(true);
 
         backupTask = queueManager.waitForQueueEmpty().thenCompose(v1 -> {
@@ -118,7 +118,7 @@ public abstract class AbstractDatabaseManager {
      * If a backup is occurring, it will wait until that is complete and the backlog of scheduled tasks are complete.
      * @return A {@link CompletableFuture} of type {@link Void} that can be used to know when the operation is complete.
      */
-    public @NotNull CompletableFuture<Void> handlePluginDisable() {
+    public @NonNull CompletableFuture<Void> handlePluginDisable() {
         if(backupTask != null) {
             return backupTask.thenCompose(v1 -> {
                 // Wait for all queued tasks to complete and the queue to shut down.

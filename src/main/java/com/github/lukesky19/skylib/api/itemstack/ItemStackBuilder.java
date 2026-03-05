@@ -48,8 +48,8 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 import org.bukkit.tag.DamageTypeTags;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -71,21 +71,21 @@ public class ItemStackBuilder {
     // Item Name
     private @Nullable Component name;
     // Item lore
-    private @NotNull List<Component> lore = new ArrayList<>();
+    private @NonNull List<Component> lore = new ArrayList<>();
     // Enchantments
-    private @NotNull Map<Enchantment, Integer> enchantments = new HashMap<>();
+    private @NonNull Map<Enchantment, Integer> enchantments = new HashMap<>();
     // EntityType - Only used for Spawners.
     private @Nullable EntityType entityType;
     // Potion Type - Only used for Potions
     private @Nullable PotionType potionType;
     // PotionEffects - Used for Potions and Suspicious Stew
-    private @NotNull List<PotionEffect> potionEffects = new ArrayList<>();
+    private @NonNull List<PotionEffect> potionEffects = new ArrayList<>();
     // Color - Used for dyeable items.
     private @Nullable Color color;
     // Item Model Key
     private @Nullable NamespacedKey model;
     // Item Flags
-    private @NotNull List<ItemFlag> itemFlags = new ArrayList<>();
+    private @NonNull List<ItemFlag> itemFlags = new ArrayList<>();
     // Decorated Pot Sherds
     private @Nullable Material frontSherd;
     private @Nullable Material leftSherd;
@@ -96,7 +96,7 @@ public class ItemStackBuilder {
     // Instrument
     private @Nullable MusicInstrument instrument;
     // Attributes
-    private @NotNull Map<Attribute, AttributeModifier> attributes = new HashMap<>();
+    private @NonNull Map<Attribute, AttributeModifier> attributes = new HashMap<>();
     // OfflinePlayer - Used for player skulls
     private @Nullable OfflinePlayer offlinePlayer;
 
@@ -121,7 +121,7 @@ public class ItemStackBuilder {
      * Constructor
      * @param logger The plugin's ComponentLogger for displaying any errors.
      */
-    public ItemStackBuilder(@NotNull ComponentLogger logger) {
+    public ItemStackBuilder(@NonNull ComponentLogger logger) {
         this.logger = logger;
     }
 
@@ -135,11 +135,11 @@ public class ItemStackBuilder {
      * @deprecated Use {@link #fromItemStackConfig(ItemStackConfig, OfflinePlayer, List)} instead. This method just calls that method.
      */
     @Deprecated(forRemoval = true)
-    public @NotNull ItemStackBuilder fromItemStackConfig(
-            @NotNull ItemStackConfig config,
+    public @NonNull ItemStackBuilder fromItemStackConfig(
+            @NonNull ItemStackConfig config,
             @Nullable Player player,
             @Nullable OfflinePlayer offlinePlayer,
-            @NotNull List<TagResolver.Single> placeholders) {
+            @NonNull List<TagResolver.Single> placeholders) {
         if(player != null) {
             return fromItemStackConfig(config, player, placeholders);
         } else if(offlinePlayer != null) {
@@ -156,10 +156,10 @@ public class ItemStackBuilder {
      * @param placeholders A list of placeholders to replace when formatting an item's name and lore.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder fromItemStackConfig(
-            @NotNull ItemStackConfig config,
+    public @NonNull ItemStackBuilder fromItemStackConfig(
+            @NonNull ItemStackConfig config,
             @Nullable OfflinePlayer offlinePlayer,
-            @NotNull List<TagResolver.Single> placeholders) {
+            @NonNull List<TagResolver.Single> placeholders) {
         if(config.itemType() == null) {
             logger.error(AdventureUtil.deserialize("Unable to parse ItemStackConfig due to the ItemType being null."));
             return this;
@@ -372,7 +372,7 @@ public class ItemStackBuilder {
      * @return an {@link Optional} containing the created {@link ItemStack} if the data is valid,
      * or an empty {@link Optional} if the data is invalid.
      */
-    public @NotNull Optional<@NotNull ItemStack> buildItemStack() {
+    public @NonNull Optional<@NonNull ItemStack> buildItemStack() {
         // Create a copy of the base ItemStack or create a new ItemStack using the ItemType. Handle any errors as needed.
         ItemStack itemStack;
         if(baseItemStack == null && itemType == null) {
@@ -522,7 +522,7 @@ public class ItemStackBuilder {
      * @param colorName The name of the color value being checked. For logging purposes, either red, green, or blue.
      * @return true if valid, false if not.
      */
-    private boolean isValidColorValue(@Nullable Integer value, @NotNull String colorName) {
+    private boolean isValidColorValue(@Nullable Integer value, @NonNull String colorName) {
         if(value == null) return false;
 
         if (value < 0 || value > 255) {
@@ -538,7 +538,7 @@ public class ItemStackBuilder {
      * @param itemMeta The {@link ItemMeta} to apply {@link Enchantment}s to.
      * @return The current {@link ItemStackBuilder}.
      */
-    private @NotNull ItemStackBuilder applyEnchantments(@NotNull ItemMeta itemMeta) {
+    private @NonNull ItemStackBuilder applyEnchantments(@NonNull ItemMeta itemMeta) {
         if(itemMeta instanceof EnchantmentStorageMeta enchantmentStorageMeta) {
             enchantments.forEach((enchantment, level) -> enchantmentStorageMeta.addStoredEnchant(enchantment, level, true));
         } else {
@@ -554,7 +554,7 @@ public class ItemStackBuilder {
      * @param itemMeta The {@link ItemMeta}.
      * @return The current {@link ItemStackBuilder}.
      */
-    private @NotNull ItemStackBuilder setItemMeta(@NotNull ItemStack itemStack, @NotNull ItemMeta itemMeta) {
+    private @NonNull ItemStackBuilder setItemMeta(@NonNull ItemStack itemStack, @NonNull ItemMeta itemMeta) {
         itemStack.setItemMeta(itemMeta);
         return this;
     }
@@ -564,7 +564,7 @@ public class ItemStackBuilder {
      * @param itemStack A {@link ItemStack} to use as a base.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setBaseItemStack(@NotNull ItemStack itemStack) {
+    public @NonNull ItemStackBuilder setBaseItemStack(@NonNull ItemStack itemStack) {
         this.baseItemStack = itemStack;
         return this;
     }
@@ -575,7 +575,7 @@ public class ItemStackBuilder {
      * @param itemType A {@link ItemType} to use to create the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setItemType(@NotNull ItemType itemType) {
+    public @NonNull ItemStackBuilder setItemType(@NonNull ItemType itemType) {
         this.itemType = itemType;
         return this;
     }
@@ -585,7 +585,7 @@ public class ItemStackBuilder {
      * @param amount The amount of items in the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setAmount(int amount) {
+    public @NonNull ItemStackBuilder setAmount(int amount) {
         this.amount = amount;
 
         return this;
@@ -597,7 +597,7 @@ public class ItemStackBuilder {
      * @param amount The maximum amount of items the {@link ItemStack} can contain.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setMaxStackSize(int amount) {
+    public @NonNull ItemStackBuilder setMaxStackSize(int amount) {
         if(amount >= 1 && amount <= 99) {
             maxStackSize = amount;
         } else {
@@ -612,7 +612,7 @@ public class ItemStackBuilder {
      * @param name The name to give the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setName(@NotNull Component name) {
+    public @NonNull ItemStackBuilder setName(@NonNull Component name) {
         this.name = name;
 
         return this;
@@ -623,7 +623,7 @@ public class ItemStackBuilder {
      * @param lore The lore to give the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setLore(@NotNull List<Component> lore) {
+    public @NonNull ItemStackBuilder setLore(@NonNull List<Component> lore) {
         this.lore = lore;
 
         return this;
@@ -635,7 +635,7 @@ public class ItemStackBuilder {
      * @param entityType The {@link EntityType} to give the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setEntityType(@NotNull EntityType entityType) {
+    public @NonNull ItemStackBuilder setEntityType(@NonNull EntityType entityType) {
         this.entityType = entityType;
 
         return this;
@@ -647,7 +647,7 @@ public class ItemStackBuilder {
      * @param enchantments A {@link Map} containing the mapping of {@link Enchantment}s and enchantment levels to give the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setEnchantments(@NotNull Map<@NotNull Enchantment, @NotNull Integer> enchantments) {
+    public @NonNull ItemStackBuilder setEnchantments(@NonNull Map<@NonNull Enchantment, @NonNull Integer> enchantments) {
         this.enchantments = enchantments;
 
         return this;
@@ -659,7 +659,7 @@ public class ItemStackBuilder {
      * @param level The enchantment level to add.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder addEnchantment(@NotNull Enchantment enchantment, int level) {
+    public @NonNull ItemStackBuilder addEnchantment(@NonNull Enchantment enchantment, int level) {
         enchantments.put(enchantment, level);
 
         return this;
@@ -671,7 +671,7 @@ public class ItemStackBuilder {
      * @param potionType The {@link PotionType} to give the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setPotionType(@NotNull PotionType potionType) {
+    public @NonNull ItemStackBuilder setPotionType(@NonNull PotionType potionType) {
         this.potionType = potionType;
 
         return this;
@@ -683,7 +683,7 @@ public class ItemStackBuilder {
      * @param potionEffects The {@link List} of {@link PotionEffect}s to give the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setPotionEffects(@NotNull List<PotionEffect> potionEffects) {
+    public @NonNull ItemStackBuilder setPotionEffects(@NonNull List<PotionEffect> potionEffects) {
         this.potionEffects = potionEffects;
 
         return this;
@@ -695,7 +695,7 @@ public class ItemStackBuilder {
      * @param potionEffect The {@link PotionEffect} to give the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder addPotionEffect(@NotNull PotionEffect potionEffect) {
+    public @NonNull ItemStackBuilder addPotionEffect(@NonNull PotionEffect potionEffect) {
         potionEffects.add(potionEffect);
 
         return this;
@@ -706,7 +706,7 @@ public class ItemStackBuilder {
      * @param color The {@link Color} to apply to the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setColor(@NotNull Color color) {
+    public @NonNull ItemStackBuilder setColor(@NonNull Color color) {
         this.color = color;
 
         return this;
@@ -717,7 +717,7 @@ public class ItemStackBuilder {
      * @param key The {@link NamespacedKey} of the item model to apply to the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setModel(@NotNull NamespacedKey key) {
+    public @NonNull ItemStackBuilder setModel(@NonNull NamespacedKey key) {
         this.model = key;
 
         return this;
@@ -729,7 +729,7 @@ public class ItemStackBuilder {
      * @param itemFlags The {@link List} of {@link ItemFlag}s that will be hidden for the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setItemFlags(@NotNull List<ItemFlag> itemFlags) {
+    public @NonNull ItemStackBuilder setItemFlags(@NonNull List<ItemFlag> itemFlags) {
         this.itemFlags = itemFlags;
 
         return this;
@@ -740,7 +740,7 @@ public class ItemStackBuilder {
      * @param itemFlag The {@link ItemFlag} to add to the {@link #itemFlags} list.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder addItemFlag(@NotNull ItemFlag itemFlag) {
+    public @NonNull ItemStackBuilder addItemFlag(@NonNull ItemFlag itemFlag) {
         itemFlags.add(itemFlag);
 
         return this;
@@ -751,7 +751,7 @@ public class ItemStackBuilder {
      * @param itemFlag The {@link ItemFlag} to remove from the {@link #itemFlags} list.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder removeItemFlag(@NotNull ItemFlag itemFlag) {
+    public @NonNull ItemStackBuilder removeItemFlag(@NonNull ItemFlag itemFlag) {
         itemFlags.remove(itemFlag);
 
         return this;
@@ -762,7 +762,7 @@ public class ItemStackBuilder {
      * @param frontSherd The {@link Material} to use for the sherd on the front of a decorated pot.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setFrontSherd(@NotNull Material frontSherd) {
+    public @NonNull ItemStackBuilder setFrontSherd(@NonNull Material frontSherd) {
         this.frontSherd = frontSherd;
 
         return this;
@@ -773,7 +773,7 @@ public class ItemStackBuilder {
      * @param leftSherd The {@link Material} to use for the sherd on the left of a decorated pot.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setLeftSherd(@NotNull Material leftSherd) {
+    public @NonNull ItemStackBuilder setLeftSherd(@NonNull Material leftSherd) {
         this.leftSherd = leftSherd;
 
         return this;
@@ -784,7 +784,7 @@ public class ItemStackBuilder {
      * @param rightSherd The {@link Material} to use for the sherd on the right of a decorated pot.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setRightSherd(@NotNull Material rightSherd) {
+    public @NonNull ItemStackBuilder setRightSherd(@NonNull Material rightSherd) {
         this.rightSherd = rightSherd;
 
         return this;
@@ -795,7 +795,7 @@ public class ItemStackBuilder {
      * @param backSherd The {@link Material} to use for the sherd on the back of a decorated pot.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setBackSherd(@NotNull Material backSherd) {
+    public @NonNull ItemStackBuilder setBackSherd(@NonNull Material backSherd) {
         this.backSherd = backSherd;
 
         return this;
@@ -806,7 +806,7 @@ public class ItemStackBuilder {
      * @param armorTrim The {@link ArmorTrim} to apply to armor {@link ItemStack}s.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setArmorTrim(@NotNull ArmorTrim armorTrim) {
+    public @NonNull ItemStackBuilder setArmorTrim(@NonNull ArmorTrim armorTrim) {
         this.armorTrim = armorTrim;
 
         return this;
@@ -818,7 +818,7 @@ public class ItemStackBuilder {
      * @param trimMaterial The {@link TrimMaterial}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setArmorTrim(@NotNull TrimPattern trimPattern, @NotNull TrimMaterial trimMaterial) {
+    public @NonNull ItemStackBuilder setArmorTrim(@NonNull TrimPattern trimPattern, @NonNull TrimMaterial trimMaterial) {
         armorTrim = new ArmorTrim(trimMaterial, trimPattern);
 
         return this;
@@ -829,7 +829,7 @@ public class ItemStackBuilder {
      * @param instrument The {@link MusicInstrument} to apply to goat horn {@link ItemStack}s.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setInstrument(@NotNull MusicInstrument instrument) {
+    public @NonNull ItemStackBuilder setInstrument(@NonNull MusicInstrument instrument) {
         this.instrument = instrument;
 
         return this;
@@ -841,7 +841,7 @@ public class ItemStackBuilder {
      * @param attributes The {@link List} of {@link Attribute}s that will be applied to the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setAttributes(@NotNull Map<Attribute, AttributeModifier> attributes) {
+    public @NonNull ItemStackBuilder setAttributes(@NonNull Map<Attribute, AttributeModifier> attributes) {
         this.attributes = attributes;
 
         return this;
@@ -853,7 +853,7 @@ public class ItemStackBuilder {
      * @param attributeModifier The {@link AttributeModifier}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder addAttribute(@NotNull Attribute attribute, @NotNull AttributeModifier attributeModifier) {
+    public @NonNull ItemStackBuilder addAttribute(@NonNull Attribute attribute, @NonNull AttributeModifier attributeModifier) {
         attributes.put(attribute, attributeModifier);
 
         return this;
@@ -864,7 +864,7 @@ public class ItemStackBuilder {
      * @param attribute The {@link Attribute}
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder removeAttribute(@NotNull Attribute attribute) {
+    public @NonNull ItemStackBuilder removeAttribute(@NonNull Attribute attribute) {
         attributes.remove(attribute);
 
         return this;
@@ -875,7 +875,7 @@ public class ItemStackBuilder {
      * @param offlinePlayer The {@link OfflinePlayer}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setPlayer(@NotNull OfflinePlayer offlinePlayer) {
+    public @NonNull ItemStackBuilder setPlayer(@NonNull OfflinePlayer offlinePlayer) {
         this.offlinePlayer = offlinePlayer;
 
         return this;
@@ -886,7 +886,7 @@ public class ItemStackBuilder {
      * @param enchantmentGlint true means the {@link ItemStack} will have glint, false means the {@link ItemStack} will never have a glint, null will use the default value of the {@link ItemStack}.
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setEnchantmentGlint(@Nullable Boolean enchantmentGlint) {
+    public @NonNull ItemStackBuilder setEnchantmentGlint(@Nullable Boolean enchantmentGlint) {
         this.enchantmentGlint = enchantmentGlint;
 
         return this;
@@ -897,7 +897,7 @@ public class ItemStackBuilder {
      * @param fireResistant true means the {@link ItemStack} will be fire-resistant, false means the {@link ItemStack} will never be fire-resistant, and null will use the default value of the {@link ItemStack}
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setFireResistant(@Nullable Boolean fireResistant) {
+    public @NonNull ItemStackBuilder setFireResistant(@Nullable Boolean fireResistant) {
         this.fireResistant = fireResistant;
 
         return this;
@@ -908,7 +908,7 @@ public class ItemStackBuilder {
      * @param glider true means the {@link ItemStack} will act like an Elytra, false means the {@link ItemStack} will never act like an Elytra, and null will use the default value of the {@link ItemStack}
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setGlider(@Nullable Boolean glider) {
+    public @NonNull ItemStackBuilder setGlider(@Nullable Boolean glider) {
         this.glider = glider;
 
         return this;
@@ -919,7 +919,7 @@ public class ItemStackBuilder {
      * @param hideToolTip true means the {@link ItemStack} will hide tool tips, false means the {@link ItemStack} will never hide tool tips, and null will use the default value of the {@link ItemStack}
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setHideToolTip(@Nullable Boolean hideToolTip) {
+    public @NonNull ItemStackBuilder setHideToolTip(@Nullable Boolean hideToolTip) {
         this.hideToolTip = hideToolTip;
 
         return this;
@@ -930,7 +930,7 @@ public class ItemStackBuilder {
      * @param unbreakable true means the {@link ItemStack} will never lose durability, false means the {@link ItemStack} will lose durability, and null will use the default value of the {@link ItemStack}
      * @return The current {@link ItemStackBuilder}.
      */
-    public @NotNull ItemStackBuilder setUnbreakable(@Nullable Boolean unbreakable) {
+    public @NonNull ItemStackBuilder setUnbreakable(@Nullable Boolean unbreakable) {
         this.unbreakable = unbreakable;
 
         return this;
@@ -980,7 +980,7 @@ public class ItemStackBuilder {
      * Get the {@link #lore} that will be applied to the {@link ItemStack} once created. Never null, but may be an empty list.
      * @return A {@link List} of {@link Component}. Never null, but the list may be empty.
      */
-    public @NotNull List<Component> getLore() {
+    public @NonNull List<Component> getLore() {
         return lore;
     }
 
@@ -988,7 +988,7 @@ public class ItemStackBuilder {
      * Get the {@link #enchantments} that will be applied to the {@link ItemStack} once created. Never null, but may be an empty map.
      * @return A {@link Map} of {@link Enchantment}s to levels. Never null, but the map may be empty.
      */
-    public @NotNull Map<Enchantment, Integer> getEnchantments() {
+    public @NonNull Map<Enchantment, Integer> getEnchantments() {
         return enchantments;
     }
 
@@ -1012,7 +1012,7 @@ public class ItemStackBuilder {
      * Get the {@link #potionEffects} that may be applied to the {@link ItemStack} once created. Never null, but may be an empty list.
      * @return A {@link List} of {@link PotionEffect}. Never null, but the list may be empty.
      */
-    public @NotNull List<PotionEffect> getPotionEffects() {
+    public @NonNull List<PotionEffect> getPotionEffects() {
         return potionEffects;
     }
 
@@ -1036,7 +1036,7 @@ public class ItemStackBuilder {
      * Get the {@link #itemFlags} that will be applied to the {@link ItemStack} once created. Never null, but may be an empty list.
      * @return A {@link List} of {@link ItemFlag}. Never null, but the list may be empty.
      */
-    public @NotNull List<ItemFlag> getItemFlags() {
+    public @NonNull List<ItemFlag> getItemFlags() {
         return itemFlags;
     }
 
@@ -1044,7 +1044,7 @@ public class ItemStackBuilder {
      * Get the {@link #attributes} that will be applied to the {@link ItemStack} once created. Never null, but may be an empty map.
      * @return A {@link Map} of {@link Attribute}s to {@link AttributeModifier}s. Never null, but the map may be empty.
      */
-    public @NotNull Map<Attribute, AttributeModifier> getAttributes() {
+    public @NonNull Map<Attribute, AttributeModifier> getAttributes() {
         return attributes;
     }
 

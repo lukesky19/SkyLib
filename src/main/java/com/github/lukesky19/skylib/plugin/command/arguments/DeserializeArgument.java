@@ -30,7 +30,7 @@ import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This class creates the deserialize command argument for the skylib command.
@@ -45,7 +45,7 @@ public class DeserializeArgument {
      * Creates the {@link LiteralCommandNode} of type {@link CommandSourceStack} for the deserialize command argument for the /skylib command.
      * @return A {@link LiteralCommandNode} of type {@link CommandSourceStack} for the deserialize command argument for the /skylib command.
      */
-    public @NotNull LiteralCommandNode<CommandSourceStack> createCommand() {
+    public @NonNull LiteralCommandNode<CommandSourceStack> createCommand() {
         return Commands.literal("deserialize")
                 .requires(ctx -> ctx.getSender().hasPermission("skylib.commands.skylib.deserialize"))
                 .then(Commands.argument("content", StringArgumentType.greedyString())

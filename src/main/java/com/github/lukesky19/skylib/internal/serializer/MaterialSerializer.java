@@ -23,8 +23,8 @@
 package com.github.lukesky19.skylib.internal.serializer;
 
 import org.bukkit.Material;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -48,7 +48,7 @@ public class MaterialSerializer implements TypeSerializer<Material> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public @Nullable Material deserialize(@NotNull Type type, @NotNull ConfigurationNode node) throws SerializationException {
+    public @Nullable Material deserialize(@NonNull Type type, @NonNull ConfigurationNode node) throws SerializationException {
         @Nullable String key = node.getString();
         if(key == null) return null;
 
@@ -63,7 +63,7 @@ public class MaterialSerializer implements TypeSerializer<Material> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public void serialize(@NotNull Type type, @Nullable Material material, @NotNull ConfigurationNode node) throws SerializationException {
+    public void serialize(@NonNull Type type, @Nullable Material material, @NonNull ConfigurationNode node) throws SerializationException {
         if(material == null) {
             node.raw(null);
             return;

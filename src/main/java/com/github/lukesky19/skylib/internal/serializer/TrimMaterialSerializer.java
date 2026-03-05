@@ -27,8 +27,8 @@ import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -52,7 +52,7 @@ public class TrimMaterialSerializer implements TypeSerializer<TrimMaterial> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public @Nullable TrimMaterial deserialize(@NotNull Type type, @NotNull ConfigurationNode node) throws SerializationException {
+    public @Nullable TrimMaterial deserialize(@NonNull Type type, @NonNull ConfigurationNode node) throws SerializationException {
         @Nullable String key = node.getString();
         if(key == null) return null;
 
@@ -67,7 +67,7 @@ public class TrimMaterialSerializer implements TypeSerializer<TrimMaterial> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public void serialize(@NotNull Type type, @Nullable TrimMaterial trimMaterial, @NotNull ConfigurationNode node) throws SerializationException {
+    public void serialize(@NonNull Type type, @Nullable TrimMaterial trimMaterial, @NonNull ConfigurationNode node) throws SerializationException {
         if(trimMaterial == null) {
             node.raw(null);
             return;

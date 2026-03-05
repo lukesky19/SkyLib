@@ -28,8 +28,8 @@ import com.github.lukesky19.skylib.api.common.abstracts.data.HashMapDataManager;
 import com.github.lukesky19.skylib.api.common.interfaces.config.IKeyValueConfigManager;
 import com.github.lukesky19.skylib.api.configurate.ConfigurationUtility;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -45,17 +45,17 @@ public abstract class KeyValueConfigManager<K, V> extends HashMapDataManager<K, 
     /**
      * The {@link SkyPlugin}.
      */
-    protected final @NotNull SkyPlugin plugin;
+    protected final @NonNull SkyPlugin plugin;
     /**
      * The {@link ComponentLogger} of the plugin.
      */
-    protected final @NotNull ComponentLogger logger;
+    protected final @NonNull ComponentLogger logger;
 
     /**
      * Constructor
      * @param plugin A {@link SkyPlugin}.
      */
-    public KeyValueConfigManager(@NotNull SkyPlugin plugin) {
+    public KeyValueConfigManager(@NonNull SkyPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getComponentLogger();
     }
@@ -83,7 +83,7 @@ public abstract class KeyValueConfigManager<K, V> extends HashMapDataManager<K, 
      * @param configurationPath The {@link Path} to load the configuration to from.
      */
     @Override
-    public void loadConfiguration(@NotNull K identifier, @NotNull Class<V> configClass, @NotNull Path configurationPath) {
+    public void loadConfiguration(@NonNull K identifier, @NonNull Class<V> configClass, @NonNull Path configurationPath) {
         @Nullable V configuration;
 
         YamlConfigurationLoader yamlConfigurationLoader = ConfigurationUtility.getYamlConfigurationLoader(configurationPath);
@@ -127,9 +127,9 @@ public abstract class KeyValueConfigManager<K, V> extends HashMapDataManager<K, 
      * @param configuration The configuration to save.
      */
     @Override
-    public void saveConfiguration(@NotNull Class<V> configClass, @NotNull Path configurationPath, @NotNull V configuration) {
+    public void saveConfiguration(@NonNull Class<V> configClass, @NonNull Path configurationPath, @NonNull V configuration) {
         try {
-            @NotNull YamlConfigurationLoader yamlConfigurationLoader = ConfigurationUtility.getYamlConfigurationLoader(configurationPath);
+            @NonNull YamlConfigurationLoader yamlConfigurationLoader = ConfigurationUtility.getYamlConfigurationLoader(configurationPath);
 
             ConfigurationNode node = yamlConfigurationLoader.createNode();
 
@@ -151,12 +151,12 @@ public abstract class KeyValueConfigManager<K, V> extends HashMapDataManager<K, 
      * @param configuration The configuration to migrate.
      * @return V the migrated configuration.
      */
-    protected abstract @Nullable V migrateConfiguration(@NotNull V configuration);
+    protected abstract @Nullable V migrateConfiguration(@NonNull V configuration);
 
     /**
      * Validate the configuration.
      * @param configuration The configuration to validate.
      * @return true if valid, or false.
      */
-    protected abstract boolean validateConfiguration(@NotNull V configuration);
+    protected abstract boolean validateConfiguration(@NonNull V configuration);
 }

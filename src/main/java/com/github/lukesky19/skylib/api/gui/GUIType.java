@@ -23,8 +23,8 @@
 package com.github.lukesky19.skylib.api.gui;
 
 import org.bukkit.inventory.MenuType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This enum contains all the GUITypes that can be created.
@@ -136,7 +136,7 @@ public enum GUIType {
      */
     STONECUTTER(MenuType.STONECUTTER, 2);
 
-    private final @NotNull MenuType menuType;
+    private final @NonNull MenuType menuType;
     private final int size;
 
     /**
@@ -144,7 +144,7 @@ public enum GUIType {
      * @param menuType The MenuType for this GUIType. {@link MenuType}
      * @param size The size of the Inventory.
      */
-    GUIType(@NotNull MenuType menuType, int size) {
+    GUIType(@NonNull MenuType menuType, int size) {
         this.menuType = menuType;
         this.size = size;
     }
@@ -153,7 +153,7 @@ public enum GUIType {
      * Gets the MenuType associated with this GUIType.
      * @return {@link MenuType}
      */
-    public @NotNull MenuType getMenuType() {
+    public @NonNull MenuType getMenuType() {
         return menuType;
     }
 

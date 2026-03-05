@@ -23,14 +23,14 @@
 package com.github.lukesky19.skylib.api.gui.templates;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.gui.abstracts.ButtonGUI;
 import com.github.lukesky19.skylib.api.gui.GUIType;
+import com.github.lukesky19.skylib.api.gui.abstracts.ButtonGUI;
 import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public abstract class BrewingStandGUI<I> extends ButtonGUI<I> {
      * @param identifier The identifier that the GUI is tied to. Used in conjunction with {@link IGUIManager}.
      * @param player The {@link Player} associated with the created GUI.
      */
-    public BrewingStandGUI(@NotNull JavaPlugin plugin, @NotNull IGUIManager<I> guiManager, @NotNull I identifier, @NotNull Player player) {
+    public BrewingStandGUI(@NonNull JavaPlugin plugin, @NonNull IGUIManager<I> guiManager, @NonNull I identifier, @NonNull Player player) {
         super(plugin, guiManager, identifier, player);
     }
 
@@ -58,7 +58,7 @@ public abstract class BrewingStandGUI<I> extends ButtonGUI<I> {
      * @return true if created successfully, otherwise false.
      */
     @Override
-    public boolean create(@NotNull GUIType guiType, @NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
+    public boolean create(@NonNull GUIType guiType, @NonNull String name, @NonNull List<TagResolver.Single> placeholders) {
         if(guiType != GUIType.BREWING_STAND) {
             logger.warn(AdventureUtil.deserialize("Unsupported GUIType provided."));
             return false;

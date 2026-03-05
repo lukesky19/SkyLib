@@ -22,7 +22,7 @@
  */
 package com.github.lukesky19.skylib.api.time;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -56,7 +56,7 @@ public class TimeUtil {
      * @param time A String with a time to parse
      * @return Milliseconds
      */
-    public static long stringToMillis(@NotNull String time) {
+    public static long stringToMillis(@NonNull String time) {
         Matcher matcher = pattern.matcher(time);
         long millis = 0;
 
@@ -141,7 +141,7 @@ public class TimeUtil {
      * @param timeUnit The maximum {@link TimeUnit}.
      * @return A {@link Time} Record that holds up to the maximum {@link TimeUnit} provided.
      */
-    public static @NotNull Time millisToTime(long millis, @NotNull TimeUnit timeUnit) {
+    public static @NonNull Time millisToTime(long millis, @NonNull TimeUnit timeUnit) {
         int years = 0;
         int months = 0;
         int weeks = 0;
@@ -325,7 +325,7 @@ public class TimeUtil {
      * @param time A {@link Time} Record
      * @return A long representing the milliseconds.
      */
-    public static long timeToMillis(@NotNull Time time) {
+    public static long timeToMillis(@NonNull Time time) {
         long millis = 0;
 
         millis += time.years() * YEAR;
@@ -347,7 +347,7 @@ public class TimeUtil {
      * @param timestampFormat The timestamp format to use for the {@link DateTimeFormatter}. I.e., MM-dd-yyyy HH:mm:ss
      * @return A {@link String} representing the formatted timestamp.
      */
-    public static String millisToTimeStamp(long millis, @NotNull ZoneId zoneId, @NotNull String timestampFormat) {
+    public static String millisToTimeStamp(long millis, @NonNull ZoneId zoneId, @NonNull String timestampFormat) {
         Instant instant = Instant.ofEpochMilli(millis);
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(timestampFormat).withZone(zoneId);

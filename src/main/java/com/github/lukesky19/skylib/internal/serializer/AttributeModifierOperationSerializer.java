@@ -24,8 +24,8 @@ package com.github.lukesky19.skylib.internal.serializer;
 
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -49,8 +49,8 @@ public class AttributeModifierOperationSerializer implements TypeSerializer<Attr
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public @Nullable AttributeModifier.Operation deserialize(@NotNull Type type, @NotNull ConfigurationNode node) throws SerializationException {
-        @Nullable String key = node.getString();
+    public AttributeModifier.@Nullable Operation deserialize(@NonNull Type type, @NonNull ConfigurationNode node) throws SerializationException {
+        String key = node.getString();
         if(key == null) return null;
 
         try {
@@ -68,7 +68,7 @@ public class AttributeModifierOperationSerializer implements TypeSerializer<Attr
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public void serialize(@NotNull Type type, @Nullable AttributeModifier.Operation operation, @NotNull ConfigurationNode node) throws SerializationException {
+    public void serialize(@NonNull Type type, AttributeModifier.@Nullable Operation operation, @NonNull ConfigurationNode node) throws SerializationException {
         if(operation == null) {
             node.raw(null);
             return;

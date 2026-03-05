@@ -25,8 +25,8 @@ package com.github.lukesky19.skylib.internal.serializer;
 import com.github.lukesky19.skylib.api.registry.RegistryUtil;
 import org.bukkit.NamespacedKey;
 import org.bukkit.potion.PotionType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -50,7 +50,7 @@ public class PotionTypeSerializer implements TypeSerializer<PotionType> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public @Nullable PotionType deserialize(@NotNull Type type, @NotNull ConfigurationNode node) throws SerializationException {
+    public @Nullable PotionType deserialize(@NonNull Type type, @NonNull ConfigurationNode node) throws SerializationException {
         @Nullable String key = node.getString();
         if(key == null) return null;
 
@@ -65,7 +65,7 @@ public class PotionTypeSerializer implements TypeSerializer<PotionType> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public void serialize(@NotNull Type type, @Nullable PotionType potionType, @NotNull ConfigurationNode node) throws SerializationException {
+    public void serialize(@NonNull Type type, @Nullable PotionType potionType, @NonNull ConfigurationNode node) throws SerializationException {
         if(potionType == null) {
             node.raw(null);
             return;

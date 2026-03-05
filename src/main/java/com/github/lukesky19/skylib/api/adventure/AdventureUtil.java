@@ -31,7 +31,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.AbstractMap;
 import java.util.List;
@@ -60,7 +60,7 @@ public class AdventureUtil {
      * @param placeholders A list of TagResolver.Single which can be created using Placeholder.parsed("STRING", REPLACEMENT)
      * @return A modern Component
      */
-    public static @NotNull Component deserialize(@NotNull Player player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+    public static @NonNull Component deserialize(@NonNull Player player, @NonNull String message, @NonNull List<TagResolver.Single> placeholders) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -81,7 +81,7 @@ public class AdventureUtil {
      * @param placeholders A list of TagResolver.Single which can be created using Placeholder.parsed("STRING", REPLACEMENT)
      * @return A modern Component
      */
-    public static @NotNull Component deserialize(@NotNull OfflinePlayer player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+    public static @NonNull Component deserialize(@NonNull OfflinePlayer player, @NonNull String message, @NonNull List<TagResolver.Single> placeholders) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -101,7 +101,7 @@ public class AdventureUtil {
      * @param message A String
      * @return A modern Component
      */
-    public static @NotNull Component deserialize(@NotNull Player player, @NotNull String message) {
+    public static @NonNull Component deserialize(@NonNull Player player, @NonNull String message) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -120,7 +120,7 @@ public class AdventureUtil {
      * @param message A String
      * @return A modern Component
      */
-    public static @NotNull Component deserialize(@NotNull OfflinePlayer player, @NotNull String message) {
+    public static @NonNull Component deserialize(@NonNull OfflinePlayer player, @NonNull String message) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -138,7 +138,7 @@ public class AdventureUtil {
      * @param placeholders A list of TagResolver.Single which can be created using Placeholder.parsed("STRING", REPLACEMENT)
      * @return A modern Component
      */
-    public static @NotNull Component deserialize(@NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+    public static @NonNull Component deserialize(@NonNull String message, @NonNull List<TagResolver.Single> placeholders) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -155,7 +155,7 @@ public class AdventureUtil {
      * @param message A String
      * @return A modern Component
      */
-    public static @NotNull Component deserialize(@NotNull String message) {
+    public static @NonNull Component deserialize(@NonNull String message) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -170,7 +170,7 @@ public class AdventureUtil {
      * @param component The {@link Component} to serialize.
      * @return A non-null {@link String} of the Component with the color and formatting MiniMessage codes.
      */
-    public static @NotNull String serialize(@NotNull Component component) {
+    public static @NonNull String serialize(@NonNull Component component) {
         return MiniMessage.miniMessage().serialize(component);
     }
 
@@ -179,7 +179,7 @@ public class AdventureUtil {
      * @param message A String that has legacy color codes to replace.
      * @return A String with clean MiniMessage tags.
      */
-    public static @NotNull String handleLegacyCodes(@NotNull String message) {
+    public static @NonNull String handleLegacyCodes(@NonNull String message) {
         // Replace hex codes of the format &#FFFFFF
         Matcher hexMatcher = Pattern.compile("&#([0-9A-Fa-f]{6})").matcher(message);
         message = hexMatcher.replaceAll(match -> "<#" + match.group(1) + ">");
@@ -213,7 +213,7 @@ public class AdventureUtil {
      * @param player the player
      * @return The {@link TagResolver}.
      */
-    public static @NotNull TagResolver papiTag(final @NotNull Player player) {
+    public static @NonNull TagResolver papiTag(final @NonNull Player player) {
         return TagResolver.resolver("papi", (argumentQueue, context) -> {
             // Get the string placeholder that they want to use.
             final String papiPlaceholder = argumentQueue.popOr("papi tag requires an argument").value();
@@ -240,7 +240,7 @@ public class AdventureUtil {
      * @param player the player
      * @return The {@link TagResolver}.
      */
-    public static @NotNull TagResolver papiTag(final @NotNull OfflinePlayer player) {
+    public static @NonNull TagResolver papiTag(final @NonNull OfflinePlayer player) {
         return TagResolver.resolver("papi", (argumentQueue, context) -> {
             // Get the string placeholder that they want to use.
             final String papiPlaceholder = argumentQueue.popOr("papi tag requires an argument").value();
@@ -259,7 +259,7 @@ public class AdventureUtil {
         });
     }
 
-    private static final @NotNull Map<String, String> codeConversion = Map.ofEntries(
+    private static final @NonNull Map<String, String> codeConversion = Map.ofEntries(
             new AbstractMap.SimpleEntry<>("§0", "<black>"),
             new AbstractMap.SimpleEntry<>("§1", "<dark_blue>"),
             new AbstractMap.SimpleEntry<>("§2", "<dark_green>"),
@@ -317,7 +317,7 @@ public class AdventureUtil {
      * @deprecated This method was originally named incorrectly. Use {@link #deserialize(Player, String, List)} instead.
      */
     @Deprecated(since = "1.4.0.0", forRemoval = true)
-    public static @NotNull Component serialize(@NotNull Player player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+    public static @NonNull Component serialize(@NonNull Player player, @NonNull String message, @NonNull List<TagResolver.Single> placeholders) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -340,7 +340,7 @@ public class AdventureUtil {
      * @deprecated This method was originally named incorrectly. Use {@link #deserialize(OfflinePlayer, String, List)} instead.
      */
     @Deprecated(since = "1.4.0.0", forRemoval = true)
-    public static @NotNull Component serialize(@NotNull OfflinePlayer player, @NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+    public static @NonNull Component serialize(@NonNull OfflinePlayer player, @NonNull String message, @NonNull List<TagResolver.Single> placeholders) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -362,7 +362,7 @@ public class AdventureUtil {
      * @deprecated This method was originally named incorrectly. Use {@link #deserialize(Player, String)} instead.
      */
     @Deprecated(since = "1.4.0.0", forRemoval = true)
-    public static @NotNull Component serialize(@NotNull Player player, @NotNull String message) {
+    public static @NonNull Component serialize(@NonNull Player player, @NonNull String message) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -383,7 +383,7 @@ public class AdventureUtil {
      * @deprecated This method was originally named incorrectly. Use {@link #deserialize(OfflinePlayer, String)} instead.
      */
     @Deprecated(since = "1.4.0.0", forRemoval = true)
-    public static @NotNull Component serialize(@NotNull OfflinePlayer player, @NotNull String message) {
+    public static @NonNull Component serialize(@NonNull OfflinePlayer player, @NonNull String message) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -403,7 +403,7 @@ public class AdventureUtil {
      * @deprecated This method was originally named incorrectly. Use {@link #deserialize(String, List)} instead.
      */
     @Deprecated(since = "1.4.0.0", forRemoval = true)
-    public static @NotNull Component serialize(@NotNull String message, @NotNull List<TagResolver.Single> placeholders) {
+    public static @NonNull Component serialize(@NonNull String message, @NonNull List<TagResolver.Single> placeholders) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -422,7 +422,7 @@ public class AdventureUtil {
      * @deprecated This method was originally named incorrectly. Use {@link #deserialize(String)} instead.
      */
     @Deprecated(since = "1.4.0.0", forRemoval = true)
-    public static @NotNull Component serialize(@NotNull String message) {
+    public static @NonNull Component serialize(@NonNull String message) {
         MiniMessage mm = MiniMessage.builder()
                 .tags(TagResolver.builder()
                         .resolver(StandardTags.defaults())
@@ -439,7 +439,7 @@ public class AdventureUtil {
      * @deprecated This method was originally named incorrectly. Use {@link #serialize(Component)} instead.
      */
     @Deprecated(since = "1.4.0.0", forRemoval = true)
-    public static @NotNull String deserialize(@NotNull Component component) {
+    public static @NonNull String deserialize(@NonNull Component component) {
         return MiniMessage.miniMessage().serialize(component);
     }
 }

@@ -22,30 +22,26 @@
  */
 package com.github.lukesky19.skylib.api.gui;
 
-import java.util.Objects;
-import java.util.function.Consumer;
-
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * This class creates buttons for use in button-based GUIs.
  */
 public class GUIButton {
-    @NotNull
-    private final ItemStack itemStack;
-    @NotNull
-    private final Consumer<InventoryClickEvent> action;
+    private final @NonNull ItemStack itemStack;
+    private final @NonNull Consumer<InventoryClickEvent> action;
 
     /**
      * Gets the ItemStack associated with this GUIButton.
      * @return A Bukkit ItemStack
      */
-    @NotNull
-    public ItemStack itemStack() {
+    public @NonNull ItemStack itemStack() {
         return this.itemStack;
     }
 
@@ -53,8 +49,7 @@ public class GUIButton {
      * Gets the action associated with this GUIButton.
      * @return A Consumer that takes an InventoryClickEvent.
      */
-    @NotNull
-    public Consumer<InventoryClickEvent> action() {
+    public @NonNull Consumer<InventoryClickEvent> action() {
         return this.action;
     }
 
@@ -70,7 +65,7 @@ public class GUIButton {
      * Create a new GUIButton from a Builder.
      * @param builder A Builder representing an incomplete GUIButton.
      */
-    public GUIButton(@NotNull Builder builder) {
+    public GUIButton(@NonNull Builder builder) {
         if(builder.itemStack == null) throw new RuntimeException("Unable to create GUIButton due to null ItemStack.");
 
         this.itemStack = builder.itemStack;
@@ -99,7 +94,7 @@ public class GUIButton {
          * @param itemStack A Bukkit ItemStack
          * @return The current {@link GUIButton.Builder}.
          */
-        public @NotNull GUIButton.Builder setItemStack(@NotNull ItemStack itemStack) {
+        public GUIButton.@NonNull Builder setItemStack(@NonNull ItemStack itemStack) {
             this.itemStack = itemStack;
 
             return this;
@@ -110,7 +105,7 @@ public class GUIButton {
          * @param action A Consumer that takes an InventoryClickEvent.
          * @return The current {@link GUIButton.Builder}.
          */
-        public @NotNull GUIButton.Builder setAction(@NotNull Consumer<InventoryClickEvent> action) {
+        public GUIButton.@NonNull Builder setAction(@NonNull Consumer<InventoryClickEvent> action) {
             this.action = action;
 
             return this;
@@ -120,7 +115,7 @@ public class GUIButton {
          * Builds a complete GUIButton.
          * @return A completed GUIButton.
          */
-        public @NotNull GUIButton build() {
+        public @NonNull GUIButton build() {
             return new GUIButton(this);
         }
     }

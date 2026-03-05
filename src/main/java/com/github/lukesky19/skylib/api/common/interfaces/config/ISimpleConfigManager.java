@@ -22,14 +22,13 @@
  */
 package com.github.lukesky19.skylib.api.common.interfaces.config;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
 
 /**
  * This interface can be used to create a simple configuration manager class.
- * This class can be extended to create a configuration manager class.
  * @param <C> The configuration object.
  */
 public interface ISimpleConfigManager<C> {
@@ -37,7 +36,7 @@ public interface ISimpleConfigManager<C> {
      * Set the configuration path to save and load the configuration.
      * @param configurationPath A {@link Path}.
      */
-    void setConfigurationPath(@NotNull Path configurationPath);
+    void setConfigurationPath(@NonNull Path configurationPath);
 
     /**
      * Get the configuration. May be null.
@@ -54,14 +53,14 @@ public interface ISimpleConfigManager<C> {
      * Save the configuration.
      * @param configuration The configuration to save.
      */
-    void saveConfiguration(@NotNull C configuration);
+    void saveConfiguration(@NonNull C configuration);
 
     /**
      * Migrate the configuration.
      * @param configuration The configuration to migrate.
      * @return The migrated configuration or null.
      */
-    @Nullable C migrateConfiguration(@NotNull C configuration);
+    @Nullable C migrateConfiguration(@NonNull C configuration);
 
     /**
      * Validate the configuration.

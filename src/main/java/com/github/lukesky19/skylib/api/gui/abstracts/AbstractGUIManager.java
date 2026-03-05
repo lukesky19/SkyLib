@@ -25,8 +25,8 @@ package com.github.lukesky19.skylib.api.gui.abstracts;
 import com.github.lukesky19.skylib.api.common.abstracts.data.HashMapDataManager;
 import com.github.lukesky19.skylib.api.gui.interfaces.BaseGUI;
 import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This class can be extended to provide a ready-to-use template for storing open GUIs.
@@ -39,22 +39,22 @@ public abstract class AbstractGUIManager<I> extends HashMapDataManager<I, BaseGU
     public AbstractGUIManager() {}
 
     @Override
-    public void addOpenGUI(@NotNull I identifier, @NotNull BaseGUI<I> data) {
+    public void addOpenGUI(@NonNull I identifier, @NonNull BaseGUI<I> data) {
         setData(identifier, data);
     }
 
     @Override
-    public void removeOpenGUI(@NotNull I identifier) {
+    public void removeOpenGUI(@NonNull I identifier) {
         removeDataByIdentifier(identifier);
     }
 
     @Override
-    public @Nullable BaseGUI<I> getOpenGUI(@NotNull I identifier) {
+    public @Nullable BaseGUI<I> getOpenGUI(@NonNull I identifier) {
         return getData(identifier);
     }
 
     @Override
-    public void refreshGUIs(@NotNull I identifier) {
+    public void refreshGUIs(@NonNull I identifier) {
         dataMap.entrySet().stream()
                 .filter(entry -> entry.getKey() != null && entry.getKey().equals(identifier))
                 .forEach(entry -> {

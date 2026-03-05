@@ -22,8 +22,8 @@
  */
 package com.github.lukesky19.skylib.api.common.interfaces.config;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.file.Path;
 
@@ -51,7 +51,7 @@ public interface IKeyValueConfigManager<K, V> {
      * @param configClass The class of the configuration being loaded.
      * @param configurationPath The {@link Path} to load the configuration to from.
      */
-    void loadConfiguration(@NotNull K identifier, @NotNull Class<V> configClass, @NotNull Path configurationPath);
+    void loadConfiguration(@NonNull K identifier, @NonNull Class<V> configClass, @NonNull Path configurationPath);
 
     /**
      * Save the configuration.
@@ -59,5 +59,5 @@ public interface IKeyValueConfigManager<K, V> {
      * @param configurationPath The {@link Path} to save the configuration to.
      * @param configuration The configuration to save.
      */
-    void saveConfiguration(@NotNull Class<V> configClass, @NotNull Path configurationPath, @NotNull V configuration);
+    void saveConfiguration(@NonNull Class<V> configClass, @NonNull Path configurationPath, @NonNull V configuration);
 }

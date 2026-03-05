@@ -23,8 +23,8 @@
 package com.github.lukesky19.skylib.internal.serializer;
 
 import org.bukkit.inventory.EquipmentSlot;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -48,7 +48,7 @@ public class EquipmentSlotSerializer implements TypeSerializer<EquipmentSlot> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public @Nullable EquipmentSlot deserialize(@NotNull Type type, @NotNull ConfigurationNode node) throws SerializationException {
+    public @Nullable EquipmentSlot deserialize(@NonNull Type type, @NonNull ConfigurationNode node) throws SerializationException {
         @Nullable String key = node.getString();
         if(key == null) return null;
 
@@ -67,7 +67,7 @@ public class EquipmentSlotSerializer implements TypeSerializer<EquipmentSlot> {
      * @throws SerializationException If serialization fails.
      */
     @Override
-    public void serialize(@NotNull Type type, @Nullable EquipmentSlot equipmentSlot, @NotNull ConfigurationNode node) throws SerializationException {
+    public void serialize(@NonNull Type type, @Nullable EquipmentSlot equipmentSlot, @NonNull ConfigurationNode node) throws SerializationException {
         if(equipmentSlot == null) {
             node.raw(null);
             return;

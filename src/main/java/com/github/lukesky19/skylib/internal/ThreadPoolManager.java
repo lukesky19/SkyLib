@@ -2,9 +2,12 @@ package com.github.lukesky19.skylib.internal;
 
 import com.github.lukesky19.skylib.api.database.queue.MultiThreadQueueManager;
 import com.github.lukesky19.skylib.plugin.settings.Settings;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class manages the shared executor service for all {@link MultiThreadQueueManager} instances.
@@ -24,7 +27,7 @@ public class ThreadPoolManager {
      * Initializes the {@link ScheduledThreadPoolExecutor} to use across all {@link MultiThreadQueueManager} instances.
      * @param settings The plugin's {@link Settings}.
      */
-    public static void initializeThreadPool(@NotNull Settings settings) {
+    public static void initializeThreadPool(@NonNull Settings settings) {
         threadPoolExecutor = new ScheduledThreadPoolExecutor(settings.corePoolSize());
         threadPoolExecutor.setMaximumPoolSize(settings.maxPoolSize());
         threadPoolExecutor.allowCoreThreadTimeOut(true);
@@ -35,7 +38,7 @@ public class ThreadPoolManager {
      * Gets the {@link ScheduledExecutorService}.
      * @return A {@link ScheduledExecutorService}
      */
-    public static @NotNull ScheduledExecutorService getThreadPoolExecutor() {
+    public static @NonNull ScheduledExecutorService getThreadPoolExecutor() {
         return threadPoolExecutor;
     }
 
@@ -44,7 +47,7 @@ public class ThreadPoolManager {
      * Will forcefully shut down after 60 seconds.
      * @return A {@link CompletableFuture} of type {@link Void} once complete.
      */
-    public static @NotNull CompletableFuture<Void> shutdownExecutorService() {
+    public static @NonNull CompletableFuture<Void> shutdownExecutorService() {
         return CompletableFuture.runAsync(() -> {
             try {
                 threadPoolExecutor.shutdown();

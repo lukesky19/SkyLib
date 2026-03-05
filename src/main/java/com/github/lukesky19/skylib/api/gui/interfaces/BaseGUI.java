@@ -28,7 +28,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.InventoryView;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
@@ -42,7 +42,7 @@ public interface BaseGUI<I> {
      * Get the {@link InventoryView} associated with this GUI.
      * @return An {@link InventoryView}.
      */
-    @NotNull Optional<InventoryView> getInventoryView();
+    @NonNull Optional<InventoryView> getInventoryView();
 
     /**
      * Opens the {@link InventoryView} for this GUI.
@@ -79,41 +79,41 @@ public interface BaseGUI<I> {
      * Used to define how an {@link InventoryCloseEvent} should be handled.
      * @param inventoryCloseEvent An {@link InventoryCloseEvent}
      */
-    void handleClose(@NotNull InventoryCloseEvent inventoryCloseEvent);
+    void handleClose(@NonNull InventoryCloseEvent inventoryCloseEvent);
 
     /**
      * Used to define how an {@link InventoryDragEvent} should be handled for the top half of the {@link InventoryView}.
      * @param inventoryDragEvent An {@link InventoryDragEvent}
      */
-    void handleTopDrag(@NotNull InventoryDragEvent inventoryDragEvent);
+    void handleTopDrag(@NonNull InventoryDragEvent inventoryDragEvent);
 
     /**
      * Used to define how an {@link InventoryDragEvent} should be handled for the bottom half of the {@link InventoryView}.
      * @param inventoryDragEvent An {@link InventoryDragEvent}
      */
-    void handleBottomDrag(@NotNull InventoryDragEvent inventoryDragEvent);
+    void handleBottomDrag(@NonNull InventoryDragEvent inventoryDragEvent);
 
     /**
      * Used to define how an {@link InventoryDragEvent} should be handled for the top and bottom half of the {@link InventoryView}.
      * @param inventoryDragEvent An {@link InventoryDragEvent}
      */
-    void handleGlobalDrag(@NotNull InventoryDragEvent inventoryDragEvent);
+    void handleGlobalDrag(@NonNull InventoryDragEvent inventoryDragEvent);
 
     /**
      * Used to define how an {@link InventoryClickEvent} should be handled for the top half of the {@link InventoryView}.
      * @param inventoryClickEvent An {@link InventoryClickEvent}
      */
-    void handleTopClick(@NotNull InventoryClickEvent inventoryClickEvent);
+    void handleTopClick(@NonNull InventoryClickEvent inventoryClickEvent);
 
     /**
      * Used to define how an {@link InventoryClickEvent} should be handled for the bottom half of the {@link InventoryView}.
      * @param inventoryClickEvent An {@link InventoryClickEvent}
      */
-    void handleBottomClick(@NotNull InventoryClickEvent inventoryClickEvent);
+    void handleBottomClick(@NonNull InventoryClickEvent inventoryClickEvent);
 
     /**
      * Used to define how an {@link InventoryClickEvent} should be handled for the top and bottom half of the {@link InventoryView}.
      * @param inventoryClickEvent An {@link InventoryClickEvent}
      */
-    void handleGlobalClick(@NotNull InventoryClickEvent inventoryClickEvent);
+    void handleGlobalClick(@NonNull InventoryClickEvent inventoryClickEvent);
 }

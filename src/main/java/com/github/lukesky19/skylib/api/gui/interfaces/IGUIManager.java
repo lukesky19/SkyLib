@@ -22,8 +22,8 @@
  */
 package com.github.lukesky19.skylib.api.gui.interfaces;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This interface can be used to create a GUI manager class.
@@ -35,26 +35,26 @@ public interface IGUIManager<I> {
      * @param identifier The identifier.
      * @param gui The gui.
      */
-    void addOpenGUI(@NotNull I identifier, @NotNull BaseGUI<I> gui);
+    void addOpenGUI(@NonNull I identifier, @NonNull BaseGUI<I> gui);
 
     /**
      * Remove the gui as open for the identifier provided.
      * @param identifier The identifier.
      */
-    void removeOpenGUI(@NotNull I identifier);
+    void removeOpenGUI(@NonNull I identifier);
 
     /**
      * Get the open gui for the identifier provided.
      * @param identifier The identifier to get the open GUI for.
      * @return The gui or null.
      */
-    @Nullable BaseGUI<I> getOpenGUI(@NotNull I identifier);
+    @Nullable BaseGUI<I> getOpenGUI(@NonNull I identifier);
 
     /**
      * Refresh the open guis with the identifier provided.
      * @param identifier The identifier.
      */
-    void refreshGUIs(@NotNull I identifier);
+    void refreshGUIs(@NonNull I identifier);
 
     /**
      * Close the open guis.

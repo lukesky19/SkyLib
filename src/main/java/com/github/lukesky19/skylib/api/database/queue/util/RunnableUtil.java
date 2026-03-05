@@ -25,7 +25,7 @@ package com.github.lukesky19.skylib.api.database.queue.util;
 import com.github.lukesky19.skylib.api.database.connection.AbstractConnectionManager;
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
 import com.github.lukesky19.skylib.api.database.queue.QueueManager;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -54,10 +54,10 @@ public class RunnableUtil {
      * @param future A {@link CompletableFuture} that will be used to return the number of rows updated or the exception that occurred (if any).
      * @return A {@link Runnable} that contains the task to run to execute the sql statement provided.
      */
-    public static @NotNull Runnable createRunnableForSingleSqlExecution(
-            @NotNull AbstractConnectionManager connectionManager,
-            @NotNull String sql,
-            @NotNull CompletableFuture<Integer> future) {
+    public static @NonNull Runnable createRunnableForSingleSqlExecution(
+            @NonNull AbstractConnectionManager connectionManager,
+            @NonNull String sql,
+            @NonNull CompletableFuture<Integer> future) {
         return () -> {
             try(Connection connection = connectionManager.getConnection()) {
                 try(Statement statement = connection.createStatement()) {
@@ -92,11 +92,11 @@ public class RunnableUtil {
      * exception that occurred (if any).
      * @return A {@link Runnable} that contains the task to run to execute the sql statement provided.
      */
-    public static @NotNull Runnable createRunnableForSingleSqlExecution(
-            @NotNull AbstractConnectionManager connectionManager,
-            @NotNull String sql,
-            @NotNull List<Parameter<?>> params,
-            @NotNull CompletableFuture<Integer> future) {
+    public static @NonNull Runnable createRunnableForSingleSqlExecution(
+            @NonNull AbstractConnectionManager connectionManager,
+            @NonNull String sql,
+            @NonNull List<Parameter<?>> params,
+            @NonNull CompletableFuture<Integer> future) {
         return () -> {
             try(Connection connection = connectionManager.getConnection()) {
                 try(PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -141,10 +141,10 @@ public class RunnableUtil {
      * rows updated or the exception that occurred (if any).
      * @return A {@link Runnable} that contains the task to run to execute the sql statements provided.
      */
-    public static @NotNull Runnable createRunnableForBatchSqlExecution(
-            @NotNull AbstractConnectionManager connectionManager,
-            @NotNull List<String> sqlList,
-            @NotNull CompletableFuture<List<Integer>> future) {
+    public static @NonNull Runnable createRunnableForBatchSqlExecution(
+            @NonNull AbstractConnectionManager connectionManager,
+            @NonNull List<String> sqlList,
+            @NonNull CompletableFuture<List<Integer>> future) {
         return () -> {
             List<Integer> updatedRows = new ArrayList<>();
 
@@ -193,10 +193,10 @@ public class RunnableUtil {
      * rows updated or the exception that occurred (if any).
      * @return A {@link Runnable} that contains the task to run to execute the sql statements provided.
      */
-    public static @NotNull Runnable createRunnableForBatchSqlExecution(
-            @NotNull AbstractConnectionManager connectionManager,
-            @NotNull Map<String, List<Parameter<?>>> sqlAndParamsMap,
-            @NotNull CompletableFuture<List<Integer>> future) {
+    public static @NonNull Runnable createRunnableForBatchSqlExecution(
+            @NonNull AbstractConnectionManager connectionManager,
+            @NonNull Map<String, List<Parameter<?>>> sqlAndParamsMap,
+            @NonNull CompletableFuture<List<Integer>> future) {
         return () -> {
             List<Integer> updatedRows = new ArrayList<>();
 
@@ -256,11 +256,11 @@ public class RunnableUtil {
      * rows updated or the exception that occurred (if any).
      * @return A {@link Runnable} that contains the task to run to execute the sql statements provided.
      */
-    public static @NotNull Runnable createRunnableForBatchSqlExecution(
-            @NotNull AbstractConnectionManager connectionManager,
-            @NotNull String sql,
-            @NotNull List<List<Parameter<?>>> listOfParameterLists,
-            @NotNull CompletableFuture<List<Integer>> future) {
+    public static @NonNull Runnable createRunnableForBatchSqlExecution(
+            @NonNull AbstractConnectionManager connectionManager,
+            @NonNull String sql,
+            @NonNull List<List<Parameter<?>>> listOfParameterLists,
+            @NonNull CompletableFuture<List<Integer>> future) {
         return () -> {
             List<Integer> updatedRows = new ArrayList<>();
 
@@ -320,11 +320,11 @@ public class RunnableUtil {
      * @return A {@link Runnable} that contains the task to run to execute the sql statement provided.
      * @param <T> The object that is created and returned when the mapper function is run.
      */
-    public static <T> @NotNull Runnable createRunnableForSingleSqlExecution(
-            @NotNull AbstractConnectionManager connectionManager,
-            @NotNull String sql,
-            @NotNull Function<ResultSet, T> mapper,
-            @NotNull CompletableFuture<T> future) {
+    public static <T> @NonNull Runnable createRunnableForSingleSqlExecution(
+            @NonNull AbstractConnectionManager connectionManager,
+            @NonNull String sql,
+            @NonNull Function<ResultSet, T> mapper,
+            @NonNull CompletableFuture<T> future) {
         return () -> {
             try(Connection connection = connectionManager.getConnection()) {
                 try(Statement statement = connection.createStatement()) {
@@ -351,12 +351,12 @@ public class RunnableUtil {
      * @return A {@link Runnable} that contains the task to run to execute the sql statement provided.
      * @param <T> The object that is created and returned when the mapper function is run.
      */
-    public static <T> @NotNull Runnable createRunnableForSingleSqlExecution(
-            @NotNull AbstractConnectionManager connectionManager,
-            @NotNull String sql,
-            @NotNull List<Parameter<?>> params,
-            @NotNull Function<ResultSet, T> mapper,
-            @NotNull CompletableFuture<T> future) {
+    public static <T> @NonNull Runnable createRunnableForSingleSqlExecution(
+            @NonNull AbstractConnectionManager connectionManager,
+            @NonNull String sql,
+            @NonNull List<Parameter<?>> params,
+            @NonNull Function<ResultSet, T> mapper,
+            @NonNull CompletableFuture<T> future) {
         return () -> {
             try (Connection connection = connectionManager.getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {

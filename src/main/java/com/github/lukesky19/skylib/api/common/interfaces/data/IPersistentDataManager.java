@@ -22,7 +22,7 @@
  */
 package com.github.lukesky19.skylib.api.common.interfaces.data;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -37,14 +37,14 @@ public interface IPersistentDataManager<I, D> {
      * @param identifier The {@link I} identifier.
      * @return A {@link CompletableFuture} of type {@link Void} when complete.
      */
-    @NotNull CompletableFuture<Void> loadData(I identifier);
+    @NonNull CompletableFuture<Void> loadData(I identifier);
 
     /**
      * Save the data for the identifier provided.
      * @param identifier The {@link I} identifier.
      * @return A {@link CompletableFuture} of type {@link Void} when complete.
      */
-    @NotNull CompletableFuture<Void> saveData(I identifier);
+    @NonNull CompletableFuture<Void> saveData(I identifier);
 
     /**
      * Save the data provided for the identifier provided.
@@ -52,11 +52,11 @@ public interface IPersistentDataManager<I, D> {
      * @param data The {@link D} data.
      * @return A {@link CompletableFuture} of type {@link Void} when complete.
      */
-    @NotNull CompletableFuture<Void> saveData(I identifier, D data);
+    @NonNull CompletableFuture<Void> saveData(I identifier, D data);
 
     /**
      * Saves all loaded data to the disk.
      * @return A {@link CompletableFuture} of type {@link Void} when complete.
      */
-    @NotNull CompletableFuture<Void> saveData();
+    @NonNull CompletableFuture<Void> saveData();
 }

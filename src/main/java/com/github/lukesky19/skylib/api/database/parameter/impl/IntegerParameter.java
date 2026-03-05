@@ -23,7 +23,7 @@
 package com.github.lukesky19.skylib.api.database.parameter.impl;
 
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Takes an {@link Integer} to store inside a database. No processing is done to the {@link Integer}.
@@ -35,7 +35,7 @@ public class IntegerParameter implements Parameter<Integer> {
      * Stores an {@link Integer} to later use to replace a parameter with.
      * @param number The number to replace a parameter with.
      */
-    public IntegerParameter(@NotNull Integer number) {
+    public IntegerParameter(@NonNull Integer number) {
         value = number;
     }
 
@@ -44,7 +44,7 @@ public class IntegerParameter implements Parameter<Integer> {
      * @return An {@link Integer} to replace a parameter with.
      */
     @Override
-    public @NotNull Integer getValue() {
+    public @NonNull Integer getValue() {
         return value;
     }
 }

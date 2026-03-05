@@ -29,7 +29,6 @@ import org.bukkit.Server;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
@@ -136,7 +135,7 @@ public class PlayerUtil {
      * @param location The location where the item will be dropped.
      * @param itemStack The item stack to drop.
      */
-    private static void dropItem(@NotNull Location location, @NotNull ItemStack itemStack) {
+    private static void dropItem(@NonNull Location location, @NonNull ItemStack itemStack) {
         Item item = location.getWorld().dropItem(location, itemStack);
         item.setPickupDelay(0);
     }

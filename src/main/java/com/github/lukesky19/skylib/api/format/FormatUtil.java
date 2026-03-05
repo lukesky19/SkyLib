@@ -29,7 +29,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemType;
 import org.bukkit.potion.PotionType;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class FormatUtil {
      * @param material The {@link Material} to format the name for.
      * @return A formatted {@link String} representing thee provided {@link Material}'s name.
      */
-    public static @NotNull String formatMaterialName(@NotNull Material material) {
+    public static @NonNull String formatMaterialName(@NonNull Material material) {
         return formatEnumName(material.name());
     }
 
@@ -61,7 +61,7 @@ public class FormatUtil {
      * @param blockType The {@link BlockType} to format the name for.
      * @return A formatted {@link String} representing the provided {@link BlockType}'s name.
      */
-    public static @NotNull String formatBlockTypeName(@NotNull BlockType blockType) {
+    public static @NonNull String formatBlockTypeName(@NonNull BlockType blockType) {
         return formatKey(blockType.getKey());
     }
 
@@ -70,7 +70,7 @@ public class FormatUtil {
      * @param itemType The {@link ItemType} to format the name for.
      * @return A formatted {@link String} representing the provided {@link ItemType}'s name.
      */
-    public static @NotNull String formatItemTypeName(@NotNull ItemType itemType) {
+    public static @NonNull String formatItemTypeName(@NonNull ItemType itemType) {
         return formatKey(itemType.getKey());
     }
 
@@ -79,7 +79,7 @@ public class FormatUtil {
      * @param potionType The {@link PotionType} to format the name for.
      * @return A formatted {@link String} representing the provided {@link PotionType}'s name.
      */
-    public static @NotNull String formatPotionTypeName(@NotNull PotionType potionType) {
+    public static @NonNull String formatPotionTypeName(@NonNull PotionType potionType) {
         return formatEnumName(potionType.name());
     }
 
@@ -88,7 +88,7 @@ public class FormatUtil {
      * @param entityType The {@link EntityType} to format the name for.
      * @return A formatted {@link String} representing the provided {@link EntityType}'s name.
      */
-    public static @NotNull String formatEntityName(@NotNull EntityType entityType) {
+    public static @NonNull String formatEntityName(@NonNull EntityType entityType) {
         return formatEnumName(entityType.name());
     }
 
@@ -98,7 +98,7 @@ public class FormatUtil {
      * @param enchantmentLevel The enchantment level to format.
      * @return A {@link String} representing the enchantment name and level in a single {@link String}.
      */
-    public static @NotNull String getEnchantmentAsString(@NotNull Enchantment enchantment, int enchantmentLevel) {
+    public static @NonNull String getEnchantmentAsString(@NonNull Enchantment enchantment, int enchantmentLevel) {
         return formatKey(enchantment.getKey()) + " " + enchantmentLevel;
     }
 
@@ -109,7 +109,7 @@ public class FormatUtil {
      * @param finalDelimiter The final delimiter to use.
      * @return A {@link String} representing the enchantment names and enchantment levels in a single {@link String}.
      */
-    public static @NotNull String getEnchantmentsListedAsString(@NotNull Map<Enchantment, Integer> enchantments, @NotNull String delimiter, @NotNull String finalDelimiter) {
+    public static @NonNull String getEnchantmentsListedAsString(@NonNull Map<Enchantment, Integer> enchantments, @NonNull String delimiter, @NonNull String finalDelimiter) {
         final int size = enchantments.size();
         if(size == 0) return "";
 
@@ -141,7 +141,7 @@ public class FormatUtil {
      * @param enumName The name of the enum to format.
      * @return A formatted {@link String}.
      */
-    public static @NotNull String formatEnumName(String enumName) {
+    public static @NonNull String formatEnumName(String enumName) {
         String[] words = enumName.split("_");
         StringBuilder formatted = new StringBuilder();
 
@@ -159,7 +159,7 @@ public class FormatUtil {
      * @param key The {@link NamespacedKey} to format.
      * @return A formatted {@link String}.
      */
-    public static @NotNull String formatKey(@NotNull NamespacedKey key) {
+    public static @NonNull String formatKey(@NonNull NamespacedKey key) {
         String name = key.getKey();
         String[] words = name.split("_");
         StringBuilder formatted = new StringBuilder();

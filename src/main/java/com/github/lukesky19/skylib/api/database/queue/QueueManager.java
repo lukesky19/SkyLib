@@ -23,7 +23,7 @@
 package com.github.lukesky19.skylib.api.database.queue;
 
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.sql.ResultSet;
 import java.util.List;
@@ -50,20 +50,20 @@ public interface QueueManager {
      * Get a {@link CompletableFuture} of type {@link Void} to be notified when the queue is empty.
      * @return A {@link CompletableFuture} of type {@link Void}.
      */
-    @NotNull CompletableFuture<Void> waitForQueueEmpty();
+    @NonNull CompletableFuture<Void> waitForQueueEmpty();
 
     /**
      * Used to shut down the queue.
      * @return A {@link CompletableFuture} of type {@link Void} when the shut-down of the queue is completed.
      */
-    @NotNull CompletableFuture<Void> shutdownQueue();
+    @NonNull CompletableFuture<Void> shutdownQueue();
 
     /**
      * Queue the sql statement to write to the database.
      * @param sql The sql statement as a {@link String}.
      * @return A {@link CompletableFuture} of type {@link Integer} that contains the number of rows updated.
      */
-    @NotNull CompletableFuture<Integer> queueWriteTransaction(@NotNull String sql);
+    @NonNull CompletableFuture<Integer> queueWriteTransaction(@NonNull String sql);
 
     /**
      * Queue the sql statement to write to the database.
@@ -71,21 +71,21 @@ public interface QueueManager {
      * @param params A {@link List} of {@link Parameter} that are used to replace parameters in the sql statement.
      * @return A {@link CompletableFuture} of type {@link Integer} that contains the number of rows updated.
      */
-    @NotNull CompletableFuture<Integer> queueWriteTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params);
+    @NonNull CompletableFuture<Integer> queueWriteTransaction(@NonNull String sql, @NonNull List<Parameter<?>> params);
 
     /**
      * Queue a {@link List} of {@link String} containing the sql statements to write to the database.
      * @param sqlList The {@link List} of {@link String} containing the sql statements.
      * @return A {@link CompletableFuture} of type {@link List} where the {@link List} contains that contains the number of rows updated for each sql statement.
      */
-    @NotNull CompletableFuture<@NotNull List<@NotNull Integer>> queueBulkWriteTransaction(@NotNull List<String> sqlList);
+    @NonNull CompletableFuture<@NonNull List<@NonNull Integer>> queueBulkWriteTransaction(@NonNull List<String> sqlList);
 
     /**
      * Queue a {@link List} of {@link String} containing the sql statements to write to the database.
      * @param sqlAndParamsMap A {@link Map} that maps a sql statement to a {@link List} of {@link Parameter} that are used to replace parameters in the sql statement.
      * @return A {@link CompletableFuture} of type {@link List} where the {@link List} contains that contains the number of rows updated for each sql statement.
      */
-    @NotNull CompletableFuture<@NotNull List<@NotNull Integer>> queueBulkWriteTransaction(@NotNull Map<String, List<Parameter<?>>> sqlAndParamsMap);
+    @NonNull CompletableFuture<@NonNull List<@NonNull Integer>> queueBulkWriteTransaction(@NonNull Map<String, List<Parameter<?>>> sqlAndParamsMap);
 
     /**
      * Queue the same sql statement to be executed multiple times with different parameters.
@@ -93,7 +93,7 @@ public interface QueueManager {
      * @param listOfParameterLists The {@link List} containing a {@link List} of {@link Parameter} that are used to replace parameters in the sql statement.
      * @return A {@link CompletableFuture} of type {@link List} where the {@link List} contains that contains the number of rows updated for each sql statement.
      */
-    @NotNull CompletableFuture<@NotNull List<@NotNull Integer>> queueBulkWriteTransaction(@NotNull String sql, @NotNull List<List<Parameter<?>>> listOfParameterLists);
+    @NonNull CompletableFuture<@NonNull List<@NonNull Integer>> queueBulkWriteTransaction(@NonNull String sql, @NonNull List<List<Parameter<?>>> listOfParameterLists);
 
     /**
      * Queues a sql statement to read from the database.
@@ -102,7 +102,7 @@ public interface QueueManager {
      * @return A {@link CompletableFuture} containing the object {@link T}.
      * @param <T> The object {@link T} created using the data from {@link ResultSet}.
      */
-    @NotNull <T> CompletableFuture<@NotNull T> queueReadTransaction(@NotNull String sql, @NotNull Function<ResultSet, T> mapper);
+    @NonNull <T> CompletableFuture<@NonNull T> queueReadTransaction(@NonNull String sql, @NonNull Function<ResultSet, T> mapper);
 
     /**
      * Queues a sql statement to read from the database.
@@ -112,5 +112,5 @@ public interface QueueManager {
      * @return A {@link CompletableFuture} containing the object {@link T}.
      * @param <T> The object {@link T} created using the data from {@link ResultSet}.
      */
-    @NotNull <T> CompletableFuture<@NotNull T> queueReadTransaction(@NotNull String sql, @NotNull List<Parameter<?>> params, @NotNull Function<ResultSet, T> mapper);
+    @NonNull <T> CompletableFuture<@NonNull T> queueReadTransaction(@NonNull String sql, @NonNull List<Parameter<?>> params, @NonNull Function<ResultSet, T> mapper);
 }

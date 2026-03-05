@@ -23,7 +23,7 @@
 package com.github.lukesky19.skylib.api.database.parameter.impl;
 
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
 
@@ -37,7 +37,7 @@ public class UUIDParameter implements Parameter<String> {
      * Takes a {@link UUID} and converts it to a {@link String} to later use to replace a parameter with.
      * @param uuid The {@link UUID} to convert to a {@link String}.
      */
-    public UUIDParameter(@NotNull UUID uuid) {
+    public UUIDParameter(@NonNull UUID uuid) {
         value = uuid.toString();
     }
 
@@ -46,7 +46,7 @@ public class UUIDParameter implements Parameter<String> {
      * @return A {@link String} representing a {@link UUID} to replace a parameter with.
      */
     @Override
-    public @NotNull String getValue() {
+    public @NonNull String getValue() {
         return value;
     }
 }

@@ -40,8 +40,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;
@@ -71,18 +71,18 @@ public record ItemStackConfig(
         @Nullable Integer amount,
         @Nullable Integer maxStackSize,
         @Nullable String name,
-        @NotNull List<String> lore,
+        @NonNull List<String> lore,
         @Nullable EntityType entityType,
         @Nullable MusicInstrument instrument,
-        @NotNull List<EnchantmentConfig> enchantments,
-        @NotNull PotionConfig potionConfig,
-        @NotNull ItemStackConfig.ColorConfig color,
+        @NonNull List<EnchantmentConfig> enchantments,
+        @NonNull PotionConfig potionConfig,
+        ItemStackConfig.@NonNull ColorConfig color,
         @Nullable String modelName,
-        @NotNull List<String> itemFlags,
-        @NotNull DecoratedPotConfig decoratedPot,
-        @NotNull ArmorTrimConfig armorTrim,
-        @NotNull List<AttributeConfig> attributes,
-        @NotNull OptionsConfig options) {
+        @NonNull List<String> itemFlags,
+        @NonNull DecoratedPotConfig decoratedPot,
+        @NonNull ArmorTrimConfig armorTrim,
+        @NonNull List<AttributeConfig> attributes,
+        @NonNull OptionsConfig options) {
     /**
      * This record contains the information to create a potion {@link ItemStack}.
      * @param potionType The {@link PotionType} that may be associated with the {@link ItemStack}.
@@ -91,7 +91,7 @@ public record ItemStackConfig(
     @ConfigSerializable
     public record PotionConfig(
             @Nullable PotionType potionType,
-            @NotNull List<PotionEffectConfig> potionEffects) {}
+            @NonNull List<PotionEffectConfig> potionEffects) {}
 
     /**
      * This record contains the information to create a {@link PotionEffect} to apply to a potion {@link ItemStack}
@@ -170,7 +170,7 @@ public record ItemStackConfig(
     public record AttributeConfig(
             @Nullable Attribute attribute,
             @Nullable Double amount,
-            @Nullable AttributeModifier.Operation operation,
+            AttributeModifier.@Nullable Operation operation,
             @Nullable EquipmentSlot equipmentSlot) {}
 
     /**

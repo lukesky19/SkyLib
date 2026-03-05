@@ -39,8 +39,8 @@ import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.view.MerchantView;
 import org.bukkit.inventory.view.builder.MerchantInventoryViewBuilder;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,32 +56,32 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
     /**
      * The plugin who is extending the abstract class to create a GUI.
      */
-    protected final @NotNull JavaPlugin plugin;
+    protected final @NonNull JavaPlugin plugin;
     /**
      * The plugin's {@link ComponentLogger} to log warnings or errors with.
      */
-    protected final @NotNull ComponentLogger logger;
+    protected final @NonNull ComponentLogger logger;
     /**
      * A class extending {@link IGUIManager} that the plugin is using to track open GUIs with.
      */
-    protected final @NotNull IGUIManager<I> guiManager;
+    protected final @NonNull IGUIManager<I> guiManager;
     /**
      * The identifier that the GUI is tied to. Used in conjunction with {@link IGUIManager}.
      */
-    protected final @NotNull I identifier;
+    protected final @NonNull I identifier;
 
     /**
      * A {@link List} of {@link MerchantRecipe} that will be used to populate the {@link Merchant} associated with this GUI.
      */
-    protected final @NotNull List<MerchantRecipe> trades = new ArrayList<>();
+    protected final @NonNull List<MerchantRecipe> trades = new ArrayList<>();
     /**
      * The {@link Player} to create the GUI for.
      */
-    protected final @NotNull Player player;
+    protected final @NonNull Player player;
     /**
      * The {@link UUID} of the {@link Player}.
      */
-    protected final @NotNull UUID uuid;
+    protected final @NonNull UUID uuid;
     /**
      * The {@link InventoryView} associated with this GUI.
      */
@@ -99,10 +99,10 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * @param player The {@link Player} associated with the created GUI.
      */
     public MerchantGUI(
-            @NotNull JavaPlugin plugin,
-            @NotNull IGUIManager<I> guiManager,
-            @NotNull I identifier,
-            @NotNull Player player) {
+            @NonNull JavaPlugin plugin,
+            @NonNull IGUIManager<I> guiManager,
+            @NonNull I identifier,
+            @NonNull Player player) {
         this.plugin = plugin;
         this.logger = plugin.getComponentLogger();
         this.guiManager = guiManager;
@@ -116,7 +116,7 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * @return An {@link Optional} containing an {@link InventoryView}. If empty, that means {@link #create(String, List)} was not called.
      */
     @Override
-    public @NotNull Optional<@NotNull InventoryView> getInventoryView() {
+    public @NonNull Optional<@NonNull InventoryView> getInventoryView() {
         return Optional.ofNullable(inventoryView);
     }
 
@@ -126,8 +126,8 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * @param placeholders A {@link List} of {@link TagResolver.Single} for any placeholders in the GUI name.
      * @return This always returns true as this method always succeeds.
      */
-    public boolean create(@NotNull String name, @NotNull List<TagResolver.Single> placeholders) {
-        @NotNull MerchantInventoryViewBuilder<@NotNull MerchantView> inventoryViewBuilder = MenuType.MERCHANT.builder();
+    public boolean create(@NonNull String name, @NonNull List<TagResolver.Single> placeholders) {
+        @NonNull MerchantInventoryViewBuilder<@NonNull MerchantView> inventoryViewBuilder = MenuType.MERCHANT.builder();
 
         merchant = plugin.getServer().createMerchant();
 
@@ -220,7 +220,7 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * You can use {@link #getLiveTrades()} to get those.
      * @return A {@link List} of {@link MerchantRecipe}s.
      */
-    public @NotNull List<@NotNull MerchantRecipe> getTrades() {
+    public @NonNull List<@NonNull MerchantRecipe> getTrades() {
         return trades;
     }
 
@@ -232,7 +232,7 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * @return An {@link Optional} of {@link List} containing {@link MerchantRecipe}s.
      * The optional may be empty if there is no {@link Merchant} associated with the GUI.
      */
-    public @NotNull Optional<@NotNull List<@NotNull MerchantRecipe>> getLiveTrades() {
+    public @NonNull Optional<@NonNull List<@NonNull MerchantRecipe>> getLiveTrades() {
         if(merchant == null) {
             // If the Merchant was not created, log a warning and return false.
             logger.warn(AdventureUtil.deserialize("Unable to add the trades to the Merchant as it was not created."));
@@ -247,7 +247,7 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * @apiNote You must call {@link #update()} to actually add the trades to the {@link Merchant} associated with the GUI.
      * @param merchantRecipe The {@link MerchantRecipe} to add.
      */
-    public void addTrade(@NotNull MerchantRecipe merchantRecipe) {
+    public void addTrade(@NonNull MerchantRecipe merchantRecipe) {
         trades.add(merchantRecipe);
     }
 
@@ -256,7 +256,7 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * @apiNote You must call {@link #update()} to actually add the trades to the {@link Merchant} associated with the GUI.
      * @param merchantRecipe A {@link MerchantRecipe} to remove.
      */
-    public void removeTrade(@NotNull MerchantRecipe merchantRecipe) {
+    public void removeTrade(@NonNull MerchantRecipe merchantRecipe) {
         trades.remove(merchantRecipe);
     }
 
@@ -265,7 +265,7 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * @apiNote You must call {@link #update()} to actually add the trades to the {@link Merchant} associated with the GUI.
      * @param tradeList A {@link List} of {@link MerchantRecipe} to add to the Merchant.
      */
-    public void setTrades(@NotNull List<MerchantRecipe> tradeList) {
+    public void setTrades(@NonNull List<MerchantRecipe> tradeList) {
         trades.clear();
 
         trades.addAll(tradeList);
@@ -275,11 +275,11 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * Used to define how a {@link PlayerTradeEvent} should be handled.
      * @param playerTradeEvent A {@link PlayerTradeEvent}.
      */
-    public abstract void handlePlayerTrade(@NotNull PlayerTradeEvent playerTradeEvent);
+    public abstract void handlePlayerTrade(@NonNull PlayerTradeEvent playerTradeEvent);
 
     /**
      * Used to define how a {@link TradeSelectEvent} should be handled.
      * @param tradeSelectEvent A {@link TradeSelectEvent}.
      */
-    public abstract void handleTradeSelect(@NotNull TradeSelectEvent tradeSelectEvent);
+    public abstract void handleTradeSelect(@NonNull TradeSelectEvent tradeSelectEvent);
 }

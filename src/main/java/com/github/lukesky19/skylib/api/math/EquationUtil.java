@@ -22,7 +22,7 @@
  */
 package com.github.lukesky19.skylib.api.math;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Map;
 import java.util.Stack;
@@ -47,7 +47,7 @@ public class EquationUtil {
      * @throws RuntimeException If a equation part is not recognized by the parser.
      * @throws ArithmeticException If a divide-by-zero situation occurs.
      */
-    public static @NotNull Double evaluateEquation(@NotNull String equation, @NotNull Map<String, String> variables) {
+    public static @NonNull Double evaluateEquation(@NonNull String equation, @NonNull Map<String, String> variables) {
         // Replace any variables
         for(Map.Entry<String, String> entry : variables.entrySet()) {
             equation = equation.replace(entry.getKey(), entry.getValue());
@@ -124,7 +124,7 @@ public class EquationUtil {
      * @param string The {@link String} to check.
      * @return true if a Double, otherwise false.
      */
-    private static boolean isDouble(@NotNull String string) {
+    private static boolean isDouble(@NonNull String string) {
         try {
             Double.parseDouble(string);
             return true;
@@ -138,7 +138,7 @@ public class EquationUtil {
      * @param string The {@link String} to check.
      * @return true if an operator, otherwise false.
      */
-    private static boolean isOperator(@NotNull String string) {
+    private static boolean isOperator(@NonNull String string) {
         return string.equals("+") || string.equals("-") || string.equals("*") || string.equals("/") || string.equals("^");
     }
 
@@ -176,7 +176,7 @@ public class EquationUtil {
      * @throws RuntimeException if an unknown operator is provided.
      * @throws ArithmeticException if a divide-by-zero error occurs.
      */
-    @NotNull
+    @NonNull
     private static Double applyOperator(char operator, double b, double a) {
         return switch (operator) {
             case '+' -> a + b;
