@@ -118,7 +118,7 @@ public class PlayerUtil {
      * @param addStack The ItemStack to add.
      * @param location The location to drop items if the inventory is full.
      */
-    private static void giveItem(@NonNull Inventory inventory, @NonNull ItemStack addStack, @NonNull Location location) {
+    public static void giveItem(@NonNull Inventory inventory, @NonNull ItemStack addStack, @NonNull Location location) {
         HashMap<Integer, ItemStack> leftover = inventory.addItem(addStack);
 
         if (!leftover.isEmpty()) {
