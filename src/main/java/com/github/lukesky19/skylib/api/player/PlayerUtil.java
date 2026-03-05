@@ -23,22 +23,24 @@
 package com.github.lukesky19.skylib.api.player;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
+import com.github.lukesky19.skylib.plugin.SkyLib;
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import javax.annotation.CheckForNull;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * A class containing utilities for running actions on the Player.
  */
 public class PlayerUtil {
-    private static final Map<UUID, PlayerProfile> profileCache = new HashMap<>();
+    private static Server server;
 
     /**
      * All methods in this class are static so this constructor will throw a runtime exception if used.
@@ -49,37 +51,53 @@ public class PlayerUtil {
     }
 
     /**
-     * Caches a PlayerProfile.
-     * @param uuid The UUID the PlayerProfile belongs to.
-     * @param playerProfile The PlayerProfile to cache.
+     * Initialize the {@link SkyLib}
+     * @param skyLib A {@link SkyLib} instance.
      */
-    public static void cachePlayerProfile(@NotNull UUID uuid, @NotNull PlayerProfile playerProfile) {
-        profileCache.put(uuid, playerProfile);
+    public static void init(@NonNull SkyLib skyLib) {
+        PlayerUtil.server = skyLib.getServer();
     }
 
     /**
-     * Removes a PlayerProfile from the cache.
-     * @param uuid The UUID the PlayerProfile belongs to.
+     * For backwards compatibility purposes and calls {@link #getPlayerProfile(UUID)}.
+     * @param playerId The {@link UUID} to retrieve the {@link PlayerProfile} for.
+     * @return A {@link PlayerProfile}.
+     * @deprecated The use of {@link #getPlayerProfile(UUID)} is preferred as that is the new method and what this method also calls.
      */
-    public static void removeCachedPlayerProfile(UUID uuid) {
-        profileCache.remove(uuid);
+    @Deprecated(since = "1.5.0.0")
+    public static @NonNull PlayerProfile getCachedPlayerProfile(@NonNull UUID playerId) {
+        return getPlayerProfile(playerId);
     }
 
     /**
-     * Removes all PlayerProfiles from the cache.
+     * Get the {@link PlayerProfile} from the cache only for the given {@link UUID}. See {@link #getOrCreatePlayerProfile(UUID)} as well.
+     * @apiNote The {@link PlayerProfile} may not be complete. Check {@link PlayerProfile#isComplete()}.
+     * @param playerId The {@link UUID} to retrieve the {@link PlayerProfile} for.
+     * @return A {@link PlayerProfile}.
      */
-    public static void clearCachedPlayerProfiles() {
-        profileCache.clear();
+    public static @NonNull PlayerProfile getPlayerProfile(@NonNull UUID playerId) {
+        PlayerProfile playerProfile = server.createProfile(playerId);
+        playerProfile.completeFromCache();
+
+        return playerProfile;
     }
 
     /**
-     * Gets the PlayerProfile from the cache or null if there is no PlayerProfile cached for the given UUID.
-     * @param uuid The UUID to retrieve the PlayerProfile for.
-     * @return A PlayerProfile or null.
+     * Get the {@link PlayerProfile} from the cache or create a new {@link PlayerProfile} and attempt to complete it for the given {@link UUID}.
+     * @apiNote The {@link PlayerProfile} may not be complete. Check {@link PlayerProfile#isComplete()}.
+     * @param playerId The {@link UUID} to retrieve the {@link PlayerProfile} for.
+     * @return A {@link PlayerProfile} or null.
      */
-    @CheckForNull
-    public static PlayerProfile getCachedPlayerProfile(UUID uuid) {
-        return profileCache.get(uuid);
+    public static @NonNull CompletableFuture<@NonNull PlayerProfile> getOrCreatePlayerProfile(@NonNull UUID playerId) {
+        PlayerProfile playerProfile = server.createProfile(playerId);
+        boolean result = playerProfile.completeFromCache();
+
+        if(result) return CompletableFuture.completedFuture(playerProfile);
+
+        return CompletableFuture.supplyAsync(() -> {
+            playerProfile.complete();
+            return playerProfile;
+        });
     }
 
     /**
@@ -89,7 +107,7 @@ public class PlayerUtil {
      * @param amount The amount of items to add.
      * @param location The location to drop any items that don't fit inside the inventory.
      */
-    public static void giveItem(Inventory inventory, ItemStack addStack, int amount, Location location) {
+    public static void giveItem(@NonNull Inventory inventory, @NonNull ItemStack addStack, int amount, @NonNull Location location) {
         addStack.setAmount(amount);
 
         giveItem(inventory, addStack, location);
@@ -101,7 +119,7 @@ public class PlayerUtil {
      * @param addStack The ItemStack to add.
      * @param location The location to drop items if the inventory is full.
      */
-    private static void giveItem(Inventory inventory, ItemStack addStack, Location location) {
+    private static void giveItem(@NonNull Inventory inventory, @NonNull ItemStack addStack, @NonNull Location location) {
         HashMap<Integer, ItemStack> leftover = inventory.addItem(addStack);
 
         if (!leftover.isEmpty()) {

@@ -24,10 +24,10 @@ package com.github.lukesky19.skylib.plugin;
 
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skylib.api.common.abstracts.SkyPlugin;
+import com.github.lukesky19.skylib.api.player.PlayerUtil;
 import com.github.lukesky19.skylib.api.version.VersionUtil;
 import com.github.lukesky19.skylib.internal.ThreadPoolManager;
 import com.github.lukesky19.skylib.plugin.command.SkyLibCommand;
-import com.github.lukesky19.skylib.plugin.listener.LoginListener;
 import com.github.lukesky19.skylib.plugin.settings.Settings;
 import com.github.lukesky19.skylib.plugin.settings.SettingsManager;
 import io.papermc.paper.ServerBuildInfo;
@@ -94,9 +94,6 @@ public final class SkyLib extends SkyPlugin {
                                 "Command to manage and use the SkyLib plugin.",
                                 List.of("library", "lib")));
 
-        // Register Listener(s)
-        this.getServer().getPluginManager().registerEvents(new LoginListener(), this);
-
         // Load plugin settings and disable SkyLib if plugin settings fail to load.
         SettingsManager settingsManager = new SettingsManager(this);
         settingsManager.loadConfiguration();
@@ -108,6 +105,9 @@ public final class SkyLib extends SkyPlugin {
 
         // Initialize the ScheduledThreadPoolExecutor in ThreadPoolManager
         ThreadPoolManager.initializeThreadPool(settings);
+
+        // Initialize the PlayerProfile cache
+        PlayerUtil.init(this);
     }
 
     @Override
