@@ -51,6 +51,10 @@ public class SettingsManager extends SimpleConfigManager<Settings> {
     @Override
     public @Nullable Settings migrateConfiguration(@NonNull Settings configuration) {
         switch(configuration.version()) {
+            case 1 -> {
+                return configuration;
+            }
+
             // 0 -> 1
             case 0 -> {
                 return new Settings(1, configuration.corePoolSize(), configuration.maxPoolSize(), configuration.timeoutTimeSeconds());
