@@ -26,7 +26,7 @@ import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skylib.api.gui.GUIType;
 import com.github.lukesky19.skylib.api.gui.interfaces.BaseGUI;
 import com.github.lukesky19.skylib.api.gui.interfaces.IGUIManager;
-import io.papermc.paper.event.player.PlayerTradeEvent;
+import io.papermc.paper.event.player.PlayerPurchaseEvent;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
@@ -116,7 +116,7 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * @return An {@link Optional} containing an {@link InventoryView}. If empty, that means {@link #create(String, List)} was not called.
      */
     @Override
-    public @NonNull Optional<@NonNull InventoryView> getInventoryView() {
+    public @NonNull Optional<InventoryView> getInventoryView() {
         return Optional.ofNullable(inventoryView);
     }
 
@@ -127,7 +127,7 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
      * @return This always returns true as this method always succeeds.
      */
     public boolean create(@NonNull String name, @NonNull List<TagResolver.Single> placeholders) {
-        @NonNull MerchantInventoryViewBuilder<@NonNull MerchantView> inventoryViewBuilder = MenuType.MERCHANT.builder();
+        MerchantInventoryViewBuilder<@NonNull MerchantView> inventoryViewBuilder = MenuType.MERCHANT.builder();
 
         merchant = plugin.getServer().createMerchant();
 
@@ -272,10 +272,10 @@ public abstract class MerchantGUI<I> implements BaseGUI<I> {
     }
 
     /**
-     * Used to define how a {@link PlayerTradeEvent} should be handled.
-     * @param playerTradeEvent A {@link PlayerTradeEvent}.
+     * Used to define how a {@link PlayerPurchaseEvent} should be handled.
+     * @param playerPurchaseEvent A {@link PlayerPurchaseEvent}.
      */
-    public abstract void handlePlayerTrade(@NonNull PlayerTradeEvent playerTradeEvent);
+    public abstract void handlePlayerTrade(@NonNull PlayerPurchaseEvent playerPurchaseEvent);
 
     /**
      * Used to define how a {@link TradeSelectEvent} should be handled.
