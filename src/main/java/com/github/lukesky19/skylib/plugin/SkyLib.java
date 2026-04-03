@@ -59,10 +59,12 @@ public final class SkyLib extends SkyPlugin {
         VersionUtil.parseVersion(minecraftVersionId);
 
         // Ensure SkyLib is running on Minecraft version 1.21.4 or newer.
-        if(VersionUtil.getMajorVersion() < 21 || VersionUtil.getMinorVersion() < 4) {
-            this.getComponentLogger().error(AdventureUtil.deserialize("SkyLib version 1.3.0.0 and newer only works on Minecraft Version 1.21.4 and newer."));
-            this.getServer().getPluginManager().disablePlugin(this);
-            return;
+        if(VersionUtil.isLegacy()) {
+            if(VersionUtil.getMajorVersion() < 21 || VersionUtil.getMinorVersion() < 4) {
+                this.getComponentLogger().error(AdventureUtil.deserialize("SkyLib version 1.3.0.0 and newer only works on Minecraft Version 1.21.4 and newer."));
+                this.getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
         }
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,

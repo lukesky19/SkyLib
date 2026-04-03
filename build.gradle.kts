@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.lukesky19"
-version = "1.5.0.0"
+version = "1.5.1.0"
 
 repositories {
     mavenCentral()
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.1.1.build.+")
     compileOnly("me.clip:placeholderapi:2.11.7")
     implementation("org.spongepowered:configurate-yaml:4.2.0")
     implementation("org.spongepowered:configurate-gson:4.2.0")
@@ -30,8 +30,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
 
-    testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-    testImplementation("com.github.lukesky19:SkyLib:1.4.0.0")
+    testImplementation("io.papermc.paper:paper-api:26.1.1.build.+")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.14.1")
     testImplementation("org.junit.platform:junit-platform-launcher:1.10.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
@@ -39,7 +38,7 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
     withSourcesJar()
     withJavadocJar()
 }
