@@ -1,40 +1,94 @@
 plugins {
-    java
+    `java-library`
     `maven-publish`
-    id("com.gradleup.shadow") version "9.2.2"
+    id("com.gradleup.shadow") version "9.4.1"
+    id("xyz.jpenilla.gremlin-gradle") version "0.0.9"
 }
 
 group = "com.github.lukesky19"
-version = "1.5.1.0"
+version = "2.0.0.0"
 
-repositories {
-    mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/") {
-        name = "papermc-repo"
+subprojects {
+    apply(plugin = "java-library")
+
+    group = "com.github.lukesky19"
+    version = "2.0.0.0"
+
+    dependencies {
+        // Annotations
+        compileOnly("org.jspecify:jspecify:1.0.0")
+
+        // Adventure
+        compileOnly("net.kyori:adventure-api:5.0.0")
+        compileOnly("net.kyori:adventure-text-logger-slf4j:5.0.0")
+        compileOnly("net.kyori:adventure-text-minimessage:5.0.0")
+
+        // Configurate (Configuration)
+        compileOnly("org.spongepowered:configurate-yaml:4.2.0")
+        compileOnly("org.spongepowered:configurate-gson:4.2.0")
+
+        // HikariCP
+        compileOnly("com.zaxxer:HikariCP:7.0.2")
+
+        // Database Drivers
+        compileOnly("org.xerial:sqlite-jdbc:3.51.3.0")
+
+        // Message Brokers
+        compileOnly("com.rabbitmq:amqp-client:5.30.0")
+
+        // Gremlin (Runtime dependency resolution)
+        compileOnly("xyz.jpenilla:gremlin-runtime:0.0.9")
     }
-    maven("https://oss.sonatype.org/content/groups/public/") {
-        name = "sonatype"
+
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+        withSourcesJar()
+        withJavadocJar()
     }
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
-        name = "PlaceholderAPI Repo"
+
+    tasks {
+        processResources {
+            val props = mapOf("version" to version)
+            inputs.properties(props)
+            filteringCharset = "UTF-8"
+            val filePatterns = listOf("plugin.yml", "paper-plugin.yml")
+
+            filePatterns.forEach { filePattern ->
+                filesMatching(filePattern) {
+                    expand(props)
+                }
+            }
+        }
+
+        // This allows usage of @apiNode in javadocs
+        javadoc {
+            (options as StandardJavadocDocletOptions).tags("apiNote:a:API Note:")
+        }
+
+        build {
+            dependsOn(javadoc)
+        }
     }
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.1.1.build.+")
-    compileOnly("me.clip:placeholderapi:2.11.7")
+    // Project Modules
+    implementation(project(":SkyLib-Common"))
+    implementation(project(":SkyLib-Paper"))
+    implementation(project(":SkyLib-Velocity"))
+
+    // Shadowed dependencies
     implementation("org.spongepowered:configurate-yaml:4.2.0")
     implementation("org.spongepowered:configurate-gson:4.2.0")
     implementation("com.google.code.gson:gson:2.13.2")
-    implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
+    implementation("com.rabbitmq:amqp-client:5.30.0")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
+    implementation("xyz.jpenilla:gremlin-runtime:0.0.9")
 
-    testImplementation("io.papermc.paper:paper-api:26.1.1.build.+")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.14.1")
-    testImplementation("org.junit.platform:junit-platform-launcher:1.10.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.21.0")
+    // Runtime Dependencies
+    runtimeDownload("org.xerial:sqlite-jdbc:3.51.3.0")
 }
 
 java {
@@ -44,46 +98,34 @@ java {
 }
 
 tasks {
-    processResources {
-        val props = mapOf("version" to version)
-        inputs.properties(props)
-        filteringCharset = "UTF-8"
-        val filePatterns = listOf("plugin.yml", "paper-plugin.yml")
-
-        filePatterns.forEach { filePattern ->
-            filesMatching(filePattern) {
-                expand(props)
-            }
-        }
-    }
-
-    test {
-        useJUnitPlatform()
-    }
-
-    compileTestJava {
-        dependsOn(shadowJar)
-        dependsOn(jar)
-        mustRunAfter(shadowJar)
+    jar {
+        archiveClassifier.set("ignored")
     }
 
     shadowJar {
+        dependsOn(":SkyLib-Common:jar")
+        dependsOn(":SkyLib-Paper:jar")
+        dependsOn(":SkyLib-Velocity:jar")
+
         manifest {
             attributes["paperweight-mappings-namespace"] = "mojang"
         }
 
         archiveClassifier.set("")
 
+        relocate("org.bstats", "com.github.lukesky19.skylib.libs.bstats")
         relocate("org.spongepowered.configurate", "com.github.lukesky19.skylib.libs.configurate")
-        relocate("com.github.gson", "com.github.lukesky19.libs.gson")
+        relocate("com.google.gson", "com.github.lukesky19.skylib.libs.gson")
         relocate("org.bstats", "com.github.lukesky19.skylib.libs.bstats")
         relocate("com.zaxxer.hikari", "com.github.lukesky19.skylib.libs.hikaricp")
         relocate("com.jeff_media.morepersistentdatatypes", "com.github.lukesky19.skylib.libs.morepersistentdatatypes")
+        relocate("com.rabbitmq", "com.github.lukesky19.skylib.libs.rabbitmq")
+        relocate("xyz.jpenilla", "com.github.lukesky19.skylib.libs.gremlin")
     }
 
-    // This allows usage of @apiNode in javadocs
-    javadoc {
-        (options as StandardJavadocDocletOptions).tags("apiNote:a:API Note:")
+    publishToMavenLocal {
+        dependsOn(shadowJar)
+        dependsOn(javadoc)
     }
 
     build {
@@ -95,8 +137,8 @@ tasks {
 
 publishing {
     publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
+        create<MavenPublication>("shadow") {
+            from(components["shadow"])
         }
     }
 }

@@ -1,0 +1,5 @@
+name: SkyLib
+version: '${version}'
+main: com.github.lukesky19.skylib.paper.SkyLibPaper
+api-version: '1.21'
+depend: [PlaceholderAPI]

@@ -1,0 +1,19 @@
+package com.github.lukesky19.skylib.common.settings;
+
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+
+/**
+ * The plugin's settings.
+ * @param version The configuration version.
+ * @param corePoolSize The core pool size to initialize the {@link ScheduledThreadPoolExecutor} with.
+ * @param maxPoolSize The max pool size to initialize the {@link ScheduledThreadPoolExecutor} with.
+ * @param timeoutTimeSeconds The time in seconds when a thread should be timed out.
+ */
+@ConfigSerializable
+public record Settings(
+        int version,
+        int corePoolSize,
+        int maxPoolSize,
+        int timeoutTimeSeconds) {}
