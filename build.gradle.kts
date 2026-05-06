@@ -6,13 +6,13 @@ plugins {
 }
 
 group = "com.github.lukesky19"
-version = "2.0.0.0"
+version = "2.0.0.1"
 
 subprojects {
     apply(plugin = "java-library")
 
     group = "com.github.lukesky19"
-    version = "2.0.0.0"
+    version = "2.0.0.1"
 
     dependencies {
         // Annotations

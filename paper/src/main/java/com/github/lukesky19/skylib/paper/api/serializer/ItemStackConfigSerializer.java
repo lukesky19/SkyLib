@@ -386,34 +386,34 @@ public class ItemStackConfigSerializer implements TypeSerializer<ItemStackConfig
         ItemStackConfig.OptionsConfig optionsConfig = new ItemStackConfig.OptionsConfig(false, false, false, false, false);
         ConfigurationNode optionsNode = node.node("options");
         if(!optionsNode.virtual()) {
-            boolean enchantmentGlint = false;
+            Boolean enchantmentGlint = null;
             ConfigurationNode enchantmentGlintNode = optionsNode.node("enchantment-glint");
             if(!enchantmentsNode.virtual()) {
-                enchantmentGlint = enchantmentGlintNode.getBoolean();
+                enchantmentGlint = enchantmentGlintNode.get(Boolean.class);
             }
 
-            boolean unbreakable = false;
+            Boolean unbreakable = null;
             ConfigurationNode unbreakableNode = optionsNode.node("unbreakable");
             if(!unbreakableNode.virtual()) {
-                unbreakable = unbreakableNode.getBoolean();
+                unbreakable = unbreakableNode.get(Boolean.class);
             }
 
-            boolean fireResistant  = false;
+            Boolean fireResistant  = null;
             ConfigurationNode fireResistantNode = optionsNode.node("fire-resistant");
             if(!fireResistantNode.virtual()) {
-                fireResistant = fireResistantNode.getBoolean();
+                fireResistant = fireResistantNode.get(Boolean.class);
             }
 
-            boolean hideToolTips  = false;
+            Boolean hideToolTips  = null;
             ConfigurationNode hideToolTipNode = optionsNode.node("hide-tool-tip");
             if(!hideToolTipNode.virtual()) {
-                hideToolTips = hideToolTipNode.getBoolean();
+                hideToolTips = hideToolTipNode.get(Boolean.class);
             }
 
-            boolean glider  = false;
+            Boolean glider  = null;
             ConfigurationNode gliderNode = optionsNode.node("glider");
             if(!gliderNode.virtual()) {
-                glider = gliderNode.getBoolean();
+                glider = gliderNode.get(Boolean.class);
             }
 
             optionsConfig = new ItemStackConfig.OptionsConfig(enchantmentGlint, unbreakable, fireResistant, hideToolTips, glider);
