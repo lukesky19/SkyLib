@@ -5,14 +5,8 @@ plugins {
     id("xyz.jpenilla.gremlin-gradle") version "0.0.9"
 }
 
-group = "com.github.lukesky19"
-version = "2.0.0.1"
-
 subprojects {
     apply(plugin = "java-library")
-
-    group = "com.github.lukesky19"
-    version = "2.0.0.1"
 
     dependencies {
         // Annotations

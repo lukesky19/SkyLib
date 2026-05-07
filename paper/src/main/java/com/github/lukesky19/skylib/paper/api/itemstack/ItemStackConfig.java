@@ -54,6 +54,7 @@ import java.util.List;
  * @param lore The lore to give the {@link ItemStack} as a {@link List} of {@link String}s with MiniMessage tags for formatting.
  * @param entityType The {@link EntityType} that may be associated with the {@link ItemStack}. Currently only applies to Spawners.
  * @param instrument The {@link MusicInstrument} that may be associated with the {@link ItemStack}. Currently only applies to goat horns.
+ * @param lightLevel The light level that may be associated with the {@link ItemStack}. Currently only applies to light blocks.
  * @param enchantments A {@link List} of {@link EnchantmentConfig}s that may be applied to the {@link ItemStack}.
  * @param potionConfig The {@link PotionConfig}.
  * @param color The {@link ColorConfig}.
@@ -72,6 +73,7 @@ public record ItemStackConfig(
         @NonNull List<String> lore,
         @Nullable EntityType entityType,
         @Nullable MusicInstrument instrument,
+        @Nullable Integer lightLevel,
         @NonNull List<EnchantmentConfig> enchantments,
         @NonNull PotionConfig potionConfig,
         ItemStackConfig.@NonNull ColorConfig color,
@@ -81,6 +83,47 @@ public record ItemStackConfig(
         @NonNull ArmorTrimConfig armorTrim,
         @NonNull List<AttributeConfig> attributes,
         @NonNull OptionsConfig options) {
+    /**
+     * Legacy constructor. For compatibility purposes.
+     * @param itemType The {@link ItemType}.
+     * @param amount The amount of items in the {@link ItemStack}.
+     * @param maxStackSize The maximum amount of items that can be in the {@link ItemStack}. This must be at greater than or equal to 1 and less than or equal to 99.
+     * @param name The name to give the {@link ItemStack} as a {@link String} with MiniMessage tags for formatting.
+     * @param lore The lore to give the {@link ItemStack} as a {@link List} of {@link String}s with MiniMessage tags for formatting.
+     * @param entityType The {@link EntityType} that may be associated with the {@link ItemStack}. Currently only applies to Spawners.
+     * @param instrument The {@link MusicInstrument} that may be associated with the {@link ItemStack}. Currently only applies to goat horns.
+     * @param enchantments A {@link List} of {@link EnchantmentConfig}s that may be applied to the {@link ItemStack}.
+     * @param potionConfig The {@link PotionConfig}.
+     * @param color The {@link ColorConfig}.
+     * @param modelName The {@link NamespacedKey} as a {@link String} that may be associated with the {@link ItemStack}. Currently only used to apply item models.
+     * @param itemFlags A {@link List} of {@link ItemFlag}s to apply to the {@link ItemStack}.
+     * @param decoratedPot The {@link DecoratedPotConfig}.
+     * @param armorTrim The {@link ArmorTrimConfig}.
+     * @param attributes The {@link AttributeConfig}.
+     * @param options The {@link OptionsConfig}.
+     */
+    public ItemStackConfig(
+            @Nullable ItemType itemType,
+            @Nullable Integer amount,
+            @Nullable Integer maxStackSize,
+            @Nullable String name,
+            @NonNull List<String> lore,
+            @Nullable EntityType entityType,
+            @Nullable MusicInstrument instrument,
+            @NonNull List<EnchantmentConfig> enchantments,
+            @NonNull PotionConfig potionConfig,
+            ItemStackConfig.@NonNull ColorConfig color,
+            @Nullable String modelName,
+            @NonNull List<String> itemFlags,
+            @NonNull DecoratedPotConfig decoratedPot,
+            @NonNull ArmorTrimConfig armorTrim,
+            @NonNull List<AttributeConfig> attributes,
+            @NonNull OptionsConfig options) {
+        this(itemType, amount, maxStackSize, name, lore, entityType, instrument,
+                null, enchantments, potionConfig, color, modelName, itemFlags,
+                decoratedPot, armorTrim, attributes, options);
+    }
+
     /**
      * This record contains the information to create a potion {@link ItemStack}.
      * @param potionType The {@link PotionType} that may be associated with the {@link ItemStack}.

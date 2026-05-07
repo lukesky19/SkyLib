@@ -40,6 +40,8 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.DecoratedPot;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Light;
 import org.bukkit.damage.DamageType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -102,6 +104,8 @@ public class ItemStackBuilder {
     private @Nullable ArmorTrim armorTrim;
     // Instrument
     private @Nullable MusicInstrument instrument;
+    // Light Level (Light Block)
+    private @Nullable Integer lightLevel;
     // Attributes
     private @NonNull Map<Attribute, AttributeModifier> attributes = new HashMap<>();
     // OfflinePlayer - Used for player skulls
@@ -330,6 +334,9 @@ public class ItemStackBuilder {
             this.instrument = config.instrument();
         }
 
+        // Light Level (Light Block)
+        lightLevel = config.lightLevel() != null ? Math.clamp(config.lightLevel(), 0, 15) : null;
+
         // If any attributes are configured, parse the attribute config and add it to the attribute map.
         // Displays a warning for any invalid configuration or parsing errors.
         for(ItemStackConfig.AttributeConfig attributeConfig : config.attributes()) {
@@ -487,6 +494,24 @@ public class ItemStackBuilder {
                 applyEnchantments(enchantmentStorageMeta);
 
                 setItemMeta(itemStack, enchantmentStorageMeta);
+            }
+
+            case BlockDataMeta blockDataMeta -> {
+                Material stackMaterial = itemStack.getType();
+                if(stackMaterial.isBlock()) {
+                    BlockData blockData = blockDataMeta.getBlockData(stackMaterial);
+
+                    if(blockData instanceof Light light) {
+                        if (lightLevel != null) {
+                            light.setLevel(lightLevel);
+                            blockDataMeta.setBlockData(blockData);
+                        }
+                    }
+                }
+
+                applyEnchantments(blockDataMeta);
+
+                setItemMeta(itemStack, blockDataMeta);
             }
 
             case BlockStateMeta blockStateMeta -> {
@@ -650,18 +675,6 @@ public class ItemStackBuilder {
     }
 
     /**
-     * Sets the {@link EntityType} the {@link ItemStack} associated with the {@link ItemStack}.
-     * This is exclusively used for spawners.
-     * @param entityType The {@link EntityType} to give the {@link ItemStack}.
-     * @return The current {@link ItemStackBuilder}.
-     */
-    public @NonNull ItemStackBuilder setEntityType(@NonNull EntityType entityType) {
-        this.entityType = entityType;
-
-        return this;
-    }
-
-    /**
      * Sets the enchantments the {@link ItemStack} should have.
      * This will replace the existing {@link #enchantments} map with the one provided.
      * @param enchantments A {@link Map} containing the mapping of {@link Enchantment}s and enchantment levels to give the {@link ItemStack}.
@@ -681,6 +694,30 @@ public class ItemStackBuilder {
      */
     public @NonNull ItemStackBuilder addEnchantment(@NonNull Enchantment enchantment, int level) {
         enchantments.put(enchantment, level);
+
+        return this;
+    }
+
+    /**
+     * Removes an {@link Enchantment} and enchantment level from the existing {@link #enchantments} map.
+     * @param enchantment The {@link Enchantment} to remove.
+     * @param level The enchantment level to remove.
+     * @return The current {@link ItemStackBuilder}.
+     */
+    public @NonNull ItemStackBuilder removeEnchantment(@NonNull Enchantment enchantment, int level) {
+        enchantments.remove(enchantment, level);
+
+        return this;
+    }
+
+    /**
+     * Sets the {@link EntityType} the {@link ItemStack} associated with the {@link ItemStack}.
+     * This is exclusively used for spawners.
+     * @param entityType The {@link EntityType} to give the {@link ItemStack}.
+     * @return The current {@link ItemStackBuilder}.
+     */
+    public @NonNull ItemStackBuilder setEntityType(@NonNull EntityType entityType) {
+        this.entityType = entityType;
 
         return this;
     }
@@ -717,6 +754,18 @@ public class ItemStackBuilder {
      */
     public @NonNull ItemStackBuilder addPotionEffect(@NonNull PotionEffect potionEffect) {
         potionEffects.add(potionEffect);
+
+        return this;
+    }
+
+    /**
+     * Adds a {@link PotionEffect}s to the existing list of potion effects the {@link ItemStack} should have.
+     * This is only used for {@link ItemStack}s that can have potions effects.
+     * @param potionEffect The {@link PotionEffect} to remove from the potion effects added to the {@link ItemStack}.
+     * @return The current {@link ItemStackBuilder}.
+     */
+    public @NonNull ItemStackBuilder removePotionEffect(@NonNull PotionEffect potionEffect) {
+        potionEffects.remove(potionEffect);
 
         return this;
     }
@@ -851,6 +900,18 @@ public class ItemStackBuilder {
      */
     public @NonNull ItemStackBuilder setInstrument(@NonNull MusicInstrument instrument) {
         this.instrument = instrument;
+
+        return this;
+    }
+
+    /**
+     * Sets the light level to apply to the light block {@link ItemStack}.
+     * If the {@link ItemStack} is not that of a light block, this value is ignored.
+     * @param lightLevel The light level.
+     * @return The current {@link ItemStackBuilder}.
+     */
+    public @NonNull ItemStackBuilder setLightLevel(@Nullable Integer lightLevel) {
+        this.lightLevel = lightLevel != null ? Math.clamp(lightLevel, 0, 15) : null;
 
         return this;
     }
@@ -1058,6 +1119,54 @@ public class ItemStackBuilder {
      */
     public @NonNull List<ItemFlag> getItemFlags() {
         return itemFlags;
+    }
+
+    /**
+     * Get the {@link Material} for the front sherd of a decorated pot.
+     * @return A {@link Material} or null.
+     */
+    public @Nullable Material getFrontSherd() {
+        return frontSherd;
+    }
+
+    /**
+     * Get the {@link Material} for the left sherd of a decorated pot.
+     * @return A {@link Material} or null.
+     */
+    public @Nullable Material getLeftSherd() {
+        return leftSherd;
+    }
+
+    /**
+     * Get the {@link Material} for the right sherd of a decorated pot.
+     * @return A {@link Material} or null.
+     */
+    public @Nullable Material getRightSherd() {
+        return rightSherd;
+    }
+
+    /**
+     * Get the {@link Material} for the back sherd of a decorated pot.
+     * @return A {@link Material} or null.
+     */
+    public @Nullable Material getBackSherd() {
+        return backSherd;
+    }
+
+    /**
+     * Get the {@link MusicInstrument} that may be applied to the {@link ItemStack}.
+     * @return A {@link MusicInstrument} or null.
+     */
+    public @Nullable MusicInstrument getInstrument() {
+        return instrument;
+    }
+
+    /**
+     * Get the light level as an {@link Integer} that may be applied to light block {@link ItemStack}s.
+     * @return An {@link Integer} or null.
+     */
+    public @Nullable Integer getLightLevel() {
+        return lightLevel;
     }
 
     /**

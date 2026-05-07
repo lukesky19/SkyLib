@@ -70,6 +70,7 @@ public class ItemStackConfigSerializer implements TypeSerializer<ItemStackConfig
                 List.of(),
                 null,
                 null,
+                null,
                 List.of(),
                 new ItemStackConfig.PotionConfig(null, List.of()),
                 new ItemStackConfig.ColorConfig(false, null, null, null),
@@ -146,6 +147,13 @@ public class ItemStackConfigSerializer implements TypeSerializer<ItemStackConfig
             if(rawKey != null) {
                 instrument = RegistryUtil.getInstrument(rawKey).orElse(null);
             }
+        }
+
+        // Light Level
+        Integer lightLevel = null;
+        ConfigurationNode lightLevelNode = node.node("light-level");
+        if(!lightLevelNode.virtual()) {
+            lightLevel = lightLevelNode.get(Integer.class);
         }
 
         // Enchantments
@@ -427,6 +435,7 @@ public class ItemStackConfigSerializer implements TypeSerializer<ItemStackConfig
                 lore,
                 entityType,
                 instrument,
+                lightLevel,
                 enchantmentConfigList,
                 potionConfig,
                 colorConfig,
@@ -513,6 +522,14 @@ public class ItemStackConfigSerializer implements TypeSerializer<ItemStackConfig
             }
         } else {
             instrumentNode.raw(null);
+        }
+
+        // Light Level
+        ConfigurationNode lightLevelNode = node.node("light-level");
+        if(itemStackConfig.lightLevel() != null) {
+            lightLevelNode.set(Integer.class, itemStackConfig.lightLevel());
+        } else {
+            lightLevelNode.raw(null);
         }
 
         // Enchantments
