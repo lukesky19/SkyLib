@@ -391,12 +391,12 @@ public class ItemStackConfigSerializer implements TypeSerializer<ItemStackConfig
         }
 
         // Options
-        ItemStackConfig.OptionsConfig optionsConfig = new ItemStackConfig.OptionsConfig(false, false, false, false, false);
+        ItemStackConfig.OptionsConfig optionsConfig = new ItemStackConfig.OptionsConfig(null, null, null, null, null);
         ConfigurationNode optionsNode = node.node("options");
         if(!optionsNode.virtual()) {
             Boolean enchantmentGlint = null;
             ConfigurationNode enchantmentGlintNode = optionsNode.node("enchantment-glint");
-            if(!enchantmentsNode.virtual()) {
+            if(!enchantmentGlintNode.virtual()) {
                 enchantmentGlint = enchantmentGlintNode.get(Boolean.class);
             }
 
