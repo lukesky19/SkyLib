@@ -13,22 +13,22 @@ subprojects {
         compileOnly("org.jspecify:jspecify:1.0.0")
 
         // Adventure
-        compileOnly("net.kyori:adventure-api:5.0.0")
-        compileOnly("net.kyori:adventure-text-logger-slf4j:5.0.0")
-        compileOnly("net.kyori:adventure-text-minimessage:5.0.0")
+        compileOnly("net.kyori:adventure-api:5.2.0")
+        compileOnly("net.kyori:adventure-text-logger-slf4j:5.2.0")
+        compileOnly("net.kyori:adventure-text-minimessage:5.2.0")
 
         // Configurate (Configuration)
         compileOnly("org.spongepowered:configurate-yaml:4.2.0")
         compileOnly("org.spongepowered:configurate-gson:4.2.0")
 
         // HikariCP
-        compileOnly("com.zaxxer:HikariCP:7.0.2")
+        compileOnly("com.zaxxer:HikariCP:7.1.0")
 
         // Database Drivers
-        compileOnly("org.xerial:sqlite-jdbc:3.51.3.0")
+        compileOnly("org.xerial:sqlite-jdbc:3.53.2.0")
 
         // Message Brokers
-        compileOnly("com.rabbitmq:amqp-client:5.30.0")
+        compileOnly("com.rabbitmq:amqp-client:5.33.0")
 
         // Gremlin (Runtime dependency resolution)
         compileOnly("xyz.jpenilla:gremlin-runtime:0.0.9")

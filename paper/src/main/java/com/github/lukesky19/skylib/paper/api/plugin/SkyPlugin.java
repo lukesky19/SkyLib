@@ -35,6 +35,11 @@ import java.nio.file.Path;
  * This class provides a template that can be used to create paper plugin.
  */
 public abstract class SkyPlugin extends JavaPlugin implements ISkyPlugin {
+    /**
+     * Default Constructor
+     */
+    public SkyPlugin() {}
+
     @Override
     public abstract void reload();
 
